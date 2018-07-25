@@ -22,7 +22,7 @@ qCalActionInitialization::~qCalActionInitialization()
 
 void qCalActionInitialization::Build()const
 {
-
+   SetUserAction(new qCalPrimaryGeneratorAction);
 }
 
 

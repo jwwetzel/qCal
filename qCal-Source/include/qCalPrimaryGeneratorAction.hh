@@ -2,6 +2,8 @@
 #define qCalPrimaryGeneratorAction_h 1
 
 #include "G4VUserPrimaryGeneratorAction.hh"
+#include "G4ThreeVector.hh"
+#include "G4SystemOfUnits.hh"
 #include "globals.hh"
 
 
@@ -12,14 +14,17 @@ class G4ParticleGun;
 class qCalPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
 public:
-   qCalPrimaryGeneratorAction();
+   qCalPrimaryGeneratorAction(
+      const G4String& particleName = "mu-",
+      G4double energy = 120.*GeV,
+      G4ThreeVector position = G4ThreeVector(0,0,-25),
+      G4ThreeVector momentumDirection = G4ThreeVector(0,0,1));
+   
    virtual ~qCalPrimaryGeneratorAction();
-   virtual void GeneratePrimaries(G4Event* event);
+   virtual void GeneratePrimaries(G4Event*);
    
 private:
    G4ParticleGun* gun;
-   G4ParticleDefinition* muonP;
-
 };
 #endif
 

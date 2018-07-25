@@ -1,4 +1,4 @@
- Macro file for the initialization of sipm
+# Macro file for the initialization of sipm
 # in interactive session
 /control/verbose 2
 /control/saveHistory

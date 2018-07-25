@@ -99,12 +99,15 @@ int main(int argc, char** argv)
    auto runManager = new G4RunManager;
    #endif
    
+   
+   /**************************************************************************************
+    User initialization classes must be set to G4RunManager through SetUserInitialization
+    **************************************************************************************/
    //Initialize Detector Construction
    auto detConstruction = new qCalDetectorConstruction();
    runManager->SetUserInitialization(detConstruction);
    
-   
-   //Initialize Physics List
+   //Configure Physics List for initialization
    auto physicsList = new FTFP_BERT;
    physicsList->ReplacePhysics(new G4EmStandardPhysics_option4());
    
@@ -119,13 +122,14 @@ int main(int argc, char** argv)
    
    physicsList->RegisterPhysics(opticalPhysics);
    
+   //Initialize Physics List
    runManager->SetUserInitialization(physicsList);
-   runManager->SetUserInitialization(new qCalActionInitialization());
    
-   //Initialize Actions
+   //Initialize Actions, includes primary generator
    auto actionInitialization = new qCalActionInitialization();
    runManager->SetUserInitialization(actionInitialization);
    
+   runManager->Initialize();
    
    
    //Initialize Visualization
