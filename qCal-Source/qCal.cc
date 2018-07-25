@@ -1,8 +1,9 @@
-#include "SipmRecorderBase.hh"
-#include "SipmDetectorConstruction.hh"
-#include "SipmActionInitialization.hh"
-#include "SipmPhysicsList.hh"
+//#include "qCalRecorderBase.hh"
+#include "qCalDetectorConstruction.hh"
+#include "qCalActionInitialization.hh"
+#include "qCalPhysicsList.hh"
 
+#include <cstdlib>
 #include "G4UImanager.hh"
 #include "G4UIcommand.hh"
 #include "G4String.hh"
@@ -29,9 +30,8 @@ namespace {
    void PrintUsage() {
       G4cerr << " Usage: " << G4endl;
       G4cerr << " qCal [-m macro ] [-x nQuartzXAxis] [-y nQuartzYAxis] [-z nQuartzZAxis] [-a absorberZ] [-u UIsession] [-t nThreads]" << G4endl;
-      G4cerr << "   note: -t option is available only for multi-threaded mode."
-      G4cerr << "Example: ./qCal -m runMe.Mac -x 10 -Y 10 -Z 50 -a 26 -u notSure -t 4"
-      << G4endl;
+      G4cerr << "   note: -t option is available only for multi-threaded mode." << G4endl;
+      G4cerr << "Example: ./qCal -m runMe.Mac -x 10 -Y 10 -Z 50 -a 26 -u notSure -t 4" << G4endl;
    }
 }
 
@@ -51,12 +51,12 @@ int main(int argc, char** argv)
    G4String session;
    
    //For the number of Quartz cubes in each access from arguments, default is 1x1x1
-   G4Int nXAxis = 1;
-   G4Int nYAxis = 1;
-   G4Int nZAxis = 1;
+   G4int nXAxis = 1;
+   G4int nYAxis = 1;
+   G4int nZAxis = 1;
    
    //Absorber Z
-   G4Int
+   G4int nAbsZ = 26;
    
    //If multithreaded option, instantiate nThreads
    #ifdef G4MULTITHREADED
@@ -65,10 +65,10 @@ int main(int argc, char** argv)
    
    //Loop through the arguments
    for ( G4int i=1; i<argc; i=i+2 ) {
-      if ( G4String(argv[i]) == "-x" ) nXAxis = argv[i+1];
-      if ( G4String(argv[i]) == "-y" ) nYAxis = argv[i+1];
-      if ( G4String(argv[i]) == "-z" ) nZAxis = argv[i+1];
-      if ( G4String(argv[i]) == "-a" ) nAbsZ  = argv[i+1];
+      if ( G4String(argv[i]) == "-x" ) nXAxis = atoi(argv[i+1]);
+      if ( G4String(argv[i]) == "-y" ) nYAxis = atoi(argv[i+1]);
+      if ( G4String(argv[i]) == "-z" ) nZAxis = atoi(argv[i+1]);
+      if ( G4String(argv[i]) == "-a" ) nAbsZ  = atoi(argv[i+1]);
       if      ( G4String(argv[i]) == "-m" ) macro = argv[i+1];
       else if ( G4String(argv[i]) == "-u" ) session = argv[i+1];
       #ifdef G4MULTITHREADED
@@ -100,7 +100,7 @@ int main(int argc, char** argv)
    #endif
    
    //Initialize Detector Construction
-   auto detConstruction = new SipmDetectorConstruction(nXAxis,nYAxis,nZAxis);
+   auto detConstruction = new qCalDetectorConstruction();
    runManager->SetUserInitialization(detConstruction);
    
    
@@ -120,10 +120,10 @@ int main(int argc, char** argv)
    physicsList->RegisterPhysics(opticalPhysics);
    
    runManager->SetUserInitialization(physicsList);
-   runManager->SetUserInitialization(new SipmActionInitialization());
+   runManager->SetUserInitialization(new qCalActionInitialization());
    
    //Initialize Actions
-   auto actionInitialization = new SipmActionInitialization(detConstruction);
+   auto actionInitialization = new qCalActionInitialization();
    runManager->SetUserInitialization(actionInitialization);
    
    
@@ -164,6 +164,7 @@ int main(int argc, char** argv)
    delete visManager;
    delete runManager;
    
+   return 0;
 }
 
 
