@@ -29,17 +29,18 @@
 namespace {
    void PrintUsage() {
       G4cerr << " Usage: " << G4endl;
-      G4cerr << " qCal [-m macro ] [-x nQuartzXAxis] [-y nQuartzYAxis] [-z nQuartzZAxis] [-a absorberZ] [-u UIsession] [-t nThreads]" << G4endl;
+      G4cerr << " qCal [-m macro ] [-w cubeWidth] [-x nQuartzXAxis] [-y nQuartzYAxis] [-z nQuartzZAxis] [-a absorberZ] [-u UIsession] [-t nThreads]" << G4endl;
       G4cerr << "   note: -t option is available only for multi-threaded mode." << G4endl;
-      G4cerr << "Example: ./qCal -m runMe.Mac -x 10 -Y 10 -Z 50 -a 26 -u notSure -t 4" << G4endl;
+      G4cerr << "Example: ./qCal -m runMe.Mac -w 1.0 -x 10 -y 10 -z 50 -a 26 -u \"qt\" -t 4" << G4endl;
    }
 }
 
 int main(int argc, char** argv)
 {
    //Make sure there aren't too many args
-   if( argc > 13 )
+   if( argc > 15 )
    {
+      G4cout << " Too many Arguments " << G4endl;
       PrintUsage();
       return 1;
    }
@@ -55,6 +56,8 @@ int main(int argc, char** argv)
    G4int nYAxis = 1;
    G4int nZAxis = 1;
    
+   G4float nCubeWidth = 1.0;
+   
    //Absorber Z
    G4int nAbsZ = 26;
    
@@ -63,20 +66,30 @@ int main(int argc, char** argv)
    G4int nThreads = 0;
    #endif
    
-   //Loop through the arguments
-   for ( G4int i=1; i<argc; i=i+2 ) {
-      if ( G4String(argv[i]) == "-x" ) nXAxis = atoi(argv[i+1]);
-      if ( G4String(argv[i]) == "-y" ) nYAxis = atoi(argv[i+1]);
-      if ( G4String(argv[i]) == "-z" ) nZAxis = atoi(argv[i+1]);
-      if ( G4String(argv[i]) == "-a" ) nAbsZ  = atoi(argv[i+1]);
+   //Loop through the arguments and check to make sure they are in the correct order.
+   for ( G4int i=1; i<argc; i=i+2 )
+   {
       if      ( G4String(argv[i]) == "-m" ) macro = argv[i+1];
+      else if ( G4String(argv[i]) == "-w" ) nCubeWidth = atof(argv[i+1]);
+      else if ( G4String(argv[i]) == "-x" ) nXAxis = atoi(argv[i+1]);
       else if ( G4String(argv[i]) == "-u" ) session = argv[i+1];
-      #ifdef G4MULTITHREADED
+      else if ( G4String(argv[i]) == "-y" ) nYAxis = atoi(argv[i+1]);
+      else if ( G4String(argv[i]) == "-z" ) nZAxis = atoi(argv[i+1]);
+      else if ( G4String(argv[i]) == "-a" ) nAbsZ  = atoi(argv[i+1]);
+   #ifdef G4MULTITHREADED
       else if ( G4String(argv[i]) == "-t" ) {
          nThreads = G4UIcommand::ConvertToInt(argv[i+1]);
       }
-      #endif
+   #endif
       else {
+         G4cout << "Incorrect Usage, arguments read are: " << G4endl;
+         G4cout << "nXAxis: " << nXAxis << G4endl;
+         G4cout << "nYAxis: " << nYAxis << G4endl;
+         G4cout << "nZAxis: " << nZAxis << G4endl;
+         G4cout << "nAbsZ: " << nAbsZ << G4endl;
+         G4cout << "nThreads: " << nThreads << G4endl;
+         G4cout << "Macro: " << macro << G4endl;
+         G4cout << "Session: " << session << G4endl;
          PrintUsage();
          return 1;
       }
@@ -104,7 +117,7 @@ int main(int argc, char** argv)
     User initialization classes must be set to G4RunManager through SetUserInitialization
     **************************************************************************************/
    //Initialize Detector Construction
-   auto detConstruction = new qCalDetectorConstruction();
+   auto detConstruction = new qCalDetectorConstruction(nXAxis, nYAxis, nZAxis, nAbsZ, nCubeWidth);
    runManager->SetUserInitialization(detConstruction);
    
    //Configure Physics List for initialization
