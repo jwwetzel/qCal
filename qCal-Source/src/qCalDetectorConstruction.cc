@@ -1,30 +1,37 @@
 #include "qCalDetectorConstruction.hh"
 //#include "qCalSD.hh"
 
+#include "globals.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4Threading.hh"
+#include <vector>
+
+#include "G4RunManager.hh"
+#include "G4SDManager.hh"
+#include "G4NistManager.hh"
+
+#include "G4GeometryManager.hh"
+#include "G4SolidStore.hh"
+#include "G4LogicalBorderSurface.hh"
+#include "G4LogicalSkinSurface.hh"
+#include "G4LogicalVolumeStore.hh"
+#include "G4PhysicalVolumeStore.hh"
+
+#include "G4OpticalSurface.hh"
+#include "G4Material.hh"
+#include "G4VSensitiveDetector.hh"
+
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
-#include "G4SystemOfUnits.hh"
-#include "G4Material.hh"
-#include "G4NistManager.hh"
+
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4PVReplica.hh"
-#include "G4VSensitiveDetector.hh"
-#include "G4RunManager.hh"
-#include "G4SDManager.hh"
-#include "G4SystemOfUnits.hh"
-#include "globals.hh"
-#include "G4LogicalBorderSurface.hh"
-#include "G4LogicalSkinSurface.hh"
-#include "G4LogicalVolumeStore.hh"
-#include "G4PhysicalVolumeStore.hh"
-#include "G4GeometryManager.hh"
-#include "G4SolidStore.hh"
-#include "G4Material.hh"
-#include "G4Threading.hh"
-#include <vector>
+
+
+
 
 qCalDetectorConstruction::qCalDetectorConstruction(G4int nXAxis,
                                                    G4int nYAxis,
@@ -50,18 +57,88 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
 {
    G4cout << p_nXAxis << G4endl;
    // Get nist material manager
-   G4NistManager* nist = G4NistManager::Instance();
+//   G4NistManager* nist = G4NistManager::Instance();
    
    // Option to switch on/off checking of volumes overlaps
-   //
    G4bool checkOverlaps = true;
    
    /**************************************************************************************
-                  World Solid, Logical Volume, and Physical Volume Definition
+    Material Definitions
     **************************************************************************************/
+   //General Variables for Material definitions
+   G4double a, z, density;
+   G4int nelements;
+   G4int ncomponents, natoms;
+   const G4int nEntries = 32;
+   
+   //Photon Energies
+   G4double PhotonEnergyQ[nEntries] ={
+      0.44*eV, 0.623125*eV, 0.80625*eV, 0.989375*eV,
+      1.1725*eV, 1.355625*eV, 1.53875*eV, 1.721875*eV,
+      1.905*eV, 2.088125*eV, 2.27125*eV, 2.454375*eV,
+      2.6375*eV, 2.820625*eV, 3.00375*eV, 3.186875*eV,
+      3.37*eV, 3.553125*eV, 3.73625*eV, 3.919375*eV,
+      4.1025*eV, 4.285625*eV, 4.46875*eV, 4.651875*eV,
+      4.835*eV, 5.018125*eV, 5.20125*eV, 5.384375*eV,
+      5.5675*eV, 5.750625*eV, 5.93375*eV, 6.3*eV};
+   
+   //Air Definition
+   G4Element* N = new G4Element("Nitrogen", "N", z=7 , a=14.01*g/mole);
+   G4Element* O = new G4Element("Oxygen"  , "O", z=8 , a=16.00*g/mole);
+   
+   G4Material* airMat = new G4Material("Air", density=1.29*mg/cm3, nelements=2);
+   airMat->AddElement(N, 70.*perCent);
+   airMat->AddElement(O, 30.*perCent);
+   
+   G4double RefractiveIndexAir[nEntries] =
+   { 1.000293, 1.000293, 1.000293, 1.000293, 1.000293, 1.000293, 1.000293,
+      1.000293, 1.000293, 1.000293, 1.000293, 1.000293, 1.000293, 1.000293,
+      1.000293, 1.000293, 1.000293, 1.000293, 1.000293, 1.000293, 1.000293,
+      1.000293, 1.000293, 1.000293, 1.000293, 1.000293, 1.000293, 1.000293,
+      1.000293, 1.000293, 1.000293, 1.000293 };
+   
+   G4MaterialPropertiesTable* airMPT = new G4MaterialPropertiesTable();
+   airMPT->AddProperty("RINDEX",       PhotonEnergyQ, RefractiveIndexAir,nEntries);
+   airMat->SetMaterialPropertiesTable(airMPT);
+   
+   //Quartz Material Definition:
+   G4Element* Si = new G4Element("Silicon", "Si", z=14., a=28.09*g/mole);  // Silicon Definition
+   
+   G4Material* quartzMat = new G4Material("Quartz",density= 2.32*g/cm3, ncomponents=2);
+   quartzMat->AddElement(Si, natoms=1);
+   quartzMat->AddElement(O , natoms=2);
+   
+   G4double RefractiveIndexQ[nEntries] =
+   { 1.4585, 1.4585, 1.4585, 1.4585, 1.4585, 1.4585, 1.4585,
+      1.4585, 1.4585, 1.4585, 1.4585, 1.4585, 1.4585, 1.4585,
+      1.4585, 1.4585, 1.4585, 1.4585, 1.4585, 1.4585, 1.4585,
+      1.4585, 1.4585, 1.4585, 1.4585, 1.4585, 1.4585, 1.4585,
+      1.4585, 1.4585, 1.4585, 1.4585 };
+   
+   G4double AbsorptionQ[nEntries] =
+   {0.07*m, 0.069375*m, 0.06875*m, 0.068125*m,
+      0.0675*m, 0.066875*m, 0.06625*m, 0.065625*m,
+      0.065*m, 0.064375*m,  0.06375*m, 0.063125*m,
+      0.0625*m, 0.061875*m, 0.06125*m, 0.060625*m,
+      0.06*m, 0.059375*m, 0.05875*m, 0.058125*m,
+      0.0575*m, 0.056875*m, 0.05625*m, 0.055625*m,
+      0.055*m, 0.054375*m, 0.05375*m, 0.053125*m,
+      0.0525*m, 0.051875*m, 0.05125*m, 0.05*m};
+   
+   G4MaterialPropertiesTable* quartzMPT = new G4MaterialPropertiesTable();
+   quartzMPT->AddProperty("RINDEX",       PhotonEnergyQ, RefractiveIndexQ,nEntries);
+   quartzMPT->AddProperty("ABSLENGTH",    PhotonEnergyQ, AbsorptionQ,     nEntries);
+   
+   quartzMat->SetMaterialPropertiesTable(quartzMPT);
+   
+   
+   /**************************************************************************************
+    Solid, Logical Volume, and Physical Volume Definitions
+    **************************************************************************************/
+   
+   //World Definition
    G4double world_sizeXY = 500*cm;
    G4double world_sizeZ  = 500*cm;
-   G4Material* world_mat = nist->FindOrBuildMaterial("G4_AIR");
    
    G4Box* solidWorld =
    new G4Box("World",                       //its name
@@ -69,7 +146,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    
    G4LogicalVolume* logicWorld =
    new G4LogicalVolume(solidWorld,          //its solid
-                       world_mat,           //its material
+                       airMat,           //its material
                        "World");            //its name
    
    G4VPhysicalVolume* physWorld =
@@ -82,63 +159,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
                      0,                     //copy number
                      checkOverlaps);        //overlaps checking
    
-   /**************************************************************************************
-    Envelope Solid, Logical Volume, and Physical Volume Definition
-    **************************************************************************************/
-   G4Material* envelope_mat = nist->FindOrBuildMaterial("G4_AIR");
-   
-   G4Box* solidEnvelope =
-   new G4Box("Envelope",                       //its name
-             0.5*p_fCubeWidth * p_nXAxis, 0.5*p_fCubeWidth * p_nYAxis, 0.5*p_fCubeWidth * p_nZAxis);     //its size
-   
-   G4LogicalVolume* logicEnvelope =
-   new G4LogicalVolume(solidEnvelope,          //its solid
-                       envelope_mat,           //its material
-                       "Envelope");            //its name
-   
-   G4VPhysicalVolume* physEnvelope =
-   new G4PVPlacement(0,                      //no rotation
-                     G4ThreeVector(),        //at (0,0,0)
-                     logicEnvelope,          //its logical volume
-                     "Envelope",             //its name
-                     logicWorld,             //its mother  volume
-                     false,                  //no boolean operation
-                     0,                      //copy number
-                     checkOverlaps);         //overlaps checking
-   
-   /**************************************************************************************
-    Quartz Solid, Logical Volume, and Physical Volume Definition
-    **************************************************************************************/
-   //Quartz Material Definition:
-   const G4int NUMENTRIES = 3;
-   G4Element* O  = new G4Element("Oxygen", "O", 8., 16.00*g/mole);
-   G4Element* Si = new G4Element("Silicon", "Si", 14., 28.09*g/mole);
-   G4Material* quartz_mat = new G4Material("quartz", 2.200*g/cm3, 2);
-   quartz_mat->AddElement(Si, 1);
-   quartz_mat->AddElement(O , 2);
 
-   //Quartz Material Properties Definition
-   G4double quartz_PP[NUMENTRIES]   = { 5.0*eV, 6.69*eV, 7.50*eV }; // lambda range 4 ri
-   G4double quartz_RIND[NUMENTRIES] = { 1.45, 1.51, 1.54 };     // ref index
-   G4double quartz_ABSL[NUMENTRIES] = { 3.0*cm, 3.0*cm, 3.0*cm };// atten length
-   G4MaterialPropertiesTable *quartz_mt = new G4MaterialPropertiesTable();
-   quartz_mt->AddProperty("RINDEX", quartz_PP, quartz_RIND, NUMENTRIES);
-   quartz_mt->AddProperty("ABSLENGTH", quartz_PP, quartz_ABSL, NUMENTRIES);
-   quartz_mat->SetMaterialPropertiesTable(quartz_mt);
-//
-//   //Quartz Optical Surfaces & Refractive Index
-//   G4double ephoton[] = {7.0*eV,7.14*eV};
-//   G4double quartz_EFF[] = {0.5,0.5};
-//   G4double quartz_RINDEX[] = {1.543,1.554};
-//   const G4int num = sizeof(ephoton)/sizeof(G4double);
-//
-//   quartz_mt->AddProperty("EFFICIENCY",ephoton,quartz_EFF,num);
-//   quartz_mt->AddProperty("RINDEX",ephoton,quartz_RINDEX,num); //add quartz refractive index
-//   G4OpticalSurface* quartzSurface = new G4OpticalSurface("quartz_opsurf", glisur, polishedtyvekair, dielectric_metal); //ADD TYVEK here
-//   quartzSurface->SetMaterialPropertiesTable(quartz_mt);
-   
-
-   
    //Quartz Solid Definition:
    G4Box* solidQuartz =
    new G4Box("Quartz",                       //its name
@@ -146,18 +167,19 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
 
    G4LogicalVolume* logicQuartz =
    new G4LogicalVolume(solidQuartz,          //its solid
-                       quartz_mat,           //its material
+                       quartzMat,           //its material
                        "Quartz");            //its name
    
-   G4PVReplica* quartzXReplica =
-   new G4PVReplica("Quartz",
-               logicQuartz,
-               logicEnvelope,
-               kZAxis,
-               p_nZAxis,
-               p_fCubeWidth
+   G4VPhysicalVolume* physicalQuartz =
+   new G4PVPlacement(0,
+                     G4ThreeVector(),
+                     logicQuartz,
+                     "Quartz",
+                     logicWorld,
+                     false,
+                     0,
+                     checkOverlaps
                );
-
    
    return physWorld;
 }
