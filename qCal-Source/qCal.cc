@@ -1,3 +1,11 @@
+/**********************************
+ Quartz Based Cherenkov Calorimeter
+ Produced by Dr. James Wetzel
+ Contact: james-wetzel@uiowa.edu
+ The University of Iowa
+ July - 2018
+ **********************************/
+
 //#include "qCalRecorderBase.hh"
 #include "qCalDetectorConstruction.hh"
 #include "qCalActionInitialization.hh"
@@ -59,7 +67,7 @@ int main(int argc, char** argv)
    G4float nCubeWidth = 1.0;
    
    //Absorber Z
-   G4int nAbsZ = 26;
+   G4String sAbs = "Iron";
    
    //If multithreaded option, instantiate nThreads
    #ifdef G4MULTITHREADED
@@ -67,6 +75,7 @@ int main(int argc, char** argv)
    #endif
    
    //Loop through the arguments and check to make sure they are in the correct order.
+   G4cout << "If you receive a segmentation fault here, you probably entered the wrong arguments." << G4endl;
    for ( G4int i=1; i<argc; i=i+2 )
    {
       if      ( G4String(argv[i]) == "-m" ) macro = argv[i+1];
@@ -75,7 +84,7 @@ int main(int argc, char** argv)
       else if ( G4String(argv[i]) == "-u" ) session = argv[i+1];
       else if ( G4String(argv[i]) == "-y" ) nYAxis = atoi(argv[i+1]);
       else if ( G4String(argv[i]) == "-z" ) nZAxis = atoi(argv[i+1]);
-      else if ( G4String(argv[i]) == "-a" ) nAbsZ  = atoi(argv[i+1]);
+      else if ( G4String(argv[i]) == "-a" ) sAbs  = argv[i+1];
    #ifdef G4MULTITHREADED
       else if ( G4String(argv[i]) == "-t" ) {
          nThreads = G4UIcommand::ConvertToInt(argv[i+1]);
@@ -86,7 +95,7 @@ int main(int argc, char** argv)
          G4cout << "nXAxis: " << nXAxis << G4endl;
          G4cout << "nYAxis: " << nYAxis << G4endl;
          G4cout << "nZAxis: " << nZAxis << G4endl;
-         G4cout << "nAbsZ: " << nAbsZ << G4endl;
+         G4cout << "sAbs: " << sAbs << G4endl;
          G4cout << "nThreads: " << nThreads << G4endl;
          G4cout << "Macro: " << macro << G4endl;
          G4cout << "Session: " << session << G4endl;
@@ -117,7 +126,7 @@ int main(int argc, char** argv)
     User initialization classes must be set to G4RunManager through SetUserInitialization
     **************************************************************************************/
    //Initialize Detector Construction
-   auto detConstruction = new qCalDetectorConstruction(nXAxis, nYAxis, nZAxis, nAbsZ, nCubeWidth);
+   auto detConstruction = new qCalDetectorConstruction(nXAxis, nYAxis, nZAxis, sAbs, nCubeWidth);
    runManager->SetUserInitialization(detConstruction);
    
    //Configure Physics List for initialization

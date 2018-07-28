@@ -36,14 +36,14 @@
 qCalDetectorConstruction::qCalDetectorConstruction(G4int nXAxis,
                                                    G4int nYAxis,
                                                    G4int nZAxis,
-                                                   G4int nAbsZ,
+                                                   G4String sAbs,
                                                    G4float fCubeWidth)
 : G4VUserDetectorConstruction()
 {
    p_nXAxis = nXAxis;
    p_nYAxis = nYAxis;
    p_nZAxis = nZAxis;
-   p_nAbsZ = nAbsZ;
+   p_sAbs = sAbs;
    p_fCubeWidth = fCubeWidth * cm;
    
 }
@@ -55,12 +55,12 @@ qCalDetectorConstruction::~qCalDetectorConstruction()
 
 G4VPhysicalVolume* qCalDetectorConstruction::Construct()
 {
-   G4cout << p_nXAxis << G4endl;
    // Get nist material manager
-//   G4NistManager* nist = G4NistManager::Instance();
+    G4NistManager* nist = G4NistManager::Instance();
    
    // Option to switch on/off checking of volumes overlaps
-   G4bool checkOverlaps = true;
+   G4bool checkOverlaps = false;
+
    
    /**************************************************************************************
     Material Definitions
@@ -70,6 +70,11 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    G4int nelements;
    G4int ncomponents, natoms;
    const G4int nEntries = 32;
+   
+   G4Material* absorberMat = nist->FindOrBuildMaterial("G4_"+p_sAbs);
+   G4float fAbsRadLen = absorberMat->GetRadlen()*mm;
+   
+   G4cout << "RadL: " << fAbsRadLen << G4endl;
    
    //Photon Energies
    G4double PhotonEnergyQ[nEntries] ={
@@ -81,6 +86,8 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
       4.1025*eV, 4.285625*eV, 4.46875*eV, 4.651875*eV,
       4.835*eV, 5.018125*eV, 5.20125*eV, 5.384375*eV,
       5.5675*eV, 5.750625*eV, 5.93375*eV, 6.3*eV};
+   
+   
    
    //Air Definition
    G4Element* N = new G4Element("Nitrogen", "N", z=7 , a=14.01*g/mole);
@@ -100,6 +107,8 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    G4MaterialPropertiesTable* airMPT = new G4MaterialPropertiesTable();
    airMPT->AddProperty("RINDEX",       PhotonEnergyQ, RefractiveIndexAir,nEntries);
    airMat->SetMaterialPropertiesTable(airMPT);
+   
+   
    
    //Quartz Material Definition:
    G4Element* Si = new G4Element("Silicon", "Si", z=14., a=28.09*g/mole);  // Silicon Definition
@@ -130,6 +139,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    quartzMPT->AddProperty("ABSLENGTH",    PhotonEnergyQ, AbsorptionQ,     nEntries);
    
    quartzMat->SetMaterialPropertiesTable(quartzMPT);
+   
    
    
    /**************************************************************************************
@@ -167,19 +177,27 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
 
    G4LogicalVolume* logicQuartz =
    new G4LogicalVolume(solidQuartz,          //its solid
-                       quartzMat,           //its material
+                       quartzMat,            //its material
                        "Quartz");            //its name
    
-   G4VPhysicalVolume* physicalQuartz =
-   new G4PVPlacement(0,
-                     G4ThreeVector(),
-                     logicQuartz,
-                     "Quartz",
-                     logicWorld,
-                     false,
-                     0,
-                     checkOverlaps
-               );
+   //Quartz Physical Volume Placement
+   for (G4int i = 0; i != p_nXAxis; ++i)
+   {
+      for ( G4int j = 0; j != p_nYAxis; ++j)
+      {
+         for ( G4int k = 0; k != p_nZAxis; ++k)
+            G4VPhysicalVolume* physicalQuartz =
+            new G4PVPlacement(0,
+                              G4ThreeVector(1*cm*i+1.5*mm*i, 1*cm*j, fAbsRadLen*k+1*cm*k),
+                              logicQuartz,
+                              "Quartz",
+                              logicWorld,
+                              false,
+                              i,
+                              checkOverlaps
+                              );
+      }
+   }
    
    return physWorld;
 }
