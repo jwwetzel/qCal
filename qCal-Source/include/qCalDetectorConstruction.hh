@@ -41,5 +41,6 @@ private:
    G4float p_fAbsYDim;
    G4float p_fQuartzSpacing;
    G4float p_fWrapSize;
+   G4float p_SiPMDim;
 };
 #endif

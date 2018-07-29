@@ -1,5 +1,5 @@
 #include "qCalDetectorConstruction.hh"
-//#include "qCalSD.hh"
+#include "qCalSD.hh"
 
 #include "globals.hh"
 #include "G4SystemOfUnits.hh"
@@ -47,9 +47,9 @@ qCalDetectorConstruction::qCalDetectorConstruction(G4int nXAxis,
    p_fCubeWidth = fCubeWidth * cm;     //Width of a single cube
    p_fQuartzSpacing = 0.15*cm;         //Width between x-cubes (circuit board + sipm)
    p_fWrapSize     = 0.015*cm;         //Width of the tyvek wrapping
-   p_fAbsXDim = 0.5*((p_fCubeWidth+2*p_fWrapSize)*p_nXAxis+((p_fQuartzSpacing)*(p_nXAxis-1)));     //Detector X coord center
-   p_fAbsYDim = 0.5*(p_fCubeWidth+2*p_fWrapSize)*p_nYAxis;                                         //Detector Y coord Center
-   
+   p_fAbsXDim = 0.5*((p_fCubeWidth+2*p_fWrapSize)*(p_nXAxis)+((p_fQuartzSpacing)*(p_nXAxis-1)))+p_fQuartzSpacing;     //Detector X coord center
+   p_fAbsYDim = 0.5*(p_fCubeWidth+2*p_fWrapSize)*p_nYAxis+p_fQuartzSpacing;                                           //Detector Y coord Center
+   p_SiPMDim = 0.5*cm;
 }
 
 qCalDetectorConstruction::~qCalDetectorConstruction()
@@ -63,7 +63,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
     G4NistManager* nist = G4NistManager::Instance();
    
    // Option to switch on/off checking of volumes overlaps
-   G4bool checkOverlaps = false;
+   G4bool checkOverlaps = true;
 
    
    /**************************************************************************************
@@ -150,8 +150,8 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
     Solid, Logical Volume, and Physical Volume Definitions
     **************************************************************************************/
    //World Definition
-   G4double world_sizeXY = 100*cm;
-   G4double world_sizeZ  = 100*cm;
+   G4double world_sizeXY = 50*cm;
+   G4double world_sizeZ  = 50*cm;
    
    G4Box* solidWorld =
    new G4Box("World",                                                   //its name
@@ -183,6 +183,19 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
                        quartzMat,                                       //its material
                        "Quartz");                                       //its name
    
+   //SiPM Solid & Volume Definition:
+   G4Box* solidSiPM =                                                   //its name
+   new G4Box("SiPM", 0.5*p_SiPMDim, 0.5*p_SiPMDim, 0.001*cm);            //its size
+   
+   G4LogicalVolume* logicSiPM =
+   new G4LogicalVolume(solidSiPM,
+                       quartzMat,
+                       "SiPM");
+   
+   //SiPM Sensitive Detector Declaration
+   qCalSD* sipmSD = new qCalSD("SiPM","SiPMCollection",logicSiPM);
+   G4SDManager *sdMan = G4SDManager::GetSDMpointer();
+   sdMan->AddNewDetector(sipmSD);
    
    //Absorber Solid & Volume Definition:
    G4float fAbsZDim = 0.5*fAbsRadLen;
@@ -199,20 +212,40 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    G4int quartzIDNumber = 0;
    G4int absorberIDNumber = p_nXAxis*p_nYAxis*p_nZAxis+10;
    G4int sipmIDNumber = 2*p_nXAxis*p_nYAxis*p_nZAxis+10;
+   G4int rowOffset = 0;
    for (G4int i = 0; i != p_nXAxis; ++i)
    {
       for ( G4int j = 0; j != p_nYAxis; ++j)
       {
          for ( G4int k = 0; k != p_nZAxis; ++k)
          {
+            if (k % 2 == 0) rowOffset = 2;
+            else rowOffset = 0;
+            //Place the Quartz
             G4VPhysicalVolume* physicalQuartz =
             new G4PVPlacement(0,
-                              G4ThreeVector((p_fCubeWidth+p_fQuartzSpacing+2*p_fWrapSize)*i+0.5*p_fCubeWidth+p_fWrapSize, (p_fCubeWidth+2*p_fWrapSize)*j+0.5*p_fCubeWidth+p_fWrapSize, (fAbsRadLen+p_fCubeWidth+2*p_fWrapSize)*k+0.5*p_fCubeWidth+p_fWrapSize),
+                              G4ThreeVector((p_fCubeWidth+p_fQuartzSpacing+2*p_fWrapSize)*i+0.5*p_fCubeWidth+p_fWrapSize+p_fQuartzSpacing*rowOffset,  //X
+                                            (p_fCubeWidth+2*p_fWrapSize)*j+0.5*p_fCubeWidth+p_fWrapSize+p_fQuartzSpacing*rowOffset,                   //Y
+                                            (fAbsRadLen+p_fCubeWidth+2*p_fWrapSize)*k+0.5*p_fCubeWidth+p_fWrapSize),                                  //Z
                               logicQuartz,
                               "Quartz",
                               logicWorld,
                               false,
                               quartzIDNumber,
+                              checkOverlaps
+                              );
+            
+            //Place the SiPMs
+            G4VPhysicalVolume* physicalSiPM =
+            new G4PVPlacement(0,
+                              G4ThreeVector((p_fCubeWidth+p_fQuartzSpacing+2*p_fWrapSize)*i+0.5*p_fCubeWidth+p_fWrapSize+p_fQuartzSpacing*rowOffset,  //X
+                                            (p_fCubeWidth+2*p_fWrapSize)*j+0.5*p_fCubeWidth+p_fWrapSize+p_fQuartzSpacing*rowOffset,                   //Y
+                                            (fAbsRadLen+p_fCubeWidth+2*p_fWrapSize)*k+p_fCubeWidth+0.001*cm+p_fWrapSize),                             //Z
+                              logicSiPM,
+                              "SiPM",
+                              logicWorld,
+                              false,
+                              sipmIDNumber,
                               checkOverlaps
                               );
 
@@ -238,11 +271,14 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
             quartzWrapMPT->AddProperty("EFFICIENCY",pp,efficiency,2);
             quartzWrap->SetMaterialPropertiesTable(quartzWrapMPT);
             
+            //Place the Absorber
             if (i == 0 && j == 0)
             {
                G4VPhysicalVolume* physicalAbsorber =
                new G4PVPlacement(0,
-                                 G4ThreeVector(p_fAbsXDim, p_fAbsYDim, (p_fCubeWidth+0.5*fAbsRadLen+2*p_fWrapSize)+(p_fCubeWidth+fAbsRadLen+2*p_fWrapSize)*k),
+                                 G4ThreeVector(p_fAbsXDim,
+                                               p_fAbsYDim,
+                                               (p_fCubeWidth+0.5*fAbsRadLen+2*p_fWrapSize)+(p_fCubeWidth+fAbsRadLen+2*p_fWrapSize)*k),
                                  logicAbsorber,
                                  "Absorber",
                                  logicWorld,
