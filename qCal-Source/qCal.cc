@@ -67,7 +67,7 @@ int main(int argc, char** argv)
    G4float nCubeWidth = 1.0;
    
    //Absorber Z
-   G4String sAbs = "Iron";
+   G4String sAbs = "Fe";
    
    //If multithreaded option, instantiate nThreads
    #ifdef G4MULTITHREADED

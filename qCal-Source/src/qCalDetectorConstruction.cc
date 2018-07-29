@@ -71,12 +71,13 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    G4int ncomponents, natoms;
    const G4int nEntries = 32;
    
+   //Define the User selected Absorber Material
    G4Material* absorberMat = nist->FindOrBuildMaterial("G4_"+p_sAbs);
    G4float fAbsRadLen = absorberMat->GetRadlen()*mm;
    
    G4cout << "RadL: " << fAbsRadLen << G4endl;
    
-   //Photon Energies
+   //Photon Energies for Optical Photon calculations
    G4double PhotonEnergyQ[nEntries] ={
       0.44*eV, 0.623125*eV, 0.80625*eV, 0.989375*eV,
       1.1725*eV, 1.355625*eV, 1.53875*eV, 1.721875*eV,
@@ -107,7 +108,6 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    G4MaterialPropertiesTable* airMPT = new G4MaterialPropertiesTable();
    airMPT->AddProperty("RINDEX",       PhotonEnergyQ, RefractiveIndexAir,nEntries);
    airMat->SetMaterialPropertiesTable(airMPT);
-   
    
    
    //Quartz Material Definition:
@@ -145,57 +145,117 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    /**************************************************************************************
     Solid, Logical Volume, and Physical Volume Definitions
     **************************************************************************************/
+   G4float fQuartzSpacing = 1.5*mm;
+   G4float fWrapSize = 0.15*mm;
    
    //World Definition
    G4double world_sizeXY = 500*cm;
    G4double world_sizeZ  = 500*cm;
    
    G4Box* solidWorld =
-   new G4Box("World",                       //its name
-             0.5*world_sizeXY, 0.5*world_sizeXY, 0.5*world_sizeZ);     //its size
+   new G4Box("World",                                                   //its name
+             0.5*world_sizeXY, 0.5*world_sizeXY, 0.5*world_sizeZ);      //its size
    
    G4LogicalVolume* logicWorld =
-   new G4LogicalVolume(solidWorld,          //its solid
-                       airMat,           //its material
-                       "World");            //its name
+   new G4LogicalVolume(solidWorld,                                      //its solid
+                       airMat,                                          //its material
+                       "World");                                        //its name
    
    G4VPhysicalVolume* physWorld =
-   new G4PVPlacement(0,                     //no rotation
-                     G4ThreeVector(),       //at (0,0,0)
-                     logicWorld,            //its logical volume
-                     "World",               //its name
-                     nullptr,                     //its mother  volume
-                     false,                 //no boolean operation
-                     0,                     //copy number
-                     checkOverlaps);        //overlaps checking
+   new G4PVPlacement(0,                      //no rotation
+                     G4ThreeVector(),        //at (0,0,0)
+                     logicWorld,             //its logical volume
+                     "World",                //its name
+                     nullptr,                //its mother  volume
+                     false,                  //no boolean operation
+                     0,                      //copy number
+                     checkOverlaps);         //overlaps checking
    
 
-   //Quartz Solid Definition:
+   //Quartz Solid & Volume Definition:
    G4Box* solidQuartz =
-   new G4Box("Quartz",                       //its name
+   new G4Box("Quartz",                                                  //its name
              0.5*p_fCubeWidth, 0.5*p_fCubeWidth, 0.5*p_fCubeWidth);     //its size
 
    G4LogicalVolume* logicQuartz =
-   new G4LogicalVolume(solidQuartz,          //its solid
-                       quartzMat,            //its material
-                       "Quartz");            //its name
+   new G4LogicalVolume(solidQuartz,                                     //its solid
+                       quartzMat,                                       //its material
+                       "Quartz");                                       //its name
+   
+   
+   //Absorber Solid & Volume Definition:
+   G4float fAbsXDim = 0.5*((p_fCubeWidth+2*fWrapSize)*p_nXAxis+((fQuartzSpacing)*(p_nXAxis-1)));
+   G4float fAbsYDim = 0.5*(p_fCubeWidth+2*fWrapSize)*p_nYAxis;
+   G4float fAbsZDim = 0.5*fAbsRadLen;
+   G4Box* solidAbsorber =
+   new G4Box("Absorber",                                                //its names
+             fAbsXDim, fAbsYDim, fAbsZDim);                             //its size
+   
+   G4LogicalVolume* logicAbsorber =
+   new G4LogicalVolume(solidAbsorber,                                   //its solid
+                       absorberMat,                                     //its material
+                       "Absorber");                                     //its name
    
    //Quartz Physical Volume Placement
+   G4int quartzIDNumber = 0;
+   G4int absorberIDNumber = p_nXAxis*p_nYAxis*p_nZAxis+10;
+   G4int sipmIDNumber = 2*p_nXAxis*p_nYAxis*p_nZAxis+10;
    for (G4int i = 0; i != p_nXAxis; ++i)
    {
       for ( G4int j = 0; j != p_nYAxis; ++j)
       {
          for ( G4int k = 0; k != p_nZAxis; ++k)
+         {
             G4VPhysicalVolume* physicalQuartz =
             new G4PVPlacement(0,
-                              G4ThreeVector(1*cm*i+1.5*mm*i, 1*cm*j, fAbsRadLen*k+1*cm*k),
+                              G4ThreeVector((p_fCubeWidth+fQuartzSpacing+2*fWrapSize)*i+0.5*p_fCubeWidth+fWrapSize, (p_fCubeWidth+2*fWrapSize)*j+0.5*p_fCubeWidth+fWrapSize, (fAbsRadLen+p_fCubeWidth+2*fWrapSize)*k+0.5*p_fCubeWidth+fWrapSize),
                               logicQuartz,
                               "Quartz",
                               logicWorld,
                               false,
-                              i,
+                              quartzIDNumber,
                               checkOverlaps
                               );
+
+            //Set the Quartz Surface
+            G4OpticalSurface* quartzWrap = new G4OpticalSurface("QuartzWrap");
+            
+            new G4LogicalBorderSurface("QuartzWrap",
+                                       physicalQuartz,
+                                       physWorld,
+                                       quartzWrap);
+            
+            quartzWrap->SetType(dielectric_metal);
+            quartzWrap->SetFinish(polished);
+            quartzWrap->SetModel(glisur);
+            
+            G4double pp[2] = {2.0*eV, 3.5*eV};
+            G4double reflectivity[2] = {1., 1.};
+            G4double efficiency[2] = {0.0, 0.0};
+            
+            G4MaterialPropertiesTable* quartzWrapMPT = new G4MaterialPropertiesTable();
+            
+            quartzWrapMPT->AddProperty("REFLECTIVITY",pp,reflectivity,2);
+            quartzWrapMPT->AddProperty("EFFICIENCY",pp,efficiency,2);
+            quartzWrap->SetMaterialPropertiesTable(quartzWrapMPT);
+            
+            if (i == 0 && j == 0)
+            {
+               G4VPhysicalVolume* physicalAbsorber =
+               new G4PVPlacement(0,
+                                 G4ThreeVector(fAbsXDim, fAbsYDim, (p_fCubeWidth+0.5*fAbsRadLen+2*fWrapSize)+(p_fCubeWidth+fAbsRadLen+2*fWrapSize)*k),
+                                 logicAbsorber,
+                                 "Absorber",
+                                 logicWorld,
+                                 false,
+                                 absorberIDNumber,
+                                 checkOverlaps
+                                 );
+               absorberIDNumber++;
+            }
+            quartzIDNumber++;
+            sipmIDNumber++;
+         }
       }
    }
    

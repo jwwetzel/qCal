@@ -20,7 +20,7 @@ public:
    qCalDetectorConstruction(G4int nXAxis = 1,
                             G4int nYAxis = 1,
                             G4int nZAxis = 1,
-                            G4String sAbs = "Iron",
+                            G4String sAbs = "Fe",
                             G4float fCubeWidth = 1.0
                             );
    virtual ~qCalDetectorConstruction();
