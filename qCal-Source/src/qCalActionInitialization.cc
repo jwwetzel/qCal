@@ -1,6 +1,8 @@
 #include "qCalActionInitialization.hh"
 #include "qCalDetectorConstruction.hh"
 #include "qCalPrimaryGeneratorAction.hh"
+#include "G4ThreeVector.hh"
+#include "G4RunManager.hh"
 //#include "qCalEventAction.hh"
 //#include "qCalRunAction.hh"
 //#include "qCalStackingAction.hh"
@@ -12,7 +14,12 @@
 //constructor & destructor
 qCalActionInitialization::qCalActionInitialization()
 : G4VUserActionInitialization()
-{}
+{
+   //Grab the Detector construction to aim the gun at its center.
+   p_theDetector = (qCalDetectorConstruction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction();
+   p_gunXLocation = p_theDetector->GetAbsXdim();
+   p_gunYLocation = p_theDetector->GetAbsYdim();
+}
 
 
 qCalActionInitialization::~qCalActionInitialization()
@@ -22,7 +29,9 @@ qCalActionInitialization::~qCalActionInitialization()
 
 void qCalActionInitialization::Build()const
 {
-   SetUserAction(new qCalPrimaryGeneratorAction);
+   G4ThreeVector gunPosition = G4ThreeVector(p_gunXLocation, p_gunYLocation, -10*cm);
+   G4ThreeVector gunMomentum = G4ThreeVector(0,0,1);
+   SetUserAction(new qCalPrimaryGeneratorAction("proton",120.0*GeV, gunPosition, gunMomentum));
 }
 
 

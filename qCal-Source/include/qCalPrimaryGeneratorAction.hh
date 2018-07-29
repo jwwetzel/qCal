@@ -17,7 +17,7 @@ public:
    qCalPrimaryGeneratorAction(
       const G4String& particleName = "mu-",
       G4double energy = 120.*GeV,
-      G4ThreeVector position = G4ThreeVector(5,5,-10),
+      G4ThreeVector position = G4ThreeVector(50,50,-10),
       G4ThreeVector momentumDirection = G4ThreeVector(0,0,1));
    
    virtual ~qCalPrimaryGeneratorAction();

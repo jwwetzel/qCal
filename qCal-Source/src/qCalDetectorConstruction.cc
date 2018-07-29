@@ -40,11 +40,15 @@ qCalDetectorConstruction::qCalDetectorConstruction(G4int nXAxis,
                                                    G4float fCubeWidth)
 : G4VUserDetectorConstruction()
 {
-   p_nXAxis = nXAxis;
-   p_nYAxis = nYAxis;
-   p_nZAxis = nZAxis;
-   p_sAbs = sAbs;
-   p_fCubeWidth = fCubeWidth * cm;
+   p_nXAxis = nXAxis;                  //Number of cubes in the X-Axis
+   p_nYAxis = nYAxis;                  //Number of cubes in the Y-Axis
+   p_nZAxis = nZAxis;                  //Number of cubes in the Z-Axis
+   p_sAbs = sAbs;                      //Absorber element
+   p_fCubeWidth = fCubeWidth * cm;     //Width of a single cube
+   p_fQuartzSpacing = 0.15*cm;         //Width between x-cubes (circuit board + sipm)
+   p_fWrapSize     = 0.015*cm;         //Width of the tyvek wrapping
+   p_fAbsXDim = 0.5*((p_fCubeWidth+2*p_fWrapSize)*p_nXAxis+((p_fQuartzSpacing)*(p_nXAxis-1)));     //Detector X coord center
+   p_fAbsYDim = 0.5*(p_fCubeWidth+2*p_fWrapSize)*p_nYAxis;                                         //Detector Y coord Center
    
 }
 
@@ -145,12 +149,9 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    /**************************************************************************************
     Solid, Logical Volume, and Physical Volume Definitions
     **************************************************************************************/
-   G4float fQuartzSpacing = 1.5*mm;
-   G4float fWrapSize = 0.15*mm;
-   
    //World Definition
-   G4double world_sizeXY = 500*cm;
-   G4double world_sizeZ  = 500*cm;
+   G4double world_sizeXY = 100*cm;
+   G4double world_sizeZ  = 100*cm;
    
    G4Box* solidWorld =
    new G4Box("World",                                                   //its name
@@ -184,12 +185,10 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    
    
    //Absorber Solid & Volume Definition:
-   G4float fAbsXDim = 0.5*((p_fCubeWidth+2*fWrapSize)*p_nXAxis+((fQuartzSpacing)*(p_nXAxis-1)));
-   G4float fAbsYDim = 0.5*(p_fCubeWidth+2*fWrapSize)*p_nYAxis;
    G4float fAbsZDim = 0.5*fAbsRadLen;
    G4Box* solidAbsorber =
    new G4Box("Absorber",                                                //its names
-             fAbsXDim, fAbsYDim, fAbsZDim);                             //its size
+             p_fAbsXDim, p_fAbsYDim, fAbsZDim);                             //its size
    
    G4LogicalVolume* logicAbsorber =
    new G4LogicalVolume(solidAbsorber,                                   //its solid
@@ -208,7 +207,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
          {
             G4VPhysicalVolume* physicalQuartz =
             new G4PVPlacement(0,
-                              G4ThreeVector((p_fCubeWidth+fQuartzSpacing+2*fWrapSize)*i+0.5*p_fCubeWidth+fWrapSize, (p_fCubeWidth+2*fWrapSize)*j+0.5*p_fCubeWidth+fWrapSize, (fAbsRadLen+p_fCubeWidth+2*fWrapSize)*k+0.5*p_fCubeWidth+fWrapSize),
+                              G4ThreeVector((p_fCubeWidth+p_fQuartzSpacing+2*p_fWrapSize)*i+0.5*p_fCubeWidth+p_fWrapSize, (p_fCubeWidth+2*p_fWrapSize)*j+0.5*p_fCubeWidth+p_fWrapSize, (fAbsRadLen+p_fCubeWidth+2*p_fWrapSize)*k+0.5*p_fCubeWidth+p_fWrapSize),
                               logicQuartz,
                               "Quartz",
                               logicWorld,
@@ -243,7 +242,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
             {
                G4VPhysicalVolume* physicalAbsorber =
                new G4PVPlacement(0,
-                                 G4ThreeVector(fAbsXDim, fAbsYDim, (p_fCubeWidth+0.5*fAbsRadLen+2*fWrapSize)+(p_fCubeWidth+fAbsRadLen+2*fWrapSize)*k),
+                                 G4ThreeVector(p_fAbsXDim, p_fAbsYDim, (p_fCubeWidth+0.5*fAbsRadLen+2*p_fWrapSize)+(p_fCubeWidth+fAbsRadLen+2*p_fWrapSize)*k),
                                  logicAbsorber,
                                  "Absorber",
                                  logicWorld,
@@ -258,7 +257,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
          }
       }
    }
-   
+
    return physWorld;
 }
 

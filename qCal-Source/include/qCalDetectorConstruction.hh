@@ -4,6 +4,7 @@
 //#include "qCalSD.hh"
 
 #include "G4VUserDetectorConstruction.hh"
+#include "G4SystemOfUnits.hh"
 #include "G4RotationMatrix.hh"
 #include "G4FieldManager.hh"
 #include "G4Cache.hh"
@@ -27,6 +28,8 @@ public:
    
    virtual G4VPhysicalVolume* Construct();
    
+   G4double GetAbsXdim(){return p_fAbsXDim;};
+   G4double GetAbsYdim(){return p_fAbsYDim;};
    
 private:
    G4int p_nXAxis;
@@ -34,5 +37,9 @@ private:
    G4int p_nZAxis;
    G4String p_sAbs;
    G4float p_fCubeWidth;
+   G4float p_fAbsXDim;
+   G4float p_fAbsYDim;
+   G4float p_fQuartzSpacing;
+   G4float p_fWrapSize;
 };
 #endif
