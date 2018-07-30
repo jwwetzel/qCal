@@ -1,6 +1,9 @@
 #include "qCalHit.hh"
 
 #include "G4VHit.hh"
+#include "G4Allocator.hh"
+#include "G4THitsCollection.hh"
+
 #include "G4UIcommand.hh"
 #include "G4UnitsTable.hh"
 #include "G4SystemOfUnits.hh"

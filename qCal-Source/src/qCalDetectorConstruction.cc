@@ -63,7 +63,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
     G4NistManager* nist = G4NistManager::Instance();
    
    // Option to switch on/off checking of volumes overlaps
-   G4bool checkOverlaps = true;
+   G4bool checkOverlaps = false;
 
    
    /**************************************************************************************
@@ -298,10 +298,10 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
 }
 
 
+void qCalDetectorConstruction::ConstructSDandField()
+{
 
-
-
-
+}
 
 
 

@@ -17,13 +17,13 @@ class G4TouchableHistory;
 class qCalSD : public G4VSensitiveDetector
 {
 public:
-   qCalSD(G4String name, G4String hitsCollectionName, G4LogicalVolume* sipmLog);
+   qCalSD(G4String SDname, G4String hitsCollectionName, G4LogicalVolume* sipmLog);
    virtual ~qCalSD();
    
    //Required Functions
    virtual G4bool ProcessHits(G4Step* step, G4TouchableHistory* rohist);
-   virtual void Initialize(G4HCofThisEvent* hce);
-   virtual void EndOfEvent(G4HCofThisEvent* hce);
+   virtual void Initialize(G4HCofThisEvent* hitCollection);
+   virtual void EndOfEvent(G4HCofThisEvent* hitCollection );
    
    //User Functions
    void Clear();

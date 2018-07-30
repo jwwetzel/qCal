@@ -1,7 +1,7 @@
 #ifndef qCalDetectorConstruction_h
 #define qCalDetectorConstruction_h 1
 
-//#include "qCalSD.hh"
+#include "qCalSD.hh"
 
 #include "G4VUserDetectorConstruction.hh"
 #include "G4SystemOfUnits.hh"
@@ -27,6 +27,7 @@ public:
    virtual ~qCalDetectorConstruction();
    
    virtual G4VPhysicalVolume* Construct();
+   virtual void ConstructSDandField();
    
    G4double GetAbsXdim(){return p_fAbsXDim;};
    G4double GetAbsYdim(){return p_fAbsYDim;};

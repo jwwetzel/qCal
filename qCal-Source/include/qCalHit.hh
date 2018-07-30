@@ -23,3 +23,5 @@ public:
    
 };
 #endif
+
+typedef G4THitsCollection<qCalHit> qCalSipmHitCollection;
