@@ -43,5 +43,11 @@ private:
    G4float p_fQuartzSpacing;
    G4float p_fWrapSize;
    G4float p_SiPMDim;
+   
+   G4LogicalVolume* fLogicSiPM;
+   
+   //The SiPM SDs:
+   G4Cache<qCalSD*> fSiPM_SD;
+   std::vector<G4ThreeVector> fSiPMPositions;
 };
 #endif

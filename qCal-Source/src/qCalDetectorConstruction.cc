@@ -187,13 +187,14 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    G4Box* solidSiPM =                                                   //its name
    new G4Box("SiPM", 0.5*p_SiPMDim, 0.5*p_SiPMDim, 0.001*cm);            //its size
    
-   G4LogicalVolume* logicSiPM =
+   fLogicSiPM =
    new G4LogicalVolume(solidSiPM,
                        quartzMat,
                        "SiPM");
    
+   
    //SiPM Sensitive Detector Declaration
-   qCalSD* sipmSD = new qCalSD("SiPM","SiPMCollection",logicSiPM);
+   qCalSD* sipmSD = new qCalSD("SiPM");
    G4SDManager *sdMan = G4SDManager::GetSDMpointer();
    sdMan->AddNewDetector(sipmSD);
    
@@ -241,13 +242,16 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
                               G4ThreeVector((p_fCubeWidth+p_fQuartzSpacing+2*p_fWrapSize)*i+0.5*p_fCubeWidth+p_fWrapSize+p_fQuartzSpacing*rowOffset,  //X
                                             (p_fCubeWidth+2*p_fWrapSize)*j+0.5*p_fCubeWidth+p_fWrapSize+p_fQuartzSpacing*rowOffset,                   //Y
                                             (fAbsRadLen+p_fCubeWidth+2*p_fWrapSize)*k+p_fCubeWidth+0.001*cm+p_fWrapSize),                             //Z
-                              logicSiPM,
+                              fLogicSiPM,
                               "SiPM",
                               logicWorld,
                               false,
                               sipmIDNumber,
                               checkOverlaps
                               );
+            fSiPMPositions.push_back(G4ThreeVector((p_fCubeWidth+p_fQuartzSpacing+2*p_fWrapSize)*i+0.5*p_fCubeWidth+p_fWrapSize+p_fQuartzSpacing*rowOffset,
+                                                   (p_fCubeWidth+2*p_fWrapSize)*j+0.5*p_fCubeWidth+p_fWrapSize+p_fQuartzSpacing*rowOffset,
+                                                   (fAbsRadLen+p_fCubeWidth+2*p_fWrapSize)*k+p_fCubeWidth+0.001*cm+p_fWrapSize));
 
             //Set the Quartz Surface
             G4OpticalSurface* quartzWrap = new G4OpticalSurface("QuartzWrap");
@@ -300,7 +304,18 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
 
 void qCalDetectorConstruction::ConstructSDandField()
 {
+   if (!fSiPM_SD.Get())
+   {
+      qCalSD* SiPM_SD = new qCalSD("/qCalDet/SiPMSD");
+      fSiPM_SD.Put(SiPM_SD);
+      SiPM_SD->InitSiPMs(p_nXAxis*p_nYAxis*p_nZAxis);
+      SiPM_SD->SetSiPMPositions(fSiPMPositions);
+      G4cout << fSiPM_SD.Get() << G4endl;
+   }
 
+   G4SDManager::GetSDMpointer()->AddNewDetector(fSiPM_SD.Get());
+
+   SetSensitiveDetector(fLogicSiPM,fSiPM_SD.Get());
 }
 
 
