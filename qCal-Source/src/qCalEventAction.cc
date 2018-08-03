@@ -1,5 +1,5 @@
 #include "qCalEventAction.hh"
-#include "qCalSiPMHit.hh"
+#include "qCalHit.hh"
 #include "qCalUserEventInformation.hh"
 #include "qCalTrajectory.hh"
 
@@ -40,11 +40,6 @@ void qCalEventAction::BeginOfEventAction(const G4Event* anEvent)
    if ( fSiPMCollID < 0 )
    {
       fSiPMCollID=SDman->GetCollectionID("SiPMHitCollection");
-   }
-   
-   if ( fRecorder )
-   {
-      fRecorder->RecordBeginOfEvent(anEvent);
    }
 }
 
@@ -97,7 +92,7 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
       for ( G4int i = 0 ; i < SiPMs; i++ )
       {
          eventInformation->IncHitCount((*SiPMHC)[i]->GetPhotonCount());
-         reconPos+=(*SiPMHC)[i]->GetSiPMPos()*(*SiPMHC)[i]->GetPhotonCount();
+         reconPos += (*SiPMHC)[i]->GetSiPMPos()*(*SiPMHC)[i]->GetPhotonCount();
          if ( (*SiPMHC)[i]->GetPhotonCount() >= fSiPMThreshold )
          {
             eventInformation->IncSiPMSAboveThreshold();
@@ -128,8 +123,6 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
       << eventInformation->GetHitCount() << G4endl;
       G4cout << "\tNumber of SiPMs above threshold("<<fSiPMThreshold<<") : "
       << eventInformation->GetSiPMSAboveThreshold() << G4endl;
-      G4cout << "\tNumber of photons produced by scintillation in this event : "
-      << eventInformation->GetPhotonCount_Scint() << G4endl;
       G4cout << "\tNumber of photons produced by cerenkov in this event : "
       << eventInformation->GetPhotonCount_Ceren() << G4endl;
       G4cout << "\tNumber of photons absorbed (OpAbsorption) in this event : "
@@ -138,8 +131,7 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
       << "this event : " << eventInformation->GetBoundaryAbsorptionCount()
       << G4endl;
       G4cout << "Unacounted for photons in this event : "
-      << (eventInformation->GetPhotonCount_Scint() +
-          eventInformation->GetPhotonCount_Ceren() -
+      << (eventInformation->GetPhotonCount_Ceren() -
           eventInformation->GetAbsorptionCount() -
           eventInformation->GetHitCount() -
           eventInformation->GetBoundaryAbsorptionCount())

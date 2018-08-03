@@ -3,13 +3,13 @@
 #include "qCalPrimaryGeneratorAction.hh"
 #include "G4ThreeVector.hh"
 #include "G4RunManager.hh"
-//#include "qCalEventAction.hh"
+#include "qCalEventAction.hh"
 //#include "qCalRunAction.hh"
 //#include "qCalStackingAction.hh"
-//#include "qCalSteppingAction.hh"
+#include "qCalSteppingAction.hh"
 //#include "qCalSteppingVerbose.hh"
 //#include "qCalRecorderBase.hh"
-//#include "qCalTrackingAction.hh"
+#include "qCalTrackingAction.hh"
 
 //constructor & destructor
 qCalActionInitialization::qCalActionInitialization()

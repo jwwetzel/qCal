@@ -1,6 +1,3 @@
-/*
- This file and code are based heavily on the LXe Example https://github.com/Geant4/geant4/tree/master/examples/extended/optical/LXe
- */
 #include "G4SDManager.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTable.hh"

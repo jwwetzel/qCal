@@ -27,8 +27,8 @@ public:
    inline void *operator new(size_t);
    inline void operator delete(void *aHit);
    
-   inline void SetSiPMNumber(G4int n) { fPmtNumber = n; }
-   inline G4int GetSiPMNumber() { return fPmtNumber; }
+   inline void SetSiPMNumber(G4int n) { fSiPMNumber = n; }
+   inline G4int GetSiPMNumber() { return fSiPMNumber; }
    
    inline void SetSiPMPhysVol(G4VPhysicalVolume* physVol){this->fPhysVol=physVol;}
    inline G4VPhysicalVolume* GetSiPMPhysVol(){return fPhysVol;}
@@ -44,8 +44,10 @@ public:
       fPos=G4ThreeVector(x,y,z);
    }
    
+       inline G4ThreeVector GetSiPMPos(){return fPos;}
+   
 private:
-   G4int fPmtNumber;
+   G4int fSiPMNumber;
    G4VPhysicalVolume* fPhysVol;
    G4ThreeVector fPos;
    G4int fPhotons;

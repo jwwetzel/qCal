@@ -17,14 +17,8 @@ public:
    qCalSteppingAction();
    virtual ~qCalSteppingAction();
    virtual void UserSteppingAction(const G4Step*);
-   
-   void SetOneStepPrimaries(G4bool b){fOneStepPrimaries=b;}
-   G4bool GetOneStepPrimaries(){return fOneStepPrimaries;}
-   
+      
 private:
-   
-   G4bool fOneStepPrimaries;
-   qCalSteppingMessenger* fSteppingMessenger;
    
    G4OpBoundaryProcessStatus fExpectedNextStatus;
 };

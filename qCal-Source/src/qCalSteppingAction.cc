@@ -2,11 +2,9 @@
 #include "qCalEventAction.hh"
 #include "qCalTrackingAction.hh"
 #include "qCalTrajectory.hh"
-#include "qCalPMTSD.hh"
+#include "qCalSD.hh"
 #include "qCalUserTrackInformation.hh"
 #include "qCalUserEventInformation.hh"
-#include "qCalSteppingMessenger.hh"
-#include "qCalRecorderBase.hh"
 
 #include "G4SteppingManager.hh"
 #include "G4SDManager.hh"
@@ -23,10 +21,7 @@
 
 
 qCalSteppingAction::qCalSteppingAction()
-:fOneStepPrimaries(false)
-{
-   fSteppingMessenger = new qCalSteppingMessenger(this);
-   
+{   
    fExpectedNextStatus = Undefined;
 }
 
@@ -99,11 +94,6 @@ void qCalSteppingAction::UserSteppingAction(const G4Step * theStep)
             }
          }
       }
-      
-      if( fOneStepPrimaries&&thePrePV->GetName() == "scintillator" )
-      {
-         theTrack->SetTrackStatus(fStopAndKill);
-      }
    }
    
    if (!thePostPV ) //out of world
@@ -167,7 +157,7 @@ void qCalSteppingAction::UserSteppingAction(const G4Step * theStep)
                //absorbed but status was Detection
                G4SDManager* SDman = G4SDManager::GetSDMpointer();
                G4String sdName="/qCalDet/SiPMSD";
-               qCalSiPMSD* SiPMSD = (qCalSiPMSD*)SDman->FindSensitiveDetector(sdName);
+               qCalSD* SiPMSD = (qCalSD*)SDman->FindSensitiveDetector(sdName);
                if(SiPMSD)SiPMSD->ProcessHits_constStep(theStep,NULL);
                trackInformation->AddTrackStatusFlag(hitSiPM);
                break;
