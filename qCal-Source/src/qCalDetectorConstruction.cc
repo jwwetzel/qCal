@@ -185,24 +185,18 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    
    //SiPM Solid & Volume Definition:
    G4Box* solidSiPM =                                                   //its name
-   new G4Box("SiPM", 0.5*p_SiPMDim, 0.5*p_SiPMDim, 0.001*cm);            //its size
+   new G4Box("SiPM", 0.5*p_SiPMDim, 0.5*p_SiPMDim, 0.001*cm);           //its size
    
    fLogicSiPM =
    new G4LogicalVolume(solidSiPM,
                        quartzMat,
                        "SiPM");
    
-   
-   //SiPM Sensitive Detector Declaration
-   qCalSD* sipmSD = new qCalSD("SiPM");
-   G4SDManager *sdMan = G4SDManager::GetSDMpointer();
-   sdMan->AddNewDetector(sipmSD);
-   
    //Absorber Solid & Volume Definition:
    G4float fAbsZDim = 0.5*fAbsRadLen;
    G4Box* solidAbsorber =
    new G4Box("Absorber",                                                //its names
-             p_fAbsXDim, p_fAbsYDim, fAbsZDim);                             //its size
+             p_fAbsXDim, p_fAbsYDim, fAbsZDim);                         //its size
    
    G4LogicalVolume* logicAbsorber =
    new G4LogicalVolume(solidAbsorber,                                   //its solid
@@ -304,17 +298,12 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
 
 void qCalDetectorConstruction::ConstructSDandField()
 {
-   if (!fSiPM_SD.Get())
-   {
-      qCalSD* SiPM_SD = new qCalSD("/qCalDet/SiPMSD");
-      fSiPM_SD.Put(SiPM_SD);
-      SiPM_SD->InitSiPMs(p_nXAxis*p_nYAxis*p_nZAxis);
-      SiPM_SD->SetSiPMPositions(fSiPMPositions);
-   }
-
-   G4SDManager::GetSDMpointer()->AddNewDetector(fSiPM_SD.Get());
-
-   SetSensitiveDetector(fLogicSiPM,fSiPM_SD.Get());
+   G4SDManager *sdMan = G4SDManager::GetSDMpointer();
+   G4String SDname;
+   
+   G4VSensitiveDetector* sipm = new qCalSD(SDname="/SiPM");
+   sdMan->AddNewDetector(sipm);
+   fLogicSiPM->SetSensitiveDetector(sipm);
 }
 
 

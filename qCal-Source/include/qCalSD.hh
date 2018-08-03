@@ -26,8 +26,8 @@ class qCalSD : public G4VSensitiveDetector
    //Required Functions
    virtual G4bool ProcessHits(G4Step* step, G4TouchableHistory* rohist);
    //A version of processHits that keeps aStep constant
-   G4bool ProcessHits_constStep(const G4Step* ,
-                                G4TouchableHistory* );
+//   G4bool ProcessHits_constStep(const G4Step* ,
+//                                G4TouchableHistory* );
    virtual void Initialize(G4HCofThisEvent* hitCollection);
    virtual void EndOfEvent(G4HCofThisEvent* hitCollection );
 

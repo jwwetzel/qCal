@@ -20,7 +20,7 @@ qCalEventAction::qCalEventAction()
 :fSaveThreshold(0),fSiPMCollID(-1),fVerbose(0),
 fSiPMThreshold(1),fForcedrawphotons(false),fForcenophotons(false)
 {
-   fEventMessenger = new qCalEventMessenger(this);
+   G4RunManager::GetRunManager()->SetPrintProgress(1);
 }
 
 
@@ -32,7 +32,11 @@ qCalEventAction::~qCalEventAction()
 
 void qCalEventAction::BeginOfEventAction(const G4Event* anEvent)
 {
-   
+   if ( fSiPMCollID == -1 )
+   {
+      G4SDManager* sdManager = G4SDManager::GetSDMpointer();
+      fSiPMCollID = sdManager->GetCollectionID("SiPM/SiPMHitCollection");
+   }
 //   //New event, add the user information object
 //   G4EventManager::GetEventManager()->SetUserInformation(new qCalUserEventInformation);
 //
@@ -47,6 +51,47 @@ void qCalEventAction::BeginOfEventAction(const G4Event* anEvent)
 
 void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
 {
+   G4HCofThisEvent* hce = anEvent->GetHCofThisEvent();
+   if ( !hce )
+   {
+      G4ExceptionDescription msg;
+      msg << "No hits collection of this event found.\n";
+      G4Exception("EventAction::EndOfEventAction()","Code001", JustWarning, msg);
+      return;
+   }
+   
+   qCalSiPMHitsCollection* hHC = static_cast<qCalSiPMHitsCollection*>(hce->GetHC(fSiPMCollID));
+   
+   if ( (!hHC) )
+   {
+      G4ExceptionDescription msg;
+      msg << "No hits collection of this event found.\n";
+      G4Exception("EventAction::EndOfEventAction()","Code001", JustWarning, msg);
+      return;
+   }
+   
+   G4int printModulo = G4RunManager::GetRunManager()->GetPrintProgress();
+   
+   if ( printModulo == 0 || anEvent ->GetEventID() % printModulo != 0 )
+   {
+      return;
+   }
+   
+   G4PrimaryParticle* primary = anEvent->GetPrimaryVertex(0)->GetPrimary(0);
+   
+   G4cout   << G4endl
+            << ">>> Event "      << anEvent->GetEventID() << " >>> Simulation truth : "
+            << ">>> Particle: "  << primary->GetG4code()->GetParticleName()
+            << ">>> Momentum: "  << primary->GetMomentum() << G4endl;
+   
+   G4int n_hit = hHC->entries();
+   G4cout << "SiPM has " << n_hit << " hits." << G4endl;
+//   for ( G4int i = 0; i < n_hit; ++i )
+//   {
+//      qCalHit* hit = (*hHC)[i];
+//      hit->Print();
+//   }
+   
 //   qCalUserEventInformation* eventInformation =(qCalUserEventInformation*)anEvent->GetUserInformation();
 //
 //   G4TrajectoryContainer* trajectoryContainer=anEvent->GetTrajectoryContainer();
