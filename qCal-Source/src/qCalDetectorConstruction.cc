@@ -310,7 +310,6 @@ void qCalDetectorConstruction::ConstructSDandField()
       fSiPM_SD.Put(SiPM_SD);
       SiPM_SD->InitSiPMs(p_nXAxis*p_nYAxis*p_nZAxis);
       SiPM_SD->SetSiPMPositions(fSiPMPositions);
-      G4cout << fSiPM_SD.Get() << G4endl;
    }
 
    G4SDManager::GetSDMpointer()->AddNewDetector(fSiPM_SD.Get());
