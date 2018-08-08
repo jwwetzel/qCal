@@ -53,22 +53,30 @@ void qCalSD::Initialize(G4HCofThisEvent* hitsCE)
 //Process Hits (Required)
 G4bool qCalSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 {
+   if (step->GetTrack()->GetDefinition() != G4OpticalPhoton::OpticalPhotonDefinition())
+   {
+      return false;
+   }
+   
    G4StepPoint* preStepPoint = step->GetPreStepPoint();
+   G4Track *aTrack = step->GetTrack() ;
 
    G4TouchableHistory* touchable = (G4TouchableHistory*)(preStepPoint->GetTouchable());
    G4int copyNo                  = touchable->GetVolume()->GetCopyNo();
    G4double hitTime              = preStepPoint->GetGlobalTime();
+   G4double photonWavelength     = 4.15e-15*3e8/(step->GetTrack()->GetTotalEnergy()/eV)*1e9;  //nm
    
+   qCalHit* hit = NULL;
    G4int ix = -1;
-//   for ( G4int i = 0; i < fSiPMHitCollection->entries(); ++i )
-//   {
-//      if ( (*fSiPMHitCollection)[i]->GetSiPMNumber() == copyNo )
-//      {
-//         ix = i;
-//         break;
-//      }
-//   }
-//
+   for ( G4int i = 0; i < fSiPMHitCollection->entries(); ++i )
+   {
+      if ( (*fSiPMHitCollection)[i]->GetSiPMNumber() == copyNo )
+      {
+         ix = i;
+         break;
+      }
+   }
+
 //   if ( ix >= 0 )
 //   {
 //      if ( (*fSiPMHitCollection)[ix]->GetTime() > hitTime )
@@ -76,11 +84,14 @@ G4bool qCalSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 //         (*fSiPMHitCollection)[ix]->SetTime(hitTime);
 //      }
 //   }
-//   else
-//   {
-      qCalHit* hit = new qCalHit(copyNo, hitTime);
+   if ( hit == NULL )
+   {
+      hit = new qCalHit(copyNo, hitTime, photonWavelength);
       fSiPMHitCollection->insert(hit);
-//   }
+      aTrack->SetTrackStatus(fStopAndKill);
+   }
+   hit->SetDrawit(true);
+   hit->IncPhotonCount();
    
    
    return false;

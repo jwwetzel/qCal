@@ -1,15 +1,18 @@
 #include "qCalActionInitialization.hh"
 #include "qCalDetectorConstruction.hh"
 #include "qCalPrimaryGeneratorAction.hh"
-#include "G4ThreeVector.hh"
-#include "G4RunManager.hh"
 #include "qCalEventAction.hh"
-//#include "qCalRunAction.hh"
-//#include "qCalStackingAction.hh"
+#include "qCalRunAction.hh"
+#include "qCalTrackingAction.hh"
 #include "qCalSteppingAction.hh"
+//#include "qCalStackingAction.hh"
 //#include "qCalSteppingVerbose.hh"
 //#include "qCalRecorderBase.hh"
-#include "qCalTrackingAction.hh"
+
+
+#include "G4ThreeVector.hh"
+#include "G4RunManager.hh"
+
 
 //constructor & destructor
 qCalActionInitialization::qCalActionInitialization()
@@ -32,6 +35,8 @@ void qCalActionInitialization::Build()const
    G4ThreeVector gunPosition = G4ThreeVector(p_gunXLocation, p_gunYLocation, -10*cm);
    G4ThreeVector gunMomentum = G4ThreeVector(0,0,1);
    SetUserAction(new qCalPrimaryGeneratorAction("mu-",120.0*GeV, gunPosition, gunMomentum));
+//   auto eventAction = new qCalEventAction;
+   SetUserAction(new qCalRunAction);
    SetUserAction(new qCalEventAction);
 }
 
@@ -39,5 +44,5 @@ void qCalActionInitialization::Build()const
 
 void qCalActionInitialization::BuildForMaster() const
 {
-
+   SetUserAction(new qCalRunAction);
 }

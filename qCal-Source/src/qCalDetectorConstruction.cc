@@ -45,7 +45,7 @@ qCalDetectorConstruction::qCalDetectorConstruction(G4int nXAxis,
    p_nZAxis = nZAxis;                  //Number of cubes in the Z-Axis
    p_sAbs = sAbs;                      //Absorber element
    p_fCubeWidth = fCubeWidth * cm;     //Width of a single cube
-   p_fQuartzSpacing = 0.15*cm;         //Width between x-cubes (circuit board + sipm)
+   p_fQuartzSpacing = 0.03*cm;         //Width between x-cubes (circuit board + sipm)
    p_fWrapSize     = 0.015*cm;         //Width of the tyvek wrapping
    p_fAbsXDim = 0.5*((p_fCubeWidth+2*p_fWrapSize)*(p_nXAxis)+((p_fQuartzSpacing)*(p_nXAxis-1)))+p_fQuartzSpacing;     //Detector X coord center
    p_fAbsYDim = 0.5*(p_fCubeWidth+2*p_fWrapSize)*p_nYAxis+p_fQuartzSpacing;                                           //Detector Y coord Center
@@ -204,9 +204,8 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
                        "Absorber");                                     //its name
    
    //Quartz Physical Volume Placement
-   G4int quartzIDNumber = 0;
+   G4int volIDNumber = 0;
    G4int absorberIDNumber = p_nXAxis*p_nYAxis*p_nZAxis+10;
-   G4int sipmIDNumber = 2*p_nXAxis*p_nYAxis*p_nZAxis+10;
    G4int rowOffset = 0;
    for (G4int i = 0; i != p_nXAxis; ++i)
    {
@@ -226,7 +225,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
                               "Quartz",
                               logicWorld,
                               false,
-                              quartzIDNumber,
+                              volIDNumber,
                               checkOverlaps
                               );
             
@@ -240,7 +239,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
                               "SiPM",
                               logicWorld,
                               false,
-                              sipmIDNumber,
+                              volIDNumber,
                               checkOverlaps
                               );
             fSiPMPositions.push_back(G4ThreeVector((p_fCubeWidth+p_fQuartzSpacing+2*p_fWrapSize)*i+0.5*p_fCubeWidth+p_fWrapSize+p_fQuartzSpacing*rowOffset,
@@ -286,8 +285,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
                                  );
                absorberIDNumber++;
             }
-            quartzIDNumber++;
-            sipmIDNumber++;
+            volIDNumber++;
          }
       }
    }

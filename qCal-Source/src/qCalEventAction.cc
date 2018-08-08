@@ -3,7 +3,9 @@
 #include "qCalUserEventInformation.hh"
 #include "qCalTrajectory.hh"
 
-#include "G4EventManager.hh"
+#include "qCalAnalysis.hh"
+#include "qCalRunAction.hh"
+
 #include "G4SDManager.hh"
 #include "G4RunManager.hh"
 #include "G4Event.hh"
@@ -15,42 +17,51 @@
 #include "G4UImanager.hh"
 #include "G4SystemOfUnits.hh"
 
+#include <iomanip>
 
+
+/**************************************************************************************
+ Constructor:  Need SiPM Hit Collection ID
+ **************************************************************************************/
 qCalEventAction::qCalEventAction()
-:fSaveThreshold(0),fSiPMCollID(-1),fVerbose(0),
-fSiPMThreshold(1),fForcedrawphotons(false),fForcenophotons(false)
+:fSiPMCollID(-1)
 {
+   //Set Print Progress to every event.
    G4RunManager::GetRunManager()->SetPrintProgress(1);
 }
 
-
+/**************************************************************************************
+ Destructor:
+ **************************************************************************************/
 qCalEventAction::~qCalEventAction()
 {
    
 }
 
-
+/**************************************************************************************
+ BeginOfEventAction:
+ First thing we have to do is grab the SiPM hit collection from the SDManager.
+ The SiPMHit Collection is declared in qCalSD.hh
+ **************************************************************************************/
 void qCalEventAction::BeginOfEventAction(const G4Event* anEvent)
 {
+   //If fSiPMCollID not defined yet, define it.
+   //We only need to do this once per run.
    if ( fSiPMCollID == -1 )
    {
       G4SDManager* sdManager = G4SDManager::GetSDMpointer();
       fSiPMCollID = sdManager->GetCollectionID("SiPM/SiPMHitCollection");
    }
-//   //New event, add the user information object
-//   G4EventManager::GetEventManager()->SetUserInformation(new qCalUserEventInformation);
-//
-//   G4SDManager* SDman = G4SDManager::GetSDMpointer();
-//   if ( fSiPMCollID < 0 )
-//   {
-//      fSiPMCollID=SDman->GetCollectionID("SiPMHitCollection");
-//   }
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
+/**************************************************************************************
+ EndOfEventAction:
+ At the end of the event, we have to grab the Hit Collection from the event.
+ Then we can process the hits, and print out or save information about the hits.
+ **************************************************************************************/
 void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
 {
+   // Grab the Hit Collection (hce) from the event
    G4HCofThisEvent* hce = anEvent->GetHCofThisEvent();
    if ( !hce )
    {
@@ -60,9 +71,9 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
       return;
    }
    
-   qCalSiPMHitsCollection* hHC = static_cast<qCalSiPMHitsCollection*>(hce->GetHC(fSiPMCollID));
-   
-   if ( (!hHC) )
+   // Grab specifically the SiPMHit collection from the general event Hit Collection.
+   qCalSiPMHitsCollection* eventSiPMHitCollection = static_cast<qCalSiPMHitsCollection*>(hce->GetHC(fSiPMCollID));
+   if ( (!eventSiPMHitCollection) )
    {
       G4ExceptionDescription msg;
       msg << "No hits collection of this event found.\n";
@@ -70,27 +81,33 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
       return;
    }
    
+   // Grab the verbosity level for deciding how often to print out info.
    G4int printModulo = G4RunManager::GetRunManager()->GetPrintProgress();
-   
    if ( printModulo == 0 || anEvent ->GetEventID() % printModulo != 0 )
    {
       return;
    }
    
+   // Spit out info on the primary particle
    G4PrimaryParticle* primary = anEvent->GetPrimaryVertex(0)->GetPrimary(0);
-   
    G4cout   << G4endl
             << ">>> Event "      << anEvent->GetEventID() << " >>> Simulation truth : "
             << ">>> Particle: "  << primary->GetG4code()->GetParticleName()
             << ">>> Momentum: "  << primary->GetMomentum() << G4endl;
    
-   G4int n_hit = hHC->entries();
-   G4cout << "SiPM has " << n_hit << " hits." << G4endl;
-//   for ( G4int i = 0; i < n_hit; ++i )
-//   {
-//      qCalHit* hit = (*hHC)[i];
-//      hit->Print();
-//   }
+   // Get the number of
+   G4int n_hit = eventSiPMHitCollection->entries();
+   G4cout << "The SiPMs collectively received " << n_hit << " hits." << G4endl;
+   
+   //Get the Analysis Manager
+   auto analysisManager = G4AnalysisManager::Instance();
+   
+   for ( G4int i = 0; i < n_hit; ++i )
+   {
+      qCalHit* hit = (*eventSiPMHitCollection)[i];
+      analysisManager->FillH1(0, hit->GetEnergy());
+   }
+//   G4cout << "SiPM exposed to " << hHC->GetPhotonCount() << " Photons." << G4endl;
    
 //   qCalUserEventInformation* eventInformation =(qCalUserEventInformation*)anEvent->GetUserInformation();
 //
@@ -191,7 +208,7 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void qCalEventAction::SetSaveThreshold(G4int save){
+//void qCalEventAction::SetSaveThreshold(G4int save){
 //   /*Sets the save threshold for the random number seed. If the number of photons
 //    generated in an event is lower than this, then save the seed for this event
 //    in a file called run###evt###.rndm
@@ -200,5 +217,5 @@ void qCalEventAction::SetSaveThreshold(G4int save){
 //   G4RunManager::GetRunManager()->SetRandomNumberStore(true);
 //   G4RunManager::GetRunManager()->SetRandomNumberStoreDir("random/");
 //   //  G4UImanager::GetUIpointer()->ApplyCommand("/random/setSavingFlag 1");
-}
+//}
 

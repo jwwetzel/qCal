@@ -16,7 +16,7 @@ public:
    
    qCalSteppingAction();
    virtual ~qCalSteppingAction();
-   virtual void UserSteppingAction(const G4Step*);
+   virtual void UserSteppingAction(G4Step*);
       
 private:
    

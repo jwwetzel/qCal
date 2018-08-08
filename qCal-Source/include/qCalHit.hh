@@ -18,7 +18,7 @@ class G4VTouchable;
 class qCalHit : public G4VHit
 {
 public:
-   qCalHit(G4int i, G4double t);
+   qCalHit(G4int i, G4double t, G4double E);
    virtual ~qCalHit();
    
    inline void *operator new(size_t);
@@ -30,7 +30,9 @@ public:
    
    void SetTime(G4double val) { fTime = val; }
    G4double GetTime() const { return fTime; } 
-   
+
+   inline void SetEnergy(G4double E) {fEnergy = E;}
+   inline G4double GetEnergy(){return fEnergy;}
    
    // From LXe:
    virtual void Draw();
@@ -56,6 +58,7 @@ public:
 private:
    G4double fTime;
    G4int fSiPMNumber;
+   G4double fEnergy;
    
    G4VPhysicalVolume* fPhysVol;
    G4ThreeVector fPos;
