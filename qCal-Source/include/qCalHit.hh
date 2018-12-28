@@ -53,7 +53,7 @@ public:
       fPos=G4ThreeVector(x,y,z);
    }
    
-       inline G4ThreeVector GetSiPMPos(){return fPos;}
+   inline G4ThreeVector GetSiPMPos(){return fPos;}
    
 private:
    G4double fTime;

@@ -22,6 +22,7 @@ public:
                             G4int nYAxis = 1,
                             G4int nZAxis = 1,
                             G4String sAbs = "Fe",
+                            G4float fAbsLen = 1.0,
                             G4float fCubeWidth = 1.0
                             );
    virtual ~qCalDetectorConstruction();
@@ -31,6 +32,7 @@ public:
    
    G4double GetAbsXdim(){return p_fAbsXDim;};
    G4double GetAbsYdim(){return p_fAbsYDim;};
+   G4double GetAbsZdim(){return p_fAbsZDim;};
    
 private:
    G4int p_nXAxis;
@@ -40,6 +42,7 @@ private:
    G4float p_fCubeWidth;
    G4float p_fAbsXDim;
    G4float p_fAbsYDim;
+   G4float p_fAbsZDim;
    G4float p_fQuartzSpacing;
    G4float p_fWrapSize;
    G4float p_SiPMDim;

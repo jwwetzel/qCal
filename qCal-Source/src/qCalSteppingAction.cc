@@ -34,6 +34,5 @@ qCalSteppingAction::~qCalSteppingAction()
 
 void qCalSteppingAction::UserSteppingAction(G4Step * theStep)
 {
-   G4cout << "I'm Fucking Here Bitch" << G4endl;
    G4Track* theTrack = theStep->GetTrack();
 }

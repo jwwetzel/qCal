@@ -22,8 +22,8 @@ qCalRunAction::qCalRunAction()
    analysisManager->SetNtupleMerging(true);
    
    // Creating histograms
-   analysisManager->CreateH1("WaveLength","Photon Wavelength in SiPM", 1000, 0., 1000);
-//   analysisManager->CreateH1("Egap","Edep in gap", 100, 0., 100*MeV);
+   analysisManager->CreateH1("0","Photon Wavelength Per SiPM Hit", 1000, 0., 1000);
+   analysisManager->CreateH1("1","# of Photons per Event", 10000, 0., 10000);
 //   analysisManager->CreateH1("Labs","trackL in absorber", 100, 0., 1*m);
 //   analysisManager->CreateH1("Lgap","trackL in gap", 100, 0., 50*cm);
    

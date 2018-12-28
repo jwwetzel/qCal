@@ -20,6 +20,7 @@ private:
    qCalDetectorConstruction* p_theDetector;
    G4float p_gunXLocation;
    G4float p_gunYLocation;
+   G4float p_gunZLocation;
 };
 #endif
 

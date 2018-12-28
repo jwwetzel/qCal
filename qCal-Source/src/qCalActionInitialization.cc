@@ -20,8 +20,11 @@ qCalActionInitialization::qCalActionInitialization()
 {
    //Grab the Detector construction to aim the gun at its center.
    p_theDetector = (qCalDetectorConstruction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction();
-   p_gunXLocation = p_theDetector->GetAbsXdim();
-   p_gunYLocation = p_theDetector->GetAbsYdim();
+   p_gunXLocation = 0; //p_theDetector->GetAbsXdim();
+   p_gunYLocation = 0; //p_theDetector->GetAbsYdim();
+   p_gunZLocation = p_theDetector->GetAbsZdim()/2 + 4*cm;
+   G4cout << "THE GUN IS AT" << G4endl;
+   G4cout << p_gunZLocation/cm << G4endl;
 }
 
 
@@ -32,10 +35,9 @@ qCalActionInitialization::~qCalActionInitialization()
 
 void qCalActionInitialization::Build()const
 {
-   G4ThreeVector gunPosition = G4ThreeVector(p_gunXLocation, p_gunYLocation, -10*cm);
-   G4ThreeVector gunMomentum = G4ThreeVector(0,0,1);
+   G4ThreeVector gunPosition = G4ThreeVector(p_gunXLocation, p_gunYLocation, p_gunZLocation);
+   G4ThreeVector gunMomentum = G4ThreeVector(0,0,-1);
    SetUserAction(new qCalPrimaryGeneratorAction("mu-",120.0*GeV, gunPosition, gunMomentum));
-//   auto eventAction = new qCalEventAction;
    SetUserAction(new qCalRunAction);
    SetUserAction(new qCalEventAction);
 }

@@ -20,6 +20,8 @@
 #include "G4OpticalPhysics.hh"
 #include "G4EmStandardPhysics_option4.hh"
 
+#include "G4NistManager.hh"
+
 #ifdef G4MULTITHREADED
 #include "G4MTRunManager.hh"
 #else
@@ -39,7 +41,7 @@ namespace {
       G4cerr << " Usage: " << G4endl;
       G4cerr << " qCal [-m macro ] [-w cubeWidth] [-x nQuartzXAxis] [-y nQuartzYAxis] [-z nQuartzZAxis] [-a absorberZ] [-u UIsession] [-t nThreads]" << G4endl;
       G4cerr << "   note: -t option is available only for multi-threaded mode." << G4endl;
-      G4cerr << "Example: ./qCal -m runMe.Mac -w 1.0 -x 10 -y 10 -z 50 -a 26 -u \"qt\" -t 4" << G4endl;
+      G4cerr << "Example: ./qCal -m runMe.Mac -w 1.0 -x 10 -y 10 -z 50 -a Fe -u \"qt\" -t 4" << G4endl;
    }
 }
 
@@ -64,7 +66,7 @@ int main(int argc, char** argv)
    G4int nYAxis = 1;
    G4int nZAxis = 1;
    
-   G4float nCubeWidth = 1.0;
+   G4float nCubeWidth = 1.0; // 1.0 cm cube by default
    
    //Absorber Z
    G4String sAbs = "Fe";
@@ -126,7 +128,10 @@ int main(int argc, char** argv)
     User initialization classes must be set to G4RunManager through SetUserInitialization
     **************************************************************************************/
    //Initialize Detector Construction
-   auto detConstruction = new qCalDetectorConstruction(nXAxis, nYAxis, nZAxis, sAbs, nCubeWidth);
+   G4NistManager* nist = G4NistManager::Instance();
+   G4Material* absorberMat = nist->FindOrBuildMaterial("G4_"+sAbs);
+   G4float fAbsRadLen = absorberMat->GetRadlen()*mm;
+   auto detConstruction = new qCalDetectorConstruction(nXAxis, nYAxis, nZAxis, sAbs, fAbsRadLen, nCubeWidth);
    runManager->SetUserInitialization(detConstruction);
    
    //Configure Physics List for initialization

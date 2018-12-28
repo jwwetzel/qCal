@@ -102,6 +102,8 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
    //Get the Analysis Manager
    auto analysisManager = G4AnalysisManager::Instance();
    
+   analysisManager->FillH1(1, n_hit);
+   
    for ( G4int i = 0; i < n_hit; ++i )
    {
       qCalHit* hit = (*eventSiPMHitCollection)[i];
