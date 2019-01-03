@@ -1,15 +1,20 @@
 #include "qCalRunAction.hh"
 #include "qCalAnalysis.hh"
+#include "qCalRunMessenger.hh"
+
 
 #include "G4Run.hh"
 #include "G4RunManager.hh"
 #include "G4UnitsTable.hh"
 #include "G4SystemOfUnits.hh"
 
+
+
 qCalRunAction::qCalRunAction()
 : G4UserRunAction()
 {
-   G4RunManager::GetRunManager()->SetPrintProgress(1);
+   p_runActionOutputFileName = "qCalOutputFile";
+   G4RunManager::GetRunManager()->SetPrintProgress(0);
    
    auto analysisManager = G4AnalysisManager::Instance();
    G4cout << "Using " << analysisManager->GetType() << G4endl;
@@ -35,6 +40,7 @@ qCalRunAction::qCalRunAction()
 //   analysisManager->CreateNtupleDColumn("Labs");
 //   analysisManager->CreateNtupleDColumn("Lgap");
    analysisManager->FinishNtuple();
+   p_fRunMessenger = new qCalRunMessenger(this);
 }
 
 
@@ -54,8 +60,9 @@ void qCalRunAction::BeginOfRunAction(const G4Run* /*run*/)
    
    // Open an output file
    //
-   G4String fileName = "qCal";
-   analysisManager->OpenFile(fileName);
+   G4String fileName = "Muons";
+   G4cout << "FileName " << p_runActionOutputFileName << G4endl;
+   analysisManager->OpenFile(p_runActionOutputFileName);
 }
 
 
@@ -99,4 +106,9 @@ void qCalRunAction::EndOfRunAction(const G4Run* /*run*/)
    //
    analysisManager->Write();
    analysisManager->CloseFile();
+}
+
+void qCalRunAction::SetOutputFileName(G4String outputFileNameByCmd)
+{
+   p_runActionOutputFileName = outputFileNameByCmd;
 }

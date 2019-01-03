@@ -38,7 +38,7 @@ void qCalActionInitialization::Build()const
    G4ThreeVector gunPosition = G4ThreeVector(p_gunXLocation, p_gunYLocation, p_gunZLocation);
    G4ThreeVector gunMomentum = G4ThreeVector(0,0,-1);
    SetUserAction(new qCalPrimaryGeneratorAction("mu-",120.0*GeV, gunPosition, gunMomentum));
-   SetUserAction(new qCalRunAction);
+   SetUserAction(new qCalRunAction());
    SetUserAction(new qCalEventAction);
 }
 
@@ -46,5 +46,5 @@ void qCalActionInitialization::Build()const
 
 void qCalActionInitialization::BuildForMaster() const
 {
-   SetUserAction(new qCalRunAction);
+   SetUserAction(new qCalRunAction());
 }

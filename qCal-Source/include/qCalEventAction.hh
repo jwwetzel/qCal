@@ -16,6 +16,7 @@ public:
    
    virtual void BeginOfEventAction(const G4Event*);
    virtual void EndOfEventAction(const G4Event*);
+//   virtual void SetSaveThreshold(G4int save);
    
 private:
    G4int              fSiPMCollID;

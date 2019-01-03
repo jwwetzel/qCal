@@ -90,10 +90,10 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
    
    // Spit out info on the primary particle
    G4PrimaryParticle* primary = anEvent->GetPrimaryVertex(0)->GetPrimary(0);
-   G4cout   << G4endl
-            << ">>> Event "      << anEvent->GetEventID() << " >>> Simulation truth : "
-            << ">>> Particle: "  << primary->GetG4code()->GetParticleName()
-            << ">>> Momentum: "  << primary->GetMomentum() << G4endl;
+//   G4cout   << G4endl
+//            << ">>> Event "      << anEvent->GetEventID() << " >>> Simulation truth : "
+//            << ">>> Particle: "  << primary->GetG4code()->GetParticleName()
+//            << ">>> Momentum: "  << primary->GetMomentum() << G4endl;
    
    // Get the number of
    G4int n_hit = eventSiPMHitCollection->entries();

@@ -41,7 +41,7 @@ namespace {
       G4cerr << " Usage: " << G4endl;
       G4cerr << " qCal [-m macro ] [-w cubeWidth] [-x nQuartzXAxis] [-y nQuartzYAxis] [-z nQuartzZAxis] [-a absorberZ] [-u UIsession] [-t nThreads]" << G4endl;
       G4cerr << "   note: -t option is available only for multi-threaded mode." << G4endl;
-      G4cerr << "Example: ./qCal -m runMe.Mac -w 1.0 -x 10 -y 10 -z 50 -a Fe -u \"qt\" -t 4" << G4endl;
+      G4cerr << "Example: ./qCal -m lowE.Mac -w 1.0 -x 10 -y 10 -z 50 -a Fe -u \"qt\" -t 4" << G4endl;
    }
 }
 
@@ -57,6 +57,7 @@ int main(int argc, char** argv)
    
    //For storing the macro name argument
    G4String macro;
+   G4String mainOutputFileName = "outputFile";
    
    //For the session argument
    G4String session;
@@ -162,7 +163,7 @@ int main(int argc, char** argv)
    //Initialize Visualization
    // G4VisExecutive can take a verbosity argument - see /vis/verbose guidance.
    // G4VisManager* visManager = new G4VisExecutive("Quiet");
-   auto visManager = new G4VisExecutive;
+   auto visManager = new G4VisExecutive();
    visManager->Initialize();
    
    //Get the pointer to the User Interface Manager

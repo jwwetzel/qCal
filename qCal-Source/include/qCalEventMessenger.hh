@@ -19,12 +19,12 @@ public:
    
 private:
    
-   qCalEventAction*        fqCalEvent;
+//   qCalEventAction*        fqCalEvent;
    G4UIcmdWithAnInteger*   fSaveThresholdCmd;
-   G4UIcmdWithAnInteger*   fVerboseCmd;
-   G4UIcmdWithAnInteger*   fSiPMThresholdCmd;
-   G4UIcmdWithABool*       fForceDrawPhotonsCmd;
-   G4UIcmdWithABool*       fForceDrawNoPhotonsCmd;
+//   G4UIcmdWithAnInteger*   fVerboseCmd;
+//   G4UIcmdWithAnInteger*   fSiPMThresholdCmd;
+//   G4UIcmdWithABool*       fForceDrawPhotonsCmd;
+//   G4UIcmdWithABool*       fForceDrawNoPhotonsCmd;
 };
 
 #endif

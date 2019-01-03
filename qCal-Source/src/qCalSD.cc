@@ -84,15 +84,31 @@ G4bool qCalSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 //         (*fSiPMHitCollection)[ix]->SetTime(hitTime);
 //      }
 //   }
-   if ( hit == NULL )
+   
+   G4int isHit = 0;
+   
+   // Simulating the Hamamatsu S13360-**75CS
+   // https://www.hamamatsu.com/resources/pdf/ssd/s13360_series_kapd1052e.pdf
+   
+   if (photonWavelength >= 280 && photonWavelength < 300) isHit = (rand() % 100) < 15;
+   else if (photonWavelength >= 300 && photonWavelength < 350) isHit = (rand() % 100) < 30*0.85;
+   else if (photonWavelength >= 350 && photonWavelength < 400) isHit = (rand() % 100) < 40*0.85;
+   else if (photonWavelength >= 400 && photonWavelength < 500) isHit = (rand() % 100) < 47*0.85;
+   else if (photonWavelength >= 500 && photonWavelength < 550) isHit = (rand() % 100) < 45*0.85;
+   else if (photonWavelength >= 550 && photonWavelength < 600) isHit = (rand() % 100) < 35*0.85;
+   else if (photonWavelength >= 600 && photonWavelength < 700) isHit = (rand() % 100) < 25*0.85;
+   else if (photonWavelength >= 700 && photonWavelength < 800) isHit = (rand() % 100) < 15*0.85;
+   else if (photonWavelength >= 800 && photonWavelength < 900) isHit = (rand() % 100) < 5*0.85;
+   
+   
+   if ( hit == NULL && isHit == 1)
    {
       hit = new qCalHit(copyNo, hitTime, photonWavelength);
       fSiPMHitCollection->insert(hit);
       aTrack->SetTrackStatus(fStopAndKill);
+      hit->SetDrawit(true);
+      hit->IncPhotonCount();
    }
-   hit->SetDrawit(true);
-   hit->IncPhotonCount();
-   
    
    return false;
 }

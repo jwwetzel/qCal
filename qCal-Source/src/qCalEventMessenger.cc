@@ -3,10 +3,11 @@
 
 #include "G4UIcmdWithABool.hh"
 #include "G4UIcmdWithAnInteger.hh"
+#include "G4UIcmdWithAString.hh"
 
-qCalEventMessenger::qCalEventMessenger(qCalEventAction* event)
-: fqCalEvent(event)
-{
+//qCalEventMessenger::qCalEventMessenger(qCalEventAction* event)
+//: fqCalEvent(event)
+//{
 //   fSaveThresholdCmd = new G4UIcmdWithAnInteger("/qCal/saveThreshold",this);
 //   fSaveThresholdCmd->SetGuidance("Set the photon count threshold for saving the random number seed");
 //   fSaveThresholdCmd->SetParameterName("photons",true);
@@ -28,19 +29,23 @@ qCalEventMessenger::qCalEventMessenger(qCalEventAction* event)
 //   fForceDrawNoPhotonsCmd=new G4UIcmdWithABool("/qCal/forceDrawNoPhotons",this);
 //   fForceDrawNoPhotonsCmd->SetGuidance("Force no drawing of photons.");
 //   fForceDrawNoPhotonsCmd->SetGuidance("(Lower priority than /qCal/forceDrawPhotons)");
-}
+//}
 
 
-qCalEventMessenger::~qCalEventMessenger(){
+//qCalEventMessenger::~qCalEventMessenger(){
 //   delete fSaveThresholdCmd;
 //   delete fVerboseCmd;
 //   delete fSiPMThresholdCmd;
 //   delete fForceDrawPhotonsCmd;
 //   delete fForceDrawNoPhotonsCmd;
-}
+//}
 
 
-void qCalEventMessenger::SetNewValue(G4UIcommand* command, G4String newValue){
+//void qCalEventMessenger::SetNewValue(G4UIcommand* command, G4String newValue){
+//   if ( command == fOutputFileNameCmd )
+//   {
+//      fqCalEvent->SetOutputFileName(fOutputFileNameCmd->GetNewStringValue(newValue));
+//   }
 //   if( command == fSaveThresholdCmd ){
 //      fqCalEvent->SetSaveThreshold(fSaveThresholdCmd->GetNewIntValue(newValue));
 //   }
@@ -59,4 +64,4 @@ void qCalEventMessenger::SetNewValue(G4UIcommand* command, G4String newValue){
 //                                       ->GetNewBoolValue(newValue));
 //      G4cout<<"TEST"<<G4endl;
 //   }
-}
+//}
