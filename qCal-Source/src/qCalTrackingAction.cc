@@ -40,13 +40,13 @@ void qCalTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
          trajectory->SetDrawTrajectory(true);
       }
    }
-//   else //draw all other trajectories
-//   {
-//      trajectory->SetDrawTrajectory(false);
-//   }
-//   
-   if(trackInformation->GetForceDrawTrajectory())
+   else //draw all other trajectories
    {
-      trajectory->SetDrawTrajectory(true);
+      trajectory->SetDrawTrajectory(false);
    }
+   
+//   if(trackInformation->GetForceDrawTrajectory())
+//   {
+//      trajectory->SetDrawTrajectory(true);
+//   }
 }
