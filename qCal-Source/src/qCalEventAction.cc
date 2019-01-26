@@ -82,27 +82,25 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
       G4Exception("EventAction::EndOfEventAction()","Code001", JustWarning, msg);
       return;
    }
-   
+   G4int n_hit = eventSiPMHitCollection->entries();
    // Grab the verbosity level for deciding how often to print out info.
    G4int printModulo = G4RunManager::GetRunManager()->GetPrintProgress();
-   if ( printModulo == 0 || anEvent ->GetEventID() % printModulo != 0 )
-   {
-      return;
-   }
+//   if ( printModulo == 0 || anEvent ->GetEventID() % printModulo != 0 )
+//   {
+//      // Spit out info on the primary particle
+//      //   G4PrimaryParticle* primary = anEvent->GetPrimaryVertex(0)->GetPrimary(0);
+//      //   G4cout   << G4endl
+//      //            << ">>> Event "      << anEvent->GetEventID() << " >>> Simulation truth : "
+//      //            << ">>> Particle: "  << primary->GetG4code()->GetParticleName()
+//      //            << ">>> Momentum: "  << primary->GetMomentum() << G4endl;
+//
+//      G4cout << "The SiPMs collectively received " << n_hit << " hits." << G4endl;
+//   }
    
-   // Spit out info on the primary particle
-   G4PrimaryParticle* primary = anEvent->GetPrimaryVertex(0)->GetPrimary(0);
-//   G4cout   << G4endl
-//            << ">>> Event "      << anEvent->GetEventID() << " >>> Simulation truth : "
-//            << ">>> Particle: "  << primary->GetG4code()->GetParticleName()
-//            << ">>> Momentum: "  << primary->GetMomentum() << G4endl;
-   
-   // Get the number of
-   G4int n_hit = eventSiPMHitCollection->entries();
-   G4cout << "The SiPMs collectively received " << n_hit << " hits." << G4endl;
    
    //Get the Analysis Manager
    auto analysisManager = G4AnalysisManager::Instance();
+   analysisManager->SetNtupleMerging(true);
    analysisManager->SetVerboseLevel(1);
    // Filling Histograms and ntuples
    for (G4int i = 0; i < SDVolume; ++i){

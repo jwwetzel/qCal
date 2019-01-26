@@ -50,7 +50,7 @@ qCalDetectorConstruction::qCalDetectorConstruction(G4int nXAxis,
    p_fWrapSize     = 0.015*cm;         //Width of the tyvek wrapping
    p_fAbsXDim = 0.5*((p_fCubeWidth+2*p_fWrapSize)*(p_nXAxis)+((p_fQuartzSpacing)*(p_nXAxis-1)))+p_fQuartzSpacing;     //Detector X coord center
    p_fAbsYDim = 0.5*(p_fCubeWidth+2*p_fWrapSize)*p_nYAxis+p_fQuartzSpacing;                                           //Detector Y coord Center
-   p_fAbsZDim = p_nZAxis * (p_fCubeWidth + fAbsLen);
+   p_fAbsZDim = p_fAbsZDim = 0.5*(p_nZAxis * (p_fCubeWidth + fAbsLen));
    p_SiPMDim = 0.5*cm;
 }
 
@@ -153,9 +153,9 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
     Solid, Logical Volume, and Physical Volume Definitions
     **************************************************************************************/
    //World Definition
-   G4double world_sizeX = p_fAbsXDim + 5*cm;
-   G4double world_sizeY = p_fAbsYDim + 5*cm;
-   G4double world_sizeZ  = (fAbsZDim*2 + p_fCubeWidth)*p_nZAxis/2 + 5*cm;
+   G4double world_sizeX = p_fAbsXDim + 1.0*cm;
+   G4double world_sizeY = p_fAbsYDim + 1.0*cm;
+   G4double world_sizeZ  = p_fAbsZDim + 2.0*cm;
    
    
    G4Box* solidWorld =
@@ -217,14 +217,14 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
       {
          for ( G4int k = 0; k != p_nZAxis; ++k)
          {
-            if (k % 2 == 0) rowOffset = 4;
+            if (k % 2 == 0) rowOffset = 0;
             else rowOffset = 0;
             //Place the Quartz
             G4VPhysicalVolume* physicalQuartz =
             new G4PVPlacement(0,
-                              G4ThreeVector((p_fCubeWidth+p_fQuartzSpacing+2*p_fWrapSize)*i+0.5*p_fCubeWidth+p_fWrapSize+p_fQuartzSpacing*rowOffset - p_fAbsXDim,  //X
-                                            (p_fCubeWidth+2*p_fWrapSize)*j+0.5*p_fCubeWidth+p_fWrapSize+p_fQuartzSpacing*rowOffset - p_fAbsYDim,                   //Y
-                                            (fAbsRadLen+p_fCubeWidth+2*p_fWrapSize)*k+0.5*p_fCubeWidth+p_fWrapSize - ((fAbsZDim*2 + p_fCubeWidth)*p_nZAxis)/2),                                  //Z
+                                      G4ThreeVector((p_fCubeWidth+p_fQuartzSpacing+2*p_fWrapSize)*i+0.5*p_fCubeWidth+p_fWrapSize+p_fQuartzSpacing*rowOffset - p_fAbsXDim, //X
+                                            (p_fCubeWidth+2*p_fWrapSize)*j+0.5*p_fCubeWidth+p_fWrapSize+p_fQuartzSpacing*rowOffset - p_fAbsYDim,                  //Y
+                                            (fAbsRadLen+p_fCubeWidth+2*p_fWrapSize)*k+0.5*p_fCubeWidth+p_fWrapSize - ((fAbsZDim*2 + p_fCubeWidth)*p_nZAxis)/2),   //Z
                               logicQuartz,
                               "Quartz",
                               logicWorld,
@@ -236,9 +236,9 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
             //Place the SiPMs
             G4VPhysicalVolume* physicalSiPM =
             new G4PVPlacement(0,
-                              G4ThreeVector((p_fCubeWidth+p_fQuartzSpacing+2*p_fWrapSize)*i+0.5*p_fCubeWidth+p_fWrapSize+p_fQuartzSpacing*rowOffset - p_fAbsXDim,  //X
-                                            (p_fCubeWidth+2*p_fWrapSize)*j+0.5*p_fCubeWidth+p_fWrapSize+p_fQuartzSpacing*rowOffset - p_fAbsXDim,                   //Y
-                                            (fAbsRadLen+p_fCubeWidth+2*p_fWrapSize)*k+p_fCubeWidth+0.001*cm+p_fWrapSize - ((fAbsZDim*2 + p_fCubeWidth)*p_nZAxis)/2),                             //Z
+                              G4ThreeVector((p_fCubeWidth+p_fQuartzSpacing+2*p_fWrapSize)*i+0.5*p_fCubeWidth+p_fWrapSize+p_fQuartzSpacing*rowOffset - p_fAbsXDim,    //X
+                                            (p_fCubeWidth+2*p_fWrapSize)*j+0.5*p_fCubeWidth+p_fWrapSize+p_fQuartzSpacing*rowOffset - p_fAbsYDim,                     //Y
+                                            (fAbsRadLen+p_fCubeWidth+2*p_fWrapSize)*k+p_fCubeWidth+0.001*cm+p_fWrapSize - ((fAbsZDim*2 + p_fCubeWidth)*p_nZAxis)/2), //Z
                               fLogicSiPM,
                               "SiPM",
                               logicWorld,
