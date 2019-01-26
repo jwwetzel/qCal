@@ -60,25 +60,7 @@ void qCalRunAction::BeginOfRunAction(const G4Run* /*run*/)
    
    // Get analysis manager
    auto analysisManager = G4AnalysisManager::Instance();
-   //try move from constructor:
-/*
-   analysisManager->SetNtupleMerging(true);
-   // Creating histograms
-   analysisManager->CreateH1("0","Photon Wavelength Per SiPM Hit", 1000, 0., 1000);
-   analysisManager->CreateH1("1","# of Photons per Event", 10000, 0., 10000);
-//   analysisManager->CreateH1("Labs","trackL in absorber", 100, 0., 1*m);
-//   analysisManager->CreateH1("Lgap","trackL in gap", 100, 0., 50*cm);
-   // Creating ntuple
-   //
-   analysisManager->CreateNtuple("qCal", "Photon Wavelength");
-   analysisManager->CreateNtupleDColumn("PhotonEnergy");
-   analysisManager->CreateNtupleDColumn("SiPM#s");
-   analysisManager->CreateNtupleDColumn("PhotonCounts");
-//   analysisManager->CreateNtupleDColumn("Egap");
-//   analysisManager->CreateNtupleDColumn("Labs");
-//   analysisManager->CreateNtupleDColumn("Lgap");
-   analysisManager->FinishNtuple();
-   */
+
    // Open an output file
    //
    G4String fileName = "Muons";
