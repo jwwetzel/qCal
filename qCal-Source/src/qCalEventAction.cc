@@ -2,7 +2,7 @@
 #include "qCalHit.hh"
 #include "qCalUserEventInformation.hh"
 #include "qCalTrajectory.hh"
-
+#include "qCalDetectorConstruction.hh"
 #include "qCalAnalysis.hh"
 #include "qCalRunAction.hh"
 
@@ -24,7 +24,9 @@
  Constructor:  Need SiPM Hit Collection ID
  **************************************************************************************/
 qCalEventAction::qCalEventAction()
-:fSiPMCollID(-1)
+: G4UserEventAction(), SDVolume(((qCalDetectorConstruction*)G4RunManager::GetRunManager()->
+GetUserDetectorConstruction())->GetVolume()), fphotonCount{std::vector<G4double>(SDVolume, 0.)},
+fSiPMNums{std::vector<G4double>(SDVolume, -1)}, fSiPMCollID(-1)
 {
    //Set Print Progress to every event.
    G4RunManager::GetRunManager()->SetPrintProgress(1);
@@ -43,7 +45,7 @@ qCalEventAction::~qCalEventAction()
  First thing we have to do is grab the SiPM hit collection from the SDManager.
  The SiPMHit Collection is declared in qCalSD.hh
  **************************************************************************************/
-void qCalEventAction::BeginOfEventAction(const G4Event* anEvent)
+void qCalEventAction::BeginOfEventAction(const G4Event*)
 {
    //If fSiPMCollID not defined yet, define it.
    //We only need to do this once per run.
@@ -101,14 +103,25 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
    
    //Get the Analysis Manager
    auto analysisManager = G4AnalysisManager::Instance();
-   
-   analysisManager->FillH1(1, n_hit);
-   
+   analysisManager->SetVerboseLevel(1);
+   // Filling Histograms and ntuples
+   for (G4int i = 0; i < SDVolume; ++i){
+       fSiPMNums[i] = i;
+    }
    for ( G4int i = 0; i < n_hit; ++i )
    {
       qCalHit* hit = (*eventSiPMHitCollection)[i];
-      analysisManager->FillH1(0, hit->GetEnergy());
+      int IDofHit = hit->GetSiPMNumber();
+
+      analysisManager->FillH1(IDofHit, hit->GetEnergy());
+      analysisManager->FillH1(IDofHit+SDVolume, hit->GetPhotonCount());
+
+      fphotonCount[IDofHit] += hit->GetPhotonCount();
+
    }
+
+   analysisManager->AddNtupleRow();
+
 //   G4cout << "SiPM exposed to " << hHC->GetPhotonCount() << " Photons." << G4endl;
    
 //   qCalUserEventInformation* eventInformation =(qCalUserEventInformation*)anEvent->GetUserInformation();
