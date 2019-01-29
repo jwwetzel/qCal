@@ -82,7 +82,10 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
       G4Exception("EventAction::EndOfEventAction()","Code001", JustWarning, msg);
       return;
    }
+
+   // Number of Hits
    G4int n_hit = eventSiPMHitCollection->entries();
+
    // Grab the verbosity level for deciding how often to print out info.
    G4int printModulo = G4RunManager::GetRunManager()->GetPrintProgress();
 //   if ( printModulo == 0 || anEvent ->GetEventID() % printModulo != 0 )
@@ -96,7 +99,6 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
 //
 //      G4cout << "The SiPMs collectively received " << n_hit << " hits." << G4endl;
 //   }
-   
    
    //Get the Analysis Manager
    auto analysisManager = G4AnalysisManager::Instance();

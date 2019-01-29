@@ -50,7 +50,7 @@ qCalDetectorConstruction::qCalDetectorConstruction(G4int nXAxis,
    p_fWrapSize     = 0.015*cm;         //Width of the tyvek wrapping
    p_fAbsXDim = 0.5*((p_fCubeWidth+2*p_fWrapSize)*(p_nXAxis)+((p_fQuartzSpacing)*(p_nXAxis-1)))+p_fQuartzSpacing;     //Detector X coord center
    p_fAbsYDim = 0.5*(p_fCubeWidth+2*p_fWrapSize)*p_nYAxis+p_fQuartzSpacing;                                           //Detector Y coord Center
-   p_fAbsZDim = p_fAbsZDim = 0.5*(p_nZAxis * (p_fCubeWidth + fAbsLen));
+   p_fAbsZDim = 0.5*(p_nZAxis * (p_fCubeWidth + fAbsLen));
    p_SiPMDim = 0.5*cm;
 }
 
@@ -222,7 +222,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
             //Place the Quartz
             G4VPhysicalVolume* physicalQuartz =
             new G4PVPlacement(0,
-                                      G4ThreeVector((p_fCubeWidth+p_fQuartzSpacing+2*p_fWrapSize)*i+0.5*p_fCubeWidth+p_fWrapSize+p_fQuartzSpacing*rowOffset - p_fAbsXDim, //X
+                              G4ThreeVector((p_fCubeWidth+p_fQuartzSpacing+2*p_fWrapSize)*i+0.5*p_fCubeWidth+p_fWrapSize+p_fQuartzSpacing*rowOffset - p_fAbsXDim, //X
                                             (p_fCubeWidth+2*p_fWrapSize)*j+0.5*p_fCubeWidth+p_fWrapSize+p_fQuartzSpacing*rowOffset - p_fAbsYDim,                  //Y
                                             (fAbsRadLen+p_fCubeWidth+2*p_fWrapSize)*k+0.5*p_fCubeWidth+p_fWrapSize - ((fAbsZDim*2 + p_fCubeWidth)*p_nZAxis)/2),   //Z
                               logicQuartz,
@@ -232,6 +232,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
                               volIDNumber,
                               checkOverlaps
                               );
+            
             
             //Place the SiPMs
             G4VPhysicalVolume* physicalSiPM =

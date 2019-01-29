@@ -28,11 +28,18 @@ SDVolume(((qCalDetectorConstruction*)G4RunManager::GetRunManager()->
    analysisManager->SetVerboseLevel(1);
    analysisManager->SetNtupleMerging(true);
    // Creating histograms
+
     for (int i = 0; i < SDVolume; i++){
         std::string id = std::to_string(i);
         analysisManager->CreateH1(id, "Photon Wavelength Per SiPM Hit: SiPM#"+id, 1000, 0., 1000);
         analysisManager->CreateH1(std::to_string(i+SDVolume), "# of Photons per Event: SiPM#"+id, 10000, 0., 10000);
     }
+
+//    analysisManager->CreateH1("0","Photon Wavelength Per SiPM Hit", 250, 0., 1000);
+//    analysisManager->CreateH1("1","# of Photons per Event", 100, 0., 10000);
+//   analysisManager->CreateH1("Labs","trackL in absorber", 100, 0., 1*m);
+//   analysisManager->CreateH1("Lgap","trackL in gap", 100, 0., 50*cm);
+
    // Creating ntuple
    //
    analysisManager->CreateNtuple("qCal", "Photon Wavelength");
