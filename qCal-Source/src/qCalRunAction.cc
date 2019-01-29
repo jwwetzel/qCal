@@ -1,8 +1,8 @@
 #include "qCalRunAction.hh"
 #include "qCalAnalysis.hh"
 #include "qCalRunMessenger.hh"
-
-
+#include "qCalDetectorConstruction.hh"
+#include "qCalEventAction.hh"
 #include "G4Run.hh"
 #include "G4RunManager.hh"
 #include "G4UnitsTable.hh"
@@ -10,11 +10,13 @@
 
 
 
-qCalRunAction::qCalRunAction()
-: G4UserRunAction()
+qCalRunAction::qCalRunAction(qCalEventAction* eventAction)
+: G4UserRunAction(), fEventAction(eventAction),
+SDVolume(((qCalDetectorConstruction*)G4RunManager::GetRunManager()->
+        GetUserDetectorConstruction())->GetVolume())
 {
    p_runActionOutputFileName = "qCalOutputFile";
-   G4RunManager::GetRunManager()->SetPrintProgress(0);
+   G4RunManager::GetRunManager()->SetPrintProgress(1);
    
    auto analysisManager = G4AnalysisManager::Instance();
    G4cout << "Using " << analysisManager->GetType() << G4endl;
@@ -25,17 +27,25 @@ qCalRunAction::qCalRunAction()
    
    analysisManager->SetVerboseLevel(1);
    analysisManager->SetNtupleMerging(true);
-   
    // Creating histograms
-   analysisManager->CreateH1("0","Photon Wavelength Per SiPM Hit", 250, 0., 1000);
-   analysisManager->CreateH1("1","# of Photons per Event", 100, 0., 10000);
+
+    for (int i = 0; i < SDVolume; i++){
+        std::string id = std::to_string(i);
+        analysisManager->CreateH1(id, "Photon Wavelength Per SiPM Hit: SiPM#"+id, 1000, 0., 1000);
+        analysisManager->CreateH1(std::to_string(i+SDVolume), "# of Photons per Event: SiPM#"+id, 10000, 0., 10000);
+    }
+
+//    analysisManager->CreateH1("0","Photon Wavelength Per SiPM Hit", 250, 0., 1000);
+//    analysisManager->CreateH1("1","# of Photons per Event", 100, 0., 10000);
 //   analysisManager->CreateH1("Labs","trackL in absorber", 100, 0., 1*m);
 //   analysisManager->CreateH1("Lgap","trackL in gap", 100, 0., 50*cm);
-   
+
    // Creating ntuple
    //
    analysisManager->CreateNtuple("qCal", "Photon Wavelength");
-   analysisManager->CreateNtupleDColumn("PhotonEnergy");
+   //analysisManager->CreateNtupleDColumn("PhotonEnergy");
+   analysisManager->CreateNtupleDColumn("SiPM#s", fEventAction->GetSiPMNums());
+   analysisManager->CreateNtupleDColumn("PhotonCounts", fEventAction->GetPhotonCount());
 //   analysisManager->CreateNtupleDColumn("Egap");
 //   analysisManager->CreateNtupleDColumn("Labs");
 //   analysisManager->CreateNtupleDColumn("Lgap");
@@ -57,7 +67,7 @@ void qCalRunAction::BeginOfRunAction(const G4Run* /*run*/)
    
    // Get analysis manager
    auto analysisManager = G4AnalysisManager::Instance();
-   
+
    // Open an output file
    //
    G4String fileName = "Muons";

@@ -233,6 +233,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
                               checkOverlaps
                               );
             
+            
             //Place the SiPMs
             G4VPhysicalVolume* physicalSiPM =
             new G4PVPlacement(0,

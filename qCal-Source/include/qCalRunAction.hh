@@ -6,12 +6,13 @@
 
 #include "qCalRunMessenger.hh"
 
+class qCalEventAction;
 class G4Run;
 
 class qCalRunAction : public G4UserRunAction
 {
 public:
-   qCalRunAction();
+   qCalRunAction(qCalEventAction* eventAction);
    virtual ~qCalRunAction();
    
    virtual void BeginOfRunAction(const G4Run*);
@@ -21,6 +22,8 @@ public:
 private:
    G4String p_runActionOutputFileName;
    qCalRunMessenger* p_fRunMessenger;
+   qCalEventAction* fEventAction;
+   G4int SDVolume;
    
 };
 

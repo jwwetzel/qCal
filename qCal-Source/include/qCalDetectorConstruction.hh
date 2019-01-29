@@ -33,7 +33,7 @@ public:
    G4double GetAbsXdim(){return p_fAbsXDim;};
    G4double GetAbsYdim(){return p_fAbsYDim;};
    G4double GetAbsZdim(){return p_fAbsZDim;};
-   
+   G4int GetVolume(){return p_nXAxis * p_nYAxis * p_nZAxis;};
 private:
    G4int p_nXAxis;
    G4int p_nYAxis;
