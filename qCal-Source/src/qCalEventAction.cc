@@ -102,7 +102,7 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
    
    //Get the Analysis Manager
    auto analysisManager = G4AnalysisManager::Instance();
-   analysisManager->SetNtupleMerging(true);
+   //analysisManager->SetNtupleMerging(true);
    analysisManager->SetVerboseLevel(1);
    // Filling Histograms and ntuples
    for (G4int i = 0; i < SDVolume; ++i){
