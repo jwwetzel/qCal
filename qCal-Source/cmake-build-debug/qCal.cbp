@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="qCal"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\..\;CMake Files\..\..\..\..\..\..\;CMake Files\..\..\..\..\..\..\opt\;CMake Files\..\..\..\..\..\..\opt\geant4\;CMake Files\..\..\..\..\..\..\opt\geant4\geant4.10.05-install\;CMake Files\..\..\..\..\..\..\opt\geant4\geant4.10.05-install\lib\;CMake Files\..\..\..\..\..\..\opt\geant4\geant4.10.05-install\lib\Geant4-10.5.0\;CMake Files\..\..\..\..\..\..\opt\geant4\geant4.10.05-install\lib\Geant4-10.5.0\Modules\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install/strip">
+				<Option working_dir="/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 install/strip"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="qCal">
+				<Option output="/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/qCal" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DG4_STORE_TRAJECTORY"/>
+					<Add option="-DG4VERBOSE"/>
+					<Add option="-DG4UI_USE"/>
+					<Add option="-DG4VIS_USE"/>
+					<Add option="-DG4MULTITHREADED"/>
+					<Add option="-DG4UI_USE_TCSH"/>
+					<Add option="-DG4INTY_USE_QT"/>
+					<Add option="-DG4UI_USE_QT"/>
+					<Add option="-DG4VIS_USE_OPENGLQT"/>
+					<Add option="-DG4INTY_USE_XT"/>
+					<Add option="-DG4UI_USE_XM"/>
+					<Add option="-DG4VIS_USE_OPENGLXM"/>
+					<Add option="-DG4VIS_USE_OPENGLX"/>
+					<Add option="-DG4VIS_USE_OPENGL"/>
+					<Add option="-DG4LIB_BUILD_DLL"/>
+					<Add directory="/home/csth/CLionProjects/qnew/qCal/qCal-Source/include"/>
+					<Add directory="/opt/geant4/geant4.10.05-install/include/Geant4"/>
+					<Add directory="/usr/include/qt4"/>
+					<Add directory="/usr/include/qt4/QtCore"/>
+					<Add directory="/usr/include/qt4/QtGui"/>
+					<Add directory="/usr/include/qt4/QtOpenGL"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 qCal"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="qCal/fast">
+				<Option output="/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/qCal" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DG4_STORE_TRAJECTORY"/>
+					<Add option="-DG4VERBOSE"/>
+					<Add option="-DG4UI_USE"/>
+					<Add option="-DG4VIS_USE"/>
+					<Add option="-DG4MULTITHREADED"/>
+					<Add option="-DG4UI_USE_TCSH"/>
+					<Add option="-DG4INTY_USE_QT"/>
+					<Add option="-DG4UI_USE_QT"/>
+					<Add option="-DG4VIS_USE_OPENGLQT"/>
+					<Add option="-DG4INTY_USE_XT"/>
+					<Add option="-DG4UI_USE_XM"/>
+					<Add option="-DG4VIS_USE_OPENGLXM"/>
+					<Add option="-DG4VIS_USE_OPENGLX"/>
+					<Add option="-DG4VIS_USE_OPENGL"/>
+					<Add option="-DG4LIB_BUILD_DLL"/>
+					<Add directory="/home/csth/CLionProjects/qnew/qCal/qCal-Source/include"/>
+					<Add directory="/opt/geant4/geant4.10.05-install/include/Geant4"/>
+					<Add directory="/usr/include/qt4"/>
+					<Add directory="/usr/include/qt4/QtCore"/>
+					<Add directory="/usr/include/qt4/QtGui"/>
+					<Add directory="/usr/include/qt4/QtOpenGL"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 qCal/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="list_install_components">
+				<Option working_dir="/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 list_install_components"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install/local">
+				<Option working_dir="/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 install/local"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install">
+				<Option working_dir="/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 install"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/include/qCalActionInitialization.hh">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/include/qCalAnalysis.hh">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/include/qCalDetectorConstruction.hh">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/include/qCalEventAction.hh">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/include/qCalEventMessenger.hh">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/include/qCalHit.hh">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/include/qCalPhysicsList.hh">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/include/qCalPrimaryGeneratorAction.hh">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/include/qCalRunAction.hh">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/include/qCalRunMessenger.hh">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/include/qCalSD.hh">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/include/qCalSteppingAction.hh">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/include/qCalTrackingAction.hh">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/include/qCalTrajectory.hh">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/include/qCalUserEventInformation.hh">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/include/qCalUserTrackInformation.hh">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/qCal.cc">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/src/qCalActionInitialization.cc">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/src/qCalDetectorConstruction.cc">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/src/qCalEventAction.cc">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/src/qCalEventMessenger.cc">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/src/qCalHit.cc">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/src/qCalPhysicsList.cc">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/src/qCalPrimaryGeneratorAction.cc">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/src/qCalRunAction.cc">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/src/qCalRunMessenger.cc">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/src/qCalSD.cc">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/src/qCalSteppingAction.cc">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/src/qCalTrackingAction.cc">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/src/qCalTrajectory.cc">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/src/qCalUserEventInformation.cc">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/src/qCalUserTrackInformation.cc">
+			<Option target="qCal"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/init_vis.mac">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/vis.mac">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/../../../../../../opt/geant4/geant4.10.05-install/lib/Geant4-10.5.0/Geant4Config.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\opt\geant4\geant4.10.05-install\lib\Geant4-10.5.0\"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/../../../../../../opt/geant4/geant4.10.05-install/lib/Geant4-10.5.0/Geant4ConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\opt\geant4\geant4.10.05-install\lib\Geant4-10.5.0\"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/../../../../../../opt/geant4/geant4.10.05-install/lib/Geant4-10.5.0/Geant4LibraryDepends-debug.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\opt\geant4\geant4.10.05-install\lib\Geant4-10.5.0\"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/../../../../../../opt/geant4/geant4.10.05-install/lib/Geant4-10.5.0/Geant4LibraryDepends.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\opt\geant4\geant4.10.05-install\lib\Geant4-10.5.0\"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/../../../../../../opt/geant4/geant4.10.05-install/lib/Geant4-10.5.0/UseGeant4.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\opt\geant4\geant4.10.05-install\lib\Geant4-10.5.0\"/>
+		</Unit>
+		<Unit filename="/home/csth/CLionProjects/qnew/qCal/qCal-Source/../../../../../../opt/geant4/geant4.10.05-install/lib/Geant4-10.5.0/Modules/IntelCompileFeatures.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\opt\geant4\geant4.10.05-install\lib\Geant4-10.5.0\Modules\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
