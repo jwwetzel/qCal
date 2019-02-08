@@ -1,7 +1,0 @@
-/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/CMakeFiles/install/strip.dir
-/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/CMakeFiles/qCal.dir
-/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/CMakeFiles/list_install_components.dir
-/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/CMakeFiles/install/local.dir
-/home/csth/CLionProjects/qnew/qCal/qCal-Source/cmake-build-debug/CMakeFiles/install.dir
