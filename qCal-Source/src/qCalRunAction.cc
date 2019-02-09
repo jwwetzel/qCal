@@ -30,13 +30,16 @@ SDVolume(((qCalDetectorConstruction*)G4RunManager::GetRunManager()->
    // Creating histograms
     std::string id;
 
+    // Note: these for-loops have the same counter but should not be combined given that root creates IDs sequentially
+
     for (int i = 0; i < SDVolume; i++){
         id = std::to_string(i);
-        analysisManager->CreateH1("WavelengthPerHit_ID"+id, "Photon Wavelength per SiPM Hit: SiPMNumber"+ std::to_string(i), 1000, 0., 1000);
-        id = std::to_string(i + SDVolume);
         analysisManager->CreateH1("PhotonsPerEvent_ID"+id, "# of Photons per Event: SiPMNumber"+ std::to_string(i), 10000, 0., 10000);
-        // id = std::to_string(i + 2*SDVolume);
-        // analysisManager->CreateH1("identifier"+id, "histogram name" + to_string(i), param1, param2, param3);
+    }
+
+    for (int i = 0; i < SDVolume; i++){
+        id = std::to_string(i + SDVolume);
+        analysisManager->CreateH1("WavelengthPerHit_ID"+id, "Photon Wavelength per SiPM Hit: SiPMNumber"+ std::to_string(i), 1000, 0., 1000);
     }
 
 

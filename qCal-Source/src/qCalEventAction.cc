@@ -121,7 +121,7 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
    }
 
    analysisManager->AddNtupleRow();
-
+   fphotonCount = std::vector<G4double>(SDVolume, 0.);
 //   G4cout << "SiPM exposed to " << hHC->GetPhotonCount() << " Photons." << G4endl;
    
 //   qCalUserEventInformation* eventInformation =(qCalUserEventInformation*)anEvent->GetUserInformation();
