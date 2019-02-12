@@ -28,12 +28,20 @@ SDVolume(((qCalDetectorConstruction*)G4RunManager::GetRunManager()->
    analysisManager->SetVerboseLevel(1);
    analysisManager->SetNtupleMerging(true);
    // Creating histograms
+    std::string id;
+
+    // Note: these for-loops have the same counter but should not be combined given that root creates IDs sequentially
 
     for (int i = 0; i < SDVolume; i++){
-        std::string id = std::to_string(i);
-        analysisManager->CreateH1(id, "Photon Wavelength Per SiPM Hit: SiPM#"+id, 1000, 0., 1000);
-        analysisManager->CreateH1(std::to_string(i+SDVolume), "# of Photons per Event: SiPM#"+id, 10000, 0., 10000);
+        id = std::to_string(i);
+        analysisManager->CreateH1("PhotonsPerEvent_ID"+id, "# of Photons per Event: SiPMNumber"+ std::to_string(i), 10000, 0., 10000);
     }
+
+    for (int i = 0; i < SDVolume; i++){
+        id = std::to_string(i + SDVolume);
+        analysisManager->CreateH1("WavelengthPerHit_ID"+id, "Photon Wavelength per SiPM Hit: SiPMNumber"+ std::to_string(i), 1000, 0., 1000);
+    }
+
 
 //    analysisManager->CreateH1("0","Photon Wavelength Per SiPM Hit", 250, 0., 1000);
 //    analysisManager->CreateH1("1","# of Photons per Event", 100, 0., 10000);
@@ -42,13 +50,16 @@ SDVolume(((qCalDetectorConstruction*)G4RunManager::GetRunManager()->
 
    // Creating ntuple
    //
-   analysisManager->CreateNtuple("qCal", "Photon Wavelength");
-   //analysisManager->CreateNtupleDColumn("PhotonEnergy");
-   analysisManager->CreateNtupleDColumn("SiPM#s", fEventAction->GetSiPMNums());
-   analysisManager->CreateNtupleDColumn("PhotonCounts", fEventAction->GetPhotonCount());
-//   analysisManager->CreateNtupleDColumn("Egap");
-//   analysisManager->CreateNtupleDColumn("Labs");
-//   analysisManager->CreateNtupleDColumn("Lgap");
+   analysisManager->CreateNtuple("qCal", "Simulation Data");
+   analysisManager->CreateNtupleDColumn("SiPMNumbers", fEventAction->GetSiPMNums()); // ID 0
+   analysisManager->CreateNtupleDColumn("PhotonCounts", fEventAction->GetPhotonCount()); // ID 1
+   //analysisManager->CreateNtupleIColumn("DetectorVolume");                                  // ID 2
+   //analysisManager->FillNtupleIColumn(2, SDVolume);
+   //analysisManager->FillNtupleIColumn()
+   // analysisManager->CreateNtupleDColumn("PhotonEnergy");
+   //   analysisManager->CreateNtupleDColumn("Egap");
+    //   analysisManager->CreateNtupleDColumn("Labs");
+    //   analysisManager->CreateNtupleDColumn("Lgap");
    analysisManager->FinishNtuple();
    p_fRunMessenger = new qCalRunMessenger(this);
 }

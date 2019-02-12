@@ -24,12 +24,12 @@ public:
                             G4String sAbs = "Fe",
                             G4float fAbsLen = 1.0,
                             G4float fCubeWidth = 1.0
-                            );
+   );
    virtual ~qCalDetectorConstruction();
-   
+
    virtual G4VPhysicalVolume* Construct();
    virtual void ConstructSDandField();
-   
+
    G4double GetAbsXdim(){return p_fAbsXDim;};
    G4double GetAbsYdim(){return p_fAbsYDim;};
    G4double GetAbsZdim(){return p_fAbsZDim;};
@@ -46,9 +46,10 @@ private:
    G4float p_fQuartzSpacing;
    G4float p_fWrapSize;
    G4float p_SiPMDim;
-   
-   G4LogicalVolume* fLogicSiPM;
-   
+   G4float p_fAbsLen;
+
+   G4LogicalVolume* logicSiPM;
+
    //The SiPM SDs:
    G4Cache<qCalSD*> fSiPM_SD;
    std::vector<G4ThreeVector> fSiPMPositions;
