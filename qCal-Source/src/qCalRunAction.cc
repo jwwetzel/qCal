@@ -51,8 +51,11 @@ SDVolume(((qCalDetectorConstruction*)G4RunManager::GetRunManager()->
    // Creating ntuple
    //
    analysisManager->CreateNtuple("qCal", "Simulation Data");
-   analysisManager->CreateNtupleDColumn("SiPMNumbers", fEventAction->GetSiPMNums());
-   analysisManager->CreateNtupleDColumn("PhotonCounts", fEventAction->GetPhotonCount());
+   analysisManager->CreateNtupleDColumn("SiPMNumbers", fEventAction->GetSiPMNums()); // ID 0
+   analysisManager->CreateNtupleDColumn("PhotonCounts", fEventAction->GetPhotonCount()); // ID 1
+   //analysisManager->CreateNtupleIColumn("DetectorVolume");                                  // ID 2
+   //analysisManager->FillNtupleIColumn(2, SDVolume);
+   //analysisManager->FillNtupleIColumn()
    // analysisManager->CreateNtupleDColumn("PhotonEnergy");
    //   analysisManager->CreateNtupleDColumn("Egap");
     //   analysisManager->CreateNtupleDColumn("Labs");

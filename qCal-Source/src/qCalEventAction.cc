@@ -97,9 +97,9 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
 //      //            << ">>> Particle: "  << primary->GetG4code()->GetParticleName()
 //      //            << ">>> Momentum: "  << primary->GetMomentum() << G4endl;
 //
-//      G4cout << "The SiPMs collectively received " << n_hit << " hits." << G4endl;
+//
 //   }
-   
+   G4cout << "The SiPMs collectively received " << n_hit << " hits." << G4endl;
    //Get the Analysis Manager
    auto analysisManager = G4AnalysisManager::Instance();
    //analysisManager->SetNtupleMerging(true);
@@ -119,9 +119,14 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
       fphotonCount[IDofHit] += hit->GetPhotonCount();
 
    }
-
    analysisManager->AddNtupleRow();
-   fphotonCount = std::vector<G4double>(SDVolume, 0.);
+
+   //fphotonCount = std::vector<G4double>(SDVolume, 0.);
+
+   for (int i = 0; i < SDVolume; i++){
+      fphotonCount[i] = 0.;
+
+   }
 //   G4cout << "SiPM exposed to " << hHC->GetPhotonCount() << " Photons." << G4endl;
    
 //   qCalUserEventInformation* eventInformation =(qCalUserEventInformation*)anEvent->GetUserInformation();

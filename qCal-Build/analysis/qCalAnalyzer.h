@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Wed Feb  6 22:35:52 2019 by ROOT version 6.14/06
-// from TTree qCal/Photon Wavelength
-// found on file: ../qCalOutputFile.root
+// Sat Feb  9 04:46:06 2019 by ROOT version 6.16/00
+// from TTree qCal/Simulation Data
+// found on file: ../muons_1-GeV_10k.root
 //////////////////////////////////////////////////////////
 
 #ifndef qCalAnalyzer_h
@@ -13,6 +13,7 @@
 #include <TFile.h>
 
 // Header file for the classes stored in the TTree if any.
+#include "vector"
 
 class qCalAnalyzer {
 public :
@@ -22,13 +23,12 @@ public :
 // Fixed size dimensions of array or collections stored in the TTree if any.
 
    // Declaration of leaf types
-   //Int_t           row_wise_branch_SiPMNumbers_count;
-   //Double_t        row_wise_branch_SiPMNumbers[27];   //[SiPMNumbers_count]
-   //Int_t           row_wise_branch_PhotonCounts_count;
-   //Double_t        row_wise_branch_PhotonCounts[27];   //[PhotonCounts_count]
+   vector<double>  *SiPMNumbers;
+   vector<double>  *PhotonCounts;
 
    // List of branches
-   TBranch        *b_photonCounts;   //!
+   TBranch        *b_SiPMNumbers;   //!
+   TBranch        *b_PhotonCounts;   //!
 
    qCalAnalyzer(TTree *tree=0);
    virtual ~qCalAnalyzer();
@@ -49,9 +49,9 @@ qCalAnalyzer::qCalAnalyzer(TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("../qCalOutputFile.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("../muons_1-GeV_10k.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("../qCalOutputFile.root");
+         f = new TFile("../muons_1-GeV_10k.root");
       }
       f->GetObject("qCal",tree);
 
@@ -94,13 +94,17 @@ void qCalAnalyzer::Init(TTree *tree)
    // Init() will be called many times when running on PROOF
    // (once per file to be processed).
 
+   // Set object pointer
+   SiPMNumbers = 0;
+   PhotonCounts = 0;
    // Set branch addresses and branch pointers
    if (!tree) return;
    fChain = tree;
    fCurrent = -1;
    fChain->SetMakeClass(1);
 
-   //fChain->SetBranchAddress("row_wise_branch", &row_wise_branch_SiPMNumbers_count, &b_row_wise_branch);
+   fChain->SetBranchAddress("SiPMNumbers", &SiPMNumbers, &b_SiPMNumbers);
+   fChain->SetBranchAddress("PhotonCounts", &PhotonCounts, &b_PhotonCounts);
    Notify();
 }
 
