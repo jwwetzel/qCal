@@ -113,8 +113,8 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
       qCalHit* hit = (*eventSiPMHitCollection)[i];
       int IDofHit = hit->GetSiPMNumber();
 
-      analysisManager->FillH1(IDofHit, hit->GetEnergy());
-      analysisManager->FillH1(IDofHit+SDVolume, hit->GetPhotonCount());
+      analysisManager->FillH1(IDofHit, hit->GetPhotonCount());
+      analysisManager->FillH1(IDofHit+SDVolume, hit->GetEnergy());
 
       fphotonCount[IDofHit] += hit->GetPhotonCount();
 

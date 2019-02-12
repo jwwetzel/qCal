@@ -34,16 +34,17 @@ qCalDetectorConstruction::qCalDetectorConstruction(G4int nXAxis,
       :G4VUserDetectorConstruction() {
    p_nXAxis = nXAxis;                                                                                                          //Number of cubes in the X-Axis
    p_nYAxis = nYAxis;                                                                                                          //Number of cubes in the Y-Axis
-   p_nZAxis = nZAxis;                                                                                                   //Number of cubes in the Z-Axis
+   p_nZAxis = nZAxis;                                                                                                          //Number of cubes in the Z-Axis
+   p_fAbsLen = fAbsLen;                                                                                                        //Length of Absorber
    p_sAbs = sAbs;                                                                                                              //Absorber element
    p_fCubeWidth = fCubeWidth * cm;                                                                                             //Width of a single cube
    p_fQuartzSpacing = 0.03*cm;                                                                                                 //Width between x-cubes (circuit board + sipm)
    p_fWrapSize = 0.015*cm;                                                                                                     //Width of the tyvek wrapping
-   p_fAbsXDim = 0.5*((p_fCubeWidth + 2 * p_fWrapSize)*(p_nXAxis)+((p_fQuartzSpacing)*(p_nXAxis - 1))) + p_fQuartzSpacing;      //Detector X coord center
-   p_fAbsYDim = 0.5*(p_fCubeWidth + 2 * p_fWrapSize)*p_nYAxis + p_fQuartzSpacing;                                              //Detector Y coord Center
-   p_fAbsZDim = 0.5*(p_nZAxis * (p_fCubeWidth + fAbsLen));                                                                     //Detector Z coord Center
+   p_fAbsXDim = ((p_fCubeWidth + 2 * p_fWrapSize + p_fQuartzSpacing) * p_nXAxis) / 2;                             //Detector X coord center
+   p_fAbsYDim = ((p_fCubeWidth + 2 * p_fWrapSize + p_fQuartzSpacing) * p_nYAxis) / 2;                             //Detector Y coord Center
+   p_fAbsZDim = ((p_fCubeWidth + 2 * p_fWrapSize + p_fQuartzSpacing + p_fAbsLen) * p_nZAxis) / 2;                   //Detector Z coord Center
    p_SiPMDim = 0.5*cm;                                                                                                         //Dimension of SiPM
-   p_fAbsLen = fAbsLen;                                                                                                        //Length of Absorber
+
 }
 qCalDetectorConstruction::~qCalDetectorConstruction()
 {
@@ -116,18 +117,18 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    quartzMat->SetMaterialPropertiesTable(quartzMPT);
    //Define the User selected Absorber Material
    G4Material* absMat = nist->FindOrBuildMaterial("G4_" + p_sAbs);
-   G4float fAbsRadLen = absMat->GetRadlen()*mm;
-   G4float fAbsZDim = 0.5*fAbsRadLen;
-   G4double cubeSize = ((p_fCubeWidth + p_fWrapSize + p_fQuartzSpacing))/2;
-   G4double cubeSizeZ = (((p_fCubeWidth + p_fWrapSize + p_fQuartzSpacing) / 2) + 0.001*cm);
+   G4float fAbsRadLen = p_fAbsLen/2;
+//   G4float fAbsZDim = 0.5*fAbsRadLen;
+   G4double cubeSize = (p_fCubeWidth + 2 * p_fWrapSize + p_fQuartzSpacing)/2;
+   G4double cubeSizeZ = (p_fCubeWidth + 2 * p_fWrapSize + p_fQuartzSpacing)/ 2;
    G4Material* detectorMat = quartzMat;
    G4Material* sipmMat = quartzMat;
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //Define the world (needs full detector + full absorber + extra space)
 ////////////////////////////////////////////////////////////////////////////////////////////////
-   G4Box* solidWorld = new G4Box("World", (cubeSize)*(p_nXAxis) + 0.5*cm, (cubeSize)*(p_nYAxis) + 0.5*cm, (cubeSize + fAbsRadLen)*(p_nZAxis) + 0.5*cm);
+   G4Box* solidWorld = new G4Box("World", p_fAbsXDim + p_fCubeWidth, p_fAbsYDim + p_fCubeWidth, p_fAbsZDim + p_fCubeWidth);
    G4LogicalVolume* worldLog = new G4LogicalVolume(solidWorld, airMat, "World");
-   G4ThreeVector solidPos = G4ThreeVector(0, 0, -(cubeSizeZ + fAbsRadLen) / 4);
+   G4ThreeVector solidPos = G4ThreeVector(0, 0, 0);
    G4VPhysicalVolume* physWorld = new G4PVPlacement(0,                     //no rotation
                                                     G4ThreeVector(),                                                    //at (0,0,0)
                                                     worldLog,                                                           //its logical volume
@@ -142,21 +143,23 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    G4Box* solidQuartz = new G4Box("solidQuartz", 0.5*p_fCubeWidth, 0.5*p_fCubeWidth, 0.5*p_fCubeWidth);
    G4LogicalVolume* logicQuartz = new G4LogicalVolume(solidQuartz, quartzMat, "logicQuartz");
    G4ThreeVector quartzPos = G4ThreeVector(0, 0, 0);
+   
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //Create the SiPM
 ////////////////////////////////////////////////////////////////////////////////////////////////
    G4Box* solidSiPM = new G4Box("solidSiPM", 0.5*p_SiPMDim, 0.5*p_SiPMDim, 0.001*cm);
    logicSiPM = new G4LogicalVolume(solidSiPM, sipmMat, "logicSiPM");
-   G4ThreeVector SiPMPos = G4ThreeVector(0, 0, -(p_fCubeWidth / 2));
+   G4ThreeVector SiPMPos = G4ThreeVector(0, 0, -((p_fCubeWidth) / 2 + 0.001*cm));
+   
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //Define the whole detector(tyvec wrapping,quartz,SiPM) - "Pixel"
 ////////////////////////////////////////////////////////////////////////////////////////////////
    G4Box* solidDetector = new G4Box("SingleDetectorTest", cubeSize, cubeSize, cubeSizeZ);
    G4Box* solidDetectorX = new G4Box("DetectorXLayer", cubeSize*p_nXAxis, cubeSize, cubeSizeZ);
    G4Box* solidDetectorXY = new G4Box("DetectorXYLayer", cubeSize*p_nXAxis, cubeSize*p_nYAxis, cubeSizeZ);
-   G4LogicalVolume* logicDetector = new G4LogicalVolume(solidDetector, detectorMat, "logicDetector");
-   G4LogicalVolume* logicDetectorX = new G4LogicalVolume(solidDetectorX, detectorMat, "logicDetectorX");
-   G4LogicalVolume* logicDetectorXY = new G4LogicalVolume(solidDetectorXY, detectorMat, "logicDetectorXY");
+   G4LogicalVolume* logicDetector = new G4LogicalVolume(solidDetector, airMat, "logicDetector");
+   G4LogicalVolume* logicDetectorX = new G4LogicalVolume(solidDetectorX, airMat, "logicDetectorX");
+   G4LogicalVolume* logicDetectorXY = new G4LogicalVolume(solidDetectorXY, airMat, "logicDetectorXY");
    G4VPhysicalVolume* quartzPlace = new G4PVPlacement(0,                       //no rotation
                                                       quartzPos,                                                              //at (0,0,0)
                                                       logicQuartz,                                                            //its logical volume
@@ -220,7 +223,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
          (p_nZAxis),                                                             //Number of replica
          (cubeSize + fAbsRadLen)*2);                                             //Width of replica
    G4VPhysicalVolume* XYZDetectorPlace = new G4PVPlacement(0,                  //no rotation
-                                                           solidPos,                                                               //at (0,0,0)
+                                                           G4ThreeVector(0, 0, 0),                                                               //at (0,0,0)
                                                            logicFinal,                                                             //its logical volume
                                                            "DetectorAndAbs",                                                     //its name
                                                            worldLog,                                                               //its mother  volume
