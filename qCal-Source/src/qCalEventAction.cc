@@ -99,7 +99,7 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
 //
 //
 //   }
-   G4cout << "The SiPMs collectively received " << n_hit << " hits." << G4endl;
+//   G4cout << "The SiPMs collectively received" << n_hit << " hits." << G4endl;
    //Get the Analysis Manager
    auto analysisManager = G4AnalysisManager::Instance();
    //analysisManager->SetNtupleMerging(true);
@@ -113,8 +113,8 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
       qCalHit* hit = (*eventSiPMHitCollection)[i];
       int IDofHit = hit->GetSiPMNumber();
 
-      analysisManager->FillH1(IDofHit, hit->GetPhotonCount());
-      analysisManager->FillH1(IDofHit+SDVolume, hit->GetEnergy());
+//      analysisManager->FillH1(IDofHit, hit->GetPhotonCount());
+//      analysisManager->FillH1(IDofHit+SDVolume, hit->GetEnergy());
 
       fphotonCount[IDofHit] += hit->GetPhotonCount();
 
