@@ -30,9 +30,3 @@ qCalSteppingAction::~qCalSteppingAction()
 {
    
 }
-
-
-void qCalSteppingAction::UserSteppingAction(G4Step * theStep)
-{
-   //G4Track* theTrack = theStep->GetTrack();
-}

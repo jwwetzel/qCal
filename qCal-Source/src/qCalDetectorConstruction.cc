@@ -139,7 +139,6 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    //G4float fAbsZDim = 0.5*fAbsRadLen;
    G4double cubeSize       = (p_fCubeWidth + 2 * p_fWrapSize + p_fQuartzSpacing)/2;
    G4double cubeSizeZ      = (p_fCubeWidth + 2 * p_fWrapSize + p_fQuartzSpacing)/ 2;
-   G4Material* detectorMat = quartzMat;
    G4Material* sipmMat     = quartzMat;
    
    ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -168,16 +167,34 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    ////////////////////////////////////////////////////////////////////////////////////////////////
    //Create the Quartz
    ////////////////////////////////////////////////////////////////////////////////////////////////
-   G4Box* solidQuartz = new G4Box("solidQuartz", 0.5*p_fCubeWidth, 0.5*p_fCubeWidth, 0.5*p_fCubeWidth);
-   G4LogicalVolume* logicQuartz = new G4LogicalVolume(solidQuartz, quartzMat, "logicQuartz");
-   G4ThreeVector quartzPos = G4ThreeVector(0, 0, 0);
+   G4Box* solidQuartz = new G4Box("solidQuartz",
+                                  0.5*p_fCubeWidth,
+                                  0.5*p_fCubeWidth,
+                                  0.5*p_fCubeWidth);
+   
+   G4LogicalVolume* logicQuartz = new G4LogicalVolume(solidQuartz,
+                                                      quartzMat,
+                                                      "logicQuartz");
+   
+   G4ThreeVector quartzPos = G4ThreeVector(0,
+                                           0,
+                                           0);
    
    ////////////////////////////////////////////////////////////////////////////////////////////////
    //Create the SiPM
    ////////////////////////////////////////////////////////////////////////////////////////////////
-   G4Box* solidSiPM = new G4Box("solidSiPM", 0.5*p_SiPMDim, 0.5*p_SiPMDim, 0.001*cm);
-   logicSiPM = new G4LogicalVolume(solidSiPM, sipmMat, "logicSiPM");
-   G4ThreeVector SiPMPos = G4ThreeVector(0, 0, -((p_fCubeWidth) / 2 + 0.001*cm));
+   G4Box* solidSiPM = new G4Box("solidSiPM",
+                                0.5*p_SiPMDim,
+                                0.5*p_SiPMDim,
+                                0.001*cm);
+   
+   logicSiPM = new G4LogicalVolume(solidSiPM,
+                                   sipmMat,
+                                   "logicSiPM");
+   
+   G4ThreeVector SiPMPos = G4ThreeVector(0,
+                                         0,
+                                         -((p_fCubeWidth) / 2 + 0.001*cm));
    
    ////////////////////////////////////////////////////////////////////////////////////////////////
    //Define the whole detector(tyvec wrapping,quartz,SiPM) - "Pixel"
@@ -210,35 +227,35 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
                                                       0,                   //copy number
                                                       checkOverlaps);      //overlaps checking
    
-   G4VPhysicalVolume* SiPMPlace = new G4PVPlacement(0,                     //no rotation
-                                                    SiPMPos,               //at (0,0,0)
-                                                    logicSiPM,             //its logical volume
-                                                    "sipmOfDetector",      //its name
-                                                    logicDetector,         //its mother  volume
-                                                    false,                 //no boolean operation
-                                                    0,                     //copy number
-                                                    checkOverlaps);        //overlaps checking
+   new G4PVPlacement(0,                     //no rotation
+                     SiPMPos,               //at (0,0,0)
+                     logicSiPM,             //its logical volume
+                     "sipmOfDetector",      //its name
+                     logicDetector,         //its mother  volume
+                     false,                 //no boolean operation
+                     0,                     //copy number
+                     checkOverlaps);        //overlaps checking
    
    ////////////////////////////////////////////////////////////////////////////////////////////////
    //Replicate pixel in XDir
    ////////////////////////////////////////////////////////////////////////////////////////////////
-   G4VPhysicalVolume* XlayerOfDetector = new G4PVReplica("detectorLayerX", //Name
-                                                         logicDetector,    //Logical Volume
-                                                         logicDetectorX,   //Mother volume
-                                                         kXAxis,           //Axis of replication
-                                                         (p_nXAxis),       //Number of replica
-                                                         cubeSize*2);      //Width of replica
+   new G4PVReplica("detectorLayerX", //Name
+                   logicDetector,    //Logical Volume
+                   logicDetectorX,   //Mother volume
+                   kXAxis,           //Axis of replication
+                   (p_nXAxis),       //Number of replica
+                   cubeSize*2);      //Width of replica
    
    ////////////////////////////////////////////////////////////////////////////////////////////////
    //Replicate pixel in XYDir
    ////////////////////////////////////////////////////////////////////////////////////////////////
-   G4VPhysicalVolume* XYlayerOfDetector = new G4PVReplica("detecLayerXY",  //Name
-                                                          logicDetectorX,  //Logical Volume
-                                                          logicDetectorXY, //Mother volume
-                                                          kYAxis,          //Axis of replication
-                                                          (p_nYAxis),      //Number of replica
-                                                          cubeSize*2);     //Width of replica
-   
+   new G4PVReplica("detecLayerXY",  //Name
+                   logicDetectorX,  //Logical Volume
+                   logicDetectorXY, //Mother volume
+                   kYAxis,          //Axis of replication
+                   (p_nYAxis),      //Number of replica
+                   cubeSize*2);     //Width of replica
+
    ////////////////////////////////////////////////////////////////////////////////////////////////
    //Create an absorber behind the XYDir pixel
    ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -264,33 +281,33 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
                                                     0,
                                                     (cubeSize) + fAbsRadLen - 0.001*cm);
    
-   G4VPhysicalVolume* absPlace = new G4PVPlacement(0,                      //no rotation
-                                                   absPos,                 //at (0,0,0)
-                                                   logicDetectorXY,        //its logical volume
-                                                   "absorberOfDetector",   //its name
-                                                   logicAbsorber,          //its mother  volume
-                                                   false,                  //no boolean operation
-                                                   0,                      //copy number
-                                                   checkOverlaps);         //overlaps checking
+   new G4PVPlacement(0,                      //no rotation
+                     absPos,                 //at (0,0,0)
+                     logicDetectorXY,        //its logical volume
+                     "absorberOfDetector",   //its name
+                     logicAbsorber,          //its mother  volume
+                     false,                  //no boolean operation
+                     0,                      //copy number
+                     checkOverlaps);         //overlaps checking
    
    ////////////////////////////////////////////////////////////////////////////////////////////////
    //Replicate pixel and absorber in XYZDir, and place it in the world
    ////////////////////////////////////////////////////////////////////////////////////////////////
-   G4VPhysicalVolume* XYZlayerOfDetector = new G4PVReplica("detecLayerXYZ",            //Name
-                                                           logicAbsorber,              //Logical Volume
-                                                           logicFinal,                 //Mother volume
-                                                           kZAxis,                     //Axis of replication
-                                                           (p_nZAxis),                 //Number of replica
-                                                           (cubeSize + fAbsRadLen)*2); //Width of replica
+   new G4PVReplica("detecLayerXYZ",             //Name
+                   logicAbsorber,               //Logical Volume
+                   logicFinal,                  //Mother volume
+                   kZAxis,                      //Axis of replication
+                   (p_nZAxis),                  //Number of replica
+                   (cubeSize + fAbsRadLen)*2);  //Width of replica
    
-   G4VPhysicalVolume* XYZDetectorPlace = new G4PVPlacement(0,                          //no rotation
-                                                           G4ThreeVector(0, 0, 0),     //at (0,0,0)
-                                                           logicFinal,                 //its logical volume
-                                                           "DetectorAndAbs",           //its name
-                                                           worldLog,                   //its mother  volume
-                                                           false,                      //no boolean operation
-                                                           0,                          //copy number
-                                                           false);                     //overlaps checking
+   new G4PVPlacement(0,                         //no rotation
+                     G4ThreeVector(0, 0, 0),    //at (0,0,0)
+                     logicFinal,                //its logical volume
+                     "DetectorAndAbs",          //its name
+                     worldLog,                  //its mother  volume
+                     false,                     //no boolean operation
+                     0,                         //copy number
+                     false);                    //overlaps checking
    
    ////////////////////////////////////////////////////////////////////////////////////////////////
    //DEBUGGING: color/visible settings foe quartz, sipm, and absorber to check for collisions
@@ -305,19 +322,23 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    //Set the Quartz Surface
    ////////////////////////////////////////////////////////////////////////////////////////////////
    G4OpticalSurface* quartzWrap = new G4OpticalSurface("QuartzWrap");
+                     quartzWrap->SetType(dielectric_metal);
+                     quartzWrap->SetFinish(polished);
+                     quartzWrap->SetModel(glisur);
+   
    new G4LogicalBorderSurface("QuartzWrap",
                               quartzPlace,
                               physWorld,
                               quartzWrap);
-   quartzWrap->SetType(dielectric_metal);
-   quartzWrap->SetFinish(polished);
-   quartzWrap->SetModel(glisur);
-   G4double pp[2] = { 2.0*eV, 3.5*eV };
-   G4double reflectivity[2] = { 1., 1. };
-   G4double efficiency[2] = { 0.0, 0.0 };
+   
+   G4double pp[2]             = { 2.0*eV, 3.5*eV };
+   G4double reflectivity[2]   = { 1., 1. };
+   G4double efficiency[2]     = { 0.0, 0.0 };
+   
    G4MaterialPropertiesTable* quartzWrapMPT = new G4MaterialPropertiesTable();
                               quartzWrapMPT->AddProperty("REFLECTIVITY",   pp, reflectivity, 2);
                               quartzWrapMPT->AddProperty("EFFICIENCY",     pp, efficiency,   2);
+   
    quartzWrap->SetMaterialPropertiesTable(quartzWrapMPT);
 
    return physWorld;

@@ -23,10 +23,8 @@
 /**************************************************************************************
  Constructor:  Need SiPM Hit Collection ID
  **************************************************************************************/
-qCalEventAction::qCalEventAction()
-: G4UserEventAction(), SDVolume(((qCalDetectorConstruction*)G4RunManager::GetRunManager()->
-GetUserDetectorConstruction())->GetVolume()), fphotonCount{std::vector<G4double>(SDVolume, 0.)},
-fSiPMNums{std::vector<G4double>(SDVolume, -1)}, fSiPMCollID(-1)
+qCalEventAction::qCalEventAction():G4UserEventAction(),SDVolume(((qCalDetectorConstruction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction())->GetVolume()), fphotonCount{std::vector<G4double>(SDVolume, 0.)}, fSiPMCollID(-1),
+fSiPMNums{std::vector<G4double>(SDVolume, -1)}
 {
    //Set Print Progress to every event.
    G4RunManager::GetRunManager()->SetPrintProgress(1);
@@ -88,154 +86,49 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
 
    // Grab the verbosity level for deciding how often to print out info.
    G4int printModulo = G4RunManager::GetRunManager()->GetPrintProgress();
-//   if ( printModulo == 0 || anEvent ->GetEventID() % printModulo != 0 )
-//   {
-//      // Spit out info on the primary particle
-//      //   G4PrimaryParticle* primary = anEvent->GetPrimaryVertex(0)->GetPrimary(0);
-//      //   G4cout   << G4endl
-//      //            << ">>> Event "      << anEvent->GetEventID() << " >>> Simulation truth : "
-//      //            << ">>> Particle: "  << primary->GetG4code()->GetParticleName()
-//      //            << ">>> Momentum: "  << primary->GetMomentum() << G4endl;
-//
-//
-//   }
-//   G4cout << "The SiPMs collectively received" << n_hit << " hits." << G4endl;
+   
+   if ( printModulo == 0 || anEvent ->GetEventID() % printModulo == 1 )
+   {
+      //Spit out info on the primary particle
+      G4PrimaryParticle* primary = anEvent->GetPrimaryVertex(0)->GetPrimary(0);
+      G4cout   << G4endl
+               << ">>> Event "      << anEvent->GetEventID() << " >>> Simulation truth : "
+               << ">>> Particle: "  << primary->GetG4code()->GetParticleName()
+               << ">>> Momentum: "  << primary->GetMomentum() << G4endl;
+      G4cout << "The SiPMs collectively received: " << n_hit << " hits." << G4endl;
+
+   }
+   
    //Get the Analysis Manager
    auto analysisManager = G4AnalysisManager::Instance();
+   
    //analysisManager->SetNtupleMerging(true);
+   
    analysisManager->SetVerboseLevel(1);
+   
    // Filling Histograms and ntuples
-   for (G4int i = 0; i < SDVolume; ++i){
+   for (G4int i = 0; i < SDVolume; ++i)
+   {
        fSiPMNums[i] = i;
     }
+   
    for ( G4int i = 0; i < n_hit; ++i )
    {
       qCalHit* hit = (*eventSiPMHitCollection)[i];
       int IDofHit = hit->GetSiPMNumber();
-
-//      analysisManager->FillH1(IDofHit, hit->GetPhotonCount());
-//      analysisManager->FillH1(IDofHit+SDVolume, hit->GetEnergy());
+      
+      //You can fill hit-dependent histograms here:
+      //analysisManager->FillH1(IDofHit, hit->GetPhotonCount());
+      //analysisManager->FillH1(IDofHit+SDVolume, hit->GetEnergy());
 
       fphotonCount[IDofHit] += hit->GetPhotonCount();
 
    }
    analysisManager->AddNtupleRow();
 
-   //fphotonCount = std::vector<G4double>(SDVolume, 0.);
-
-   for (int i = 0; i < SDVolume; i++){
+   // Reset the SiPM counts to zero for a new event.
+   for (int i = 0; i < SDVolume; i++)
+   {
       fphotonCount[i] = 0.;
-
    }
-//   G4cout << "SiPM exposed to " << hHC->GetPhotonCount() << " Photons." << G4endl;
-   
-//   qCalUserEventInformation* eventInformation =(qCalUserEventInformation*)anEvent->GetUserInformation();
-//
-//   G4TrajectoryContainer* trajectoryContainer=anEvent->GetTrajectoryContainer();
-//
-//   G4int n_trajectories = 0;
-//   if ( trajectoryContainer )
-//   {
-//      n_trajectories = trajectoryContainer->entries();
-//   }
-//
-//   // extract the trajectories and draw them
-//   if ( G4VVisManager::GetConcreteInstance() )
-//   {
-//      for ( G4int i=0; i<n_trajectories; i++ )
-//      {
-//         qCalTrajectory* trj = (qCalTrajectory*)((*(anEvent->GetTrajectoryContainer()))[i]);
-//         if( trj->GetParticleName() == "opticalphoton" )
-//         {
-//            trj->SetForceDrawTrajectory(fForcedrawphotons);
-//            trj->SetForceNoDrawTrajectory(fForcenophotons);
-//         }
-//         trj->DrawTrajectory();
-//      }
-//   }
-//
-//   qCalSiPMHitsCollection* SiPMHC = 0;
-//   G4HCofThisEvent* hitsCE = anEvent->GetHCofThisEvent();
-//
-//   //Get the hit collections
-//   if( hitsCE )
-//   {
-//      if( fSiPMCollID >= 0 )
-//      {
-//         SiPMHC = (qCalSiPMHitsCollection*)(hitsCE->GetHC(fSiPMCollID));
-//      }
-//   }
-//
-//   if(SiPMHC)
-//   {
-//      G4ThreeVector reconPos(0.,0.,0.);
-//      G4int SiPMs = SiPMHC->entries();
-//      //Gather info from all SiPMs
-//      for ( G4int i = 0 ; i < SiPMs; i++ )
-//      {
-//         eventInformation->IncHitCount((*SiPMHC)[i]->GetPhotonCount());
-//         reconPos += (*SiPMHC)[i]->GetSiPMPos()*(*SiPMHC)[i]->GetPhotonCount();
-//         if ( (*SiPMHC)[i]->GetPhotonCount() >= fSiPMThreshold )
-//         {
-//            eventInformation->IncSiPMSAboveThreshold();
-//         }
-//         else{
-//            //wasnt above the threshold, turn it back off
-//            (*SiPMHC)[i]->SetDrawit(false);
-//         }
-//      }
-//
-//      //dont bother unless there were hits
-//      if ( eventInformation->GetHitCount() > 0 )
-//      {
-//         reconPos/=eventInformation->GetHitCount();
-//         if(fVerbose>0){
-//            G4cout << "\tReconstructed position of hits in qCal : "
-//            << reconPos/mm << G4endl;
-//         }
-//         eventInformation->SetReconPos(reconPos);
-//      }
-//      SiPMHC->DrawAllHits();
-//   }
-//
-//   if ( fVerbose > 0 )
-//   {
-//      //End of event output. later to be controlled by a verbose level
-//      G4cout << "\tNumber of photons that hit SiPMs in this event : "
-//      << eventInformation->GetHitCount() << G4endl;
-//      G4cout << "\tNumber of SiPMs above threshold("<<fSiPMThreshold<<") : "
-//      << eventInformation->GetSiPMSAboveThreshold() << G4endl;
-//      G4cout << "\tNumber of photons produced by cerenkov in this event : "
-//      << eventInformation->GetPhotonCount_Ceren() << G4endl;
-//      G4cout << "\tNumber of photons absorbed (OpAbsorption) in this event : "
-//      << eventInformation->GetAbsorptionCount() << G4endl;
-//      G4cout << "\tNumber of photons absorbed at boundaries (OpBoundary) in "
-//      << "this event : " << eventInformation->GetBoundaryAbsorptionCount()
-//      << G4endl;
-//      G4cout << "Unacounted for photons in this event : "
-//      << (eventInformation->GetPhotonCount_Ceren() -
-//          eventInformation->GetAbsorptionCount() -
-//          eventInformation->GetHitCount() -
-//          eventInformation->GetBoundaryAbsorptionCount())
-//      << G4endl;
-//   }
-//   //If we have set the flag to save 'special' events, save here
-//   if ( fSaveThreshold&&eventInformation->GetPhotonCount() <= fSaveThreshold )
-//   {
-//      G4RunManager::GetRunManager()->rndmSaveThisEvent();
-//   }
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-//void qCalEventAction::SetSaveThreshold(G4int save){
-//   /*Sets the save threshold for the random number seed. If the number of photons
-//    generated in an event is lower than this, then save the seed for this event
-//    in a file called run###evt###.rndm
-//    */
-//   fSaveThreshold = save;
-//   G4RunManager::GetRunManager()->SetRandomNumberStore(true);
-//   G4RunManager::GetRunManager()->SetRandomNumberStoreDir("random/");
-//   //  G4UImanager::GetUIpointer()->ApplyCommand("/random/setSavingFlag 1");
-//}
-

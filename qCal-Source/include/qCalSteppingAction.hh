@@ -16,8 +16,7 @@ public:
    
    qCalSteppingAction();
    virtual ~qCalSteppingAction();
-   virtual void UserSteppingAction(G4Step*);
-      
+   
 private:
    
    G4OpBoundaryProcessStatus fExpectedNextStatus;

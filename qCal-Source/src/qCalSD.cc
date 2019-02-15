@@ -44,7 +44,8 @@ void qCalSD::Initialize(G4HCofThisEvent* hitsCE)
    fSiPMHitCollection = new qCalSiPMHitsCollection(SensitiveDetectorName, collectionName[0]);
    //Store collection with event and keep ID
    static G4int hitCID = -1;
-   if(hitCID<0){
+   if(hitCID<0)
+   {
       hitCID = GetCollectionID(0);
    }
    hitsCE->AddHitsCollection( hitCID, fSiPMHitCollection );
