@@ -351,7 +351,7 @@ void qCalDetectorConstruction::ConstructSDandField()
    G4SDManager *sdMan = G4SDManager::GetSDMpointer();
    G4String SDname;
 
-   G4VSensitiveDetector* sipm = new qCalSD(SDname="/SiPM");
+   G4VSensitiveDetector* sipm = new qCalSD(SDname="/SiPM",p_fAbsLen,p_sdCubeSize,p_nZAxis);
    sdMan->AddNewDetector(sipm);
    logicSiPM->SetSensitiveDetector(sipm);
 }

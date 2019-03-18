@@ -120,6 +120,24 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
       fSiPMNums[i] = i;
    }
 
+   // Filling the X,Y,Z coordinate ntuples:
+
+   std::map<G4ThreeVector, int> mapOfHits = qCalSD::returnMap();
+   G4int counter = 0;
+   for (auto iter3 = mapOfHits.cbegin(); iter3 != mapOfHits.cend(); iter3++)
+   {
+      G4ThreeVector tempPos = iter3->first;
+      G4int tempX = tempPos.getX();
+      G4int tempY = tempPos.getY();
+      G4int tempZ = tempPos.getZ();
+
+      fSiPMCordsX[counter] = tempX;
+      fSiPMCordsY[counter] = tempY;
+      fSiPMCordsZ[counter] = tempZ;
+      counter = counter+1;
+   }
+
+
    G4int nZAxis = eventDetector->GetnZAxis();
    G4float absLen =  eventDetector->GetAbsLen();
    G4double cubeSize = eventDetector->GetCubeSize();
