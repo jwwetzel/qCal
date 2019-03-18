@@ -105,8 +105,6 @@ G4bool qCalSD::ProcessHits(G4Step* step, G4TouchableHistory*)
    
    if ( hit == NULL && isHit == 1)
    {
-      //G4cout << "POS VECTOR IS: " << posVector << G4endl;
-      //G4cout << "NORMED POS VECTOR IS: " << NormalizeCoordinates(posVector) << G4endl;
       hit = new qCalHit(posVector, hitTime, photonWavelength);
       fSiPMHitCollection->insert(hit);
       aTrack->SetTrackStatus(fStopAndKill);
@@ -182,7 +180,6 @@ void qCalSD::EndOfEvent(G4HCofThisEvent*) {
    for (auto iter = mapOfHits.cbegin(); iter != mapOfHits.cend(); iter++) {
 
       G4ThreeVector posAt = iter->first;
-      // G4cout << "HERE POS VECTOR IS: " << posAt << G4endl;
       G4double newXtemp = (posAt.getX()) - (offsetX);
       G4double newYtemp = (posAt.getY()) - (offsetY);
       G4double newZtemp = (posAt.getZ()) - (offsetZ);
@@ -203,7 +200,6 @@ void qCalSD::EndOfEvent(G4HCofThisEvent*) {
    } else {
       normOffsetZ = (((p_fAbsLen / 2) + (p_fcubeSize / 2)) * 2) / cm;
    }
-   // G4cout << "2. NORM OFFSET Z IS: " << normOffsetZ << G4endl;
 
    for (auto iter2 = mapOfHits.cbegin(); iter2 != mapOfHits.cend(); iter2++) {
       G4ThreeVector posAt = iter2->first;
@@ -211,11 +207,7 @@ void qCalSD::EndOfEvent(G4HCofThisEvent*) {
       G4double newX = (posAt.getX());// - (offsetX);
       G4double newY = (posAt.getY());// -(offsetY);
       G4double newZ = (posAt.getZ()) - (offsetZ);
-      // G4cout << "BUT HERE IS THE NEW Z IS: " << newZ/normOffsetZ << G4endl;
-
-      //newVector = G4ThreeVector(posAt.getX(), posAt.getY(), newZ);
       newVector = G4ThreeVector(newX, newY, newZ / normOffsetZ);
-      // G4cout << "HERE NEW VECTOR IS: " << newVector << G4endl;
       finalMap.insert(std::make_pair(newVector, hitNo));
    }
 

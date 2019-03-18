@@ -36,9 +36,7 @@ class qCalSD : public G4VSensitiveDetector
    void DrawAll();
    void PrintAll();
    static std::map<G4ThreeVector, int> returnMap() { return normalizedMap; }
-
-   G4ThreeVector NormalizeCoordinates(const G4ThreeVector& posAt);
-
+   
    //Initialize the arrays to store pmt possitions
    inline void InitSiPMs(G4int nSiPMs){
       if(fSiPMPositionsX)delete fSiPMPositionsX;
@@ -48,11 +46,6 @@ class qCalSD : public G4VSensitiveDetector
       fSiPMPositionsY=new G4DataVector(nSiPMs);
       fSiPMPositionsZ=new G4DataVector(nSiPMs);
    }
-
-   //Store a pmt position
-   void SetSiPMPositions(const std::vector<G4ThreeVector>& positions);
-
-   static G4double GetOffsetZ(){return p_foffsetZ;}
 
    private:
 
@@ -68,7 +61,6 @@ class qCalSD : public G4VSensitiveDetector
    static G4double p_foffsetZ;
 
    void setNormalizedMap(std::map<G4ThreeVector, int> i) { normalizedMap = i; }
-   void setOffsetZ(G4double offset){p_foffsetZ = offset;}
 
 };
 
