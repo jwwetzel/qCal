@@ -46,18 +46,12 @@ class qCalSD : public G4VSensitiveDetector
       fSiPMPositionsZ=new G4DataVector(nSiPMs);
    }
 
-   //Store a pmt position
-   void SetSiPMPositions(const std::vector<G4ThreeVector>& positions);
-
-   
-   
    private:
-   
-   qCalSiPMHitsCollection* fSiPMHitCollection;
-
-   G4DataVector* fSiPMPositionsX;
-   G4DataVector* fSiPMPositionsY;
-   G4DataVector* fSiPMPositionsZ;
+      qCalSiPMHitsCollection* fSiPMHitCollection;
+      std::map<G4ThreeVector, int> mapOfHits;
+      G4DataVector* fSiPMPositionsX;
+      G4DataVector* fSiPMPositionsY;
+      G4DataVector* fSiPMPositionsZ;
 };
 
 #endif

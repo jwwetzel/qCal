@@ -7,6 +7,7 @@
 #include "G4Track.hh"
 #include "G4Step.hh"
 #include "G4SDManager.hh"
+#include "G4RunManager.hh"
 
 #include "G4VPhysicalVolume.hh"
 #include "G4VTouchable.hh"
@@ -14,6 +15,7 @@
 #include "G4ios.hh"
 #include "G4ParticleTypes.hh"
 #include "G4ParticleDefinition.hh"
+#include <map>
 
 
 //Constructor
@@ -29,15 +31,6 @@ qCalSD::~qCalSD()
    
 }
 
-void qCalSD::SetSiPMPositions(const std::vector<G4ThreeVector>& positions)
-{
-//   for (G4int i=0; i<G4int(positions.size()); ++i) {
-//      if(fSiPMPositionsX)fSiPMPositionsX->push_back(positions[i].x());
-//      if(fSiPMPositionsY)fSiPMPositionsY->push_back(positions[i].y());
-//      if(fSiPMPositionsZ)fSiPMPositionsZ->push_back(positions[i].z());
-//   }
-}
-
 //Initialize (Required)
 void qCalSD::Initialize(G4HCofThisEvent* hitsCE)
 {
@@ -51,6 +44,7 @@ void qCalSD::Initialize(G4HCofThisEvent* hitsCE)
    hitsCE->AddHitsCollection( hitCID, fSiPMHitCollection );
 }
 
+
 //Process Hits (Required)
 G4bool qCalSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 {
@@ -63,29 +57,33 @@ G4bool qCalSD::ProcessHits(G4Step* step, G4TouchableHistory*)
    G4Track *aTrack = step->GetTrack() ;
 
    G4TouchableHistory* touchable = (G4TouchableHistory*)(preStepPoint->GetTouchable());
+   ///
+
+   G4ThreeVector copyNoPos = touchable->GetTranslation();
+   /////Storing the smallest vector(which will be (0,0,0), as well as the second smallest which will be (0,0,1);
+   G4double tempX = copyNoPos.getX()/cm;
+   G4double tempY = copyNoPos.getY()/cm;
+   G4double tempZ = copyNoPos.getZ()/cm;
+   G4ThreeVector posVector = G4ThreeVector(tempX, tempY, tempZ);
+   std::map<G4ThreeVector, int>::iterator it = mapOfHits.find(posVector);
+
+   if (it != mapOfHits.end())
+   {
+      it->second++;
+   }
+   else
+   {
+      mapOfHits.insert(std::make_pair(posVector, 1));
+   }
+
+
+   ///
    G4int copyNo                  = touchable->GetVolume()->GetCopyNo();
    G4double hitTime              = preStepPoint->GetGlobalTime();
    G4double photonWavelength     = 4.15e-15*3e8/(step->GetTrack()->GetTotalEnergy()/eV)*1e9;  //nm
    
    qCalHit* hit = NULL;
-   G4int ix = -1;
-   for ( G4int i = 0; i < fSiPMHitCollection->entries(); ++i )
-   {
-      if ( (*fSiPMHitCollection)[i]->GetSiPMNumber() == copyNo )
-      {
-         ix = i;
-         break;
-      }
-   }
 
-//   if ( ix >= 0 )
-//   {
-//      if ( (*fSiPMHitCollection)[ix]->GetTime() > hitTime )
-//      {
-//         (*fSiPMHitCollection)[ix]->SetTime(hitTime);
-//      }
-//   }
-   
    G4int isHit = 0;
    
    // Simulating the Hamamatsu S13360-**75CS
@@ -104,11 +102,15 @@ G4bool qCalSD::ProcessHits(G4Step* step, G4TouchableHistory*)
    
    if ( hit == NULL && isHit == 1)
    {
-      hit = new qCalHit(copyNo, hitTime, photonWavelength);
+      //G4cout << "POS VECTOR IS: " << posVector << G4endl;
+      //G4cout << "NORMED POS VECTOR IS: " << NormalizeCoordinates(posVector) << G4endl;
+      hit = new qCalHit(posVector, hitTime, photonWavelength);
       fSiPMHitCollection->insert(hit);
       aTrack->SetTrackStatus(fStopAndKill);
       hit->SetDrawit(true);
       hit->IncPhotonCount();
+
+
    }
    
    return false;
@@ -160,9 +162,20 @@ G4bool qCalSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 //}
 
 //End event (Required)
+
+
 void qCalSD::EndOfEvent(G4HCofThisEvent*)
 {
-   
+   G4double offsetZ = 10;
+   for (auto iter = mapOfHits.cbegin(); iter != mapOfHits.cend(); iter++)
+   {
+      G4ThreeVector posAt = iter->first;
+      if (abs(offsetZ) >= abs(posAt.getZ()))
+      {
+         offsetZ = posAt.getZ();
+      }
+   }
+   ((qCalDetectorConstruction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction())->SetOffsetZ(offsetZ);
 }
 
 //Clear hit markings
@@ -182,3 +195,4 @@ void qCalSD::PrintAll()
 {
    
 }
+

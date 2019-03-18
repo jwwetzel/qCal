@@ -17,10 +17,10 @@
 
 G4ThreadLocal G4Allocator<qCalHit>* qCalSiPMHitAllocator=0;
 
-qCalHit::qCalHit(G4int i, G4double t, G4double E)
-:fSiPMNumber(i),fPhotons(0),fPhysVol(0),fDrawit(false),G4VHit(), fTime(t), fEnergy(E)
+qCalHit::qCalHit(G4ThreeVector i, G4double t, G4double E)
+:fCoord(i), fSiPMNumber(0), fPhotons(0),fPhysVol(0),fDrawit(false),G4VHit(), fTime(t), fEnergy(E)
 {
-   
+
 }
 
 qCalHit::~qCalHit()
@@ -51,5 +51,20 @@ void qCalHit::Draw()
 
 void qCalHit::Print()
 {
-   G4cout << "SiPM[" << fSiPMNumber << "] " << fTime/ns << " (nsec)" << " Wavelength: " << fEnergy << " nm" << G4endl;
+   //G4cout << "SiPM[" << fSiPMNumber << "] " << fTime/ns << " (nsec)" << " Wavelength: " << fEnergy << " nm" << G4endl;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
