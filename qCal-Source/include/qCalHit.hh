@@ -18,7 +18,7 @@ class G4VTouchable;
 class qCalHit : public G4VHit
 {
 public:
-   qCalHit(G4int i, G4double t, G4double E);
+   qCalHit(G4ThreeVector i, G4double t, G4double E);
    virtual ~qCalHit();
    
    inline void *operator new(size_t);
@@ -27,6 +27,7 @@ public:
    virtual void Print();
    
    inline G4int GetSiPMNumber() { return fSiPMNumber; }
+   inline G4ThreeVector GetSiPMCoords() { return fCoord; }
    
    void SetTime(G4double val) { fTime = val; }
    G4double GetTime() const { return fTime; } 
@@ -47,21 +48,15 @@ public:
    
    inline void SetDrawit(G4bool b){fDrawit=b;}
    inline G4bool GetDrawit(){return fDrawit;}
-   
-   inline void SetSiPMPos(G4double x,G4double y,G4double z)
-   {
-      fPos=G4ThreeVector(x,y,z);
-   }
-   
-   inline G4ThreeVector GetSiPMPos(){return fPos;}
-   
+
+   inline void NormalizeZCoord(G4double offset, G4double norm){fCoord = G4ThreeVector(fCoord.getX(), fCoord.getY(), (fCoord.getZ() - offset)/norm);}
+
 private:
    G4double fTime;
    G4int fSiPMNumber;
    G4double fEnergy;
-   
    G4VPhysicalVolume* fPhysVol;
-   G4ThreeVector fPos;
+   G4ThreeVector fCoord;
    G4int fPhotons;
    G4bool fDrawit;
    
