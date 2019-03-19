@@ -17,12 +17,16 @@
 #include "G4ParticleDefinition.hh"
 #include <map>
 
+std::map<G4ThreeVector, int> qCalSD::normalizedMap = {}; // ?
 
 //Constructor
-qCalSD::qCalSD(G4String SDname)
+qCalSD::qCalSD(G4String SDname, G4float absLen, G4double cubeSize, G4int noOfZ)
 : G4VSensitiveDetector(SDname), fSiPMHitCollection(0),fSiPMPositionsX(0),fSiPMPositionsY(0),fSiPMPositionsZ(0)
 {
    collectionName.insert("SiPMHitCollection");
+   p_fAbsLen = absLen;
+   p_fcubeSize = cubeSize;
+   p_nZAxis = noOfZ;
 }
 
 //Destructor
@@ -83,7 +87,6 @@ G4bool qCalSD::ProcessHits(G4Step* step, G4TouchableHistory*)
    G4double photonWavelength     = 4.15e-15*3e8/(step->GetTrack()->GetTotalEnergy()/eV)*1e9;  //nm
    
    qCalHit* hit = NULL;
-
    G4int isHit = 0;
    
    // Simulating the Hamamatsu S13360-**75CS
@@ -102,8 +105,6 @@ G4bool qCalSD::ProcessHits(G4Step* step, G4TouchableHistory*)
    
    if ( hit == NULL && isHit == 1)
    {
-      //G4cout << "POS VECTOR IS: " << posVector << G4endl;
-      //G4cout << "NORMED POS VECTOR IS: " << NormalizeCoordinates(posVector) << G4endl;
       hit = new qCalHit(posVector, hitTime, photonWavelength);
       fSiPMHitCollection->insert(hit);
       aTrack->SetTrackStatus(fStopAndKill);
@@ -164,18 +165,55 @@ G4bool qCalSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 //End event (Required)
 
 
-void qCalSD::EndOfEvent(G4HCofThisEvent*)
-{
+
+void qCalSD::EndOfEvent(G4HCofThisEvent*) {
+   G4double offsetX = 10;
+   G4double offsetY = 10;
    G4double offsetZ = 10;
-   for (auto iter = mapOfHits.cbegin(); iter != mapOfHits.cend(); iter++)
-   {
+   G4double normOffsetZ;
+   G4double normOffsetXY;
+   bool newZfound = false;
+   std::map<G4ThreeVector, int> finalMap;
+   G4ThreeVector newVector;
+   G4double newZ;
+
+   for (auto iter = mapOfHits.cbegin(); iter != mapOfHits.cend(); iter++) {
+
       G4ThreeVector posAt = iter->first;
-      if (abs(offsetZ) >= abs(posAt.getZ()))
-      {
+      G4double newXtemp = (posAt.getX()) - (offsetX);
+      G4double newYtemp = (posAt.getY()) - (offsetY);
+      G4double newZtemp = (posAt.getZ()) - (offsetZ);
+      if (abs(offsetX) >= abs(posAt.getX())) {
+      }
+      if (abs(offsetY) >= abs(posAt.getY())) {
+      }
+      if (abs(offsetZ) >= abs(posAt.getZ())) {
          offsetZ = posAt.getZ();
       }
    }
-   ((qCalDetectorConstruction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction())->SetOffsetZ(offsetZ);
+
+   ((qCalDetectorConstruction *) G4RunManager::GetRunManager()->GetUserDetectorConstruction())->SetOffsetZ(offsetZ);
+
+   normOffsetXY = 1 / cm; //(p_fcubeSize / cm);
+   if (p_nZAxis % 2 == 0) {
+      normOffsetZ = ((p_fAbsLen) + (p_fcubeSize)) / cm;
+   } else {
+      normOffsetZ = (((p_fAbsLen / 2) + (p_fcubeSize / 2)) * 2) / cm;
+   }
+
+   for (auto iter2 = mapOfHits.cbegin(); iter2 != mapOfHits.cend(); iter2++) {
+      G4ThreeVector posAt = iter2->first;
+      G4int hitNo = iter2->second;
+      G4double newX = (posAt.getX());// - (offsetX);
+      G4double newY = (posAt.getY());// -(offsetY);
+      G4double newZ = (posAt.getZ()) - (offsetZ);
+      newVector = G4ThreeVector(newX, newY, newZ / normOffsetZ);
+      finalMap.insert(std::make_pair(newVector, hitNo));
+   }
+
+   setNormalizedMap(finalMap);
+   finalMap.clear();
+   mapOfHits.clear();
 }
 
 //Clear hit markings

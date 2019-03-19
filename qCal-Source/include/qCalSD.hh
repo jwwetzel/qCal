@@ -20,7 +20,7 @@ class qCalSD : public G4VSensitiveDetector
 {
    public:
    
-   qCalSD(G4String SDname);
+   qCalSD(G4String SDname, G4float absLen, G4double cubeSize, G4int noOfZ);
    virtual ~qCalSD();
 
    //Required Functions
@@ -35,7 +35,8 @@ class qCalSD : public G4VSensitiveDetector
    void Clear();
    void DrawAll();
    void PrintAll();
-
+   static std::map<G4ThreeVector, int> returnMap() { return normalizedMap; }
+   
    //Initialize the arrays to store pmt possitions
    inline void InitSiPMs(G4int nSiPMs){
       if(fSiPMPositionsX)delete fSiPMPositionsX;
@@ -47,11 +48,20 @@ class qCalSD : public G4VSensitiveDetector
    }
 
    private:
-      qCalSiPMHitsCollection* fSiPMHitCollection;
-      std::map<G4ThreeVector, int> mapOfHits;
-      G4DataVector* fSiPMPositionsX;
-      G4DataVector* fSiPMPositionsY;
-      G4DataVector* fSiPMPositionsZ;
+
+   qCalSiPMHitsCollection* fSiPMHitCollection;
+   std::map<G4ThreeVector, int> mapOfHits;
+   static std::map<G4ThreeVector, int> normalizedMap;
+   G4DataVector* fSiPMPositionsX;
+   G4DataVector* fSiPMPositionsY;
+   G4DataVector* fSiPMPositionsZ;
+   G4float p_fAbsLen;
+   G4double p_fcubeSize;
+   G4int p_nZAxis;
+   static G4double p_foffsetZ;
+
+   void setNormalizedMap(std::map<G4ThreeVector, int> i) { normalizedMap = i; }
+
 };
 
 #endif
