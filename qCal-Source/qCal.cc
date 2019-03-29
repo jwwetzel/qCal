@@ -79,7 +79,6 @@ int main(int argc, char** argv)
    #ifdef G4MULTITHREADED
    G4int nThreads = 0;
    #endif
-   G4int nThreads = 0;
    
    //Loop through the arguments and check to make sure they are in the correct order.
    G4cout << "If you receive a segmentation fault here, you probably entered the wrong arguments." << G4endl;
@@ -104,9 +103,11 @@ int main(int argc, char** argv)
          G4cout << "nXAxis: " << nXAxis << G4endl;
          G4cout << "nYAxis: " << nYAxis << G4endl;
          G4cout << "nZAxis: " << nZAxis << G4endl;
-		 G4cout << "startingEnergy: " << startingEnergy << G4endl;
+         G4cout << "startingEnergy: " << startingEnergy << G4endl;
          G4cout << "sAbs: " << sAbs << G4endl;
+#ifdef G4MULTITHREADED
          G4cout << "nThreads: " << nThreads << G4endl;
+#endif
          G4cout << "Macro: " << macro << G4endl;
          G4cout << "Session: " << session << G4endl;
          PrintUsage();
@@ -163,13 +164,13 @@ int main(int argc, char** argv)
 				nYAxis = nXAxis;
 				G4cout << "Number of X/Y Cubes: " << nXAxis << G4endl;
 		//For Z of detector, dependaant on the energy of the particle that will be entering
-				G4float tMax, lambdaAtt, L, layerWidth;
+				G4float tMax, lambdaAtt, LMax, layerWidth;
 				tMax = (0.2)*log(startingEnergy) + 0.7;
 				lambdaAtt = pow((startingEnergy), 0.3);
-				L = tMax + (2.5)*(lambdaAtt);
+				LMax = tMax + (2.5)*(lambdaAtt);
 				layerWidth = (nCubeWidth + fAbsRadLen);
 				nZAxis = ceil((L*bothNucLength) / layerWidth);
-				//G4cout << "tMax: " << tMax << ", " << "lambdaAtt: " << lambdaAtt << ", " "L: " << L << ", " << "LayerWidth: " << layerWidth << G4endl;
+				//G4cout << "tMax: " << tMax << ", " << "lambdaAtt: " << lambdaAtt << ", " "L: " << LMax << ", " << "LayerWidth: " << layerWidth << G4endl;
 				G4cout << "Number of Z Cubes: " << nZAxis << G4endl;
 
    auto detConstruction = new qCalDetectorConstruction(nXAxis, nYAxis, nZAxis, sAbs, fAbsRadLen, nCubeWidth);
