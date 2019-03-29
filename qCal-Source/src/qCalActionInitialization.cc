@@ -11,7 +11,7 @@
 
 
 //constructor
-qCalActionInitialization::qCalActionInitialization()
+qCalActionInitialization::qCalActionInitialization(G4String sParticle, G4int sEnergy)
 : G4VUserActionInitialization()
 {
    // Grab the Detector construction to aim the gun at its center.
@@ -22,6 +22,8 @@ qCalActionInitialization::qCalActionInitialization()
    p_gunXLocation = 0;
    p_gunYLocation = 0;
    p_gunZLocation = p_theDetector->GetAbsZdim()+1*cm;
+   startingParticle = sParticle;
+   startingEnergy = sEnergy;
    G4cout << "************************************"   << G4endl;
    G4cout << "***    Action Initialization     ***"   << G4endl;
    G4cout << "************************************"   << G4endl;
@@ -48,9 +50,9 @@ void qCalActionInitialization::Build()const
    SetUserAction(eventAction);
    SetUserAction(new qCalRunAction(eventAction));
    
-   G4cout << "The Gun's Default Config is: " << G4endl;
-   G4cout << "Particle: Mu- "                << G4endl;
-   G4cout << "Energy: 120 GeV "              << G4endl;
+   G4cout << "The Gun's Config is: " << G4endl;
+   G4cout << "Particle: " << startingParticle             << G4endl;
+   G4cout << "Energy: " << startingEnergy               << G4endl;
 
 }
 
