@@ -35,10 +35,11 @@ SDVolume(((qCalDetectorConstruction*)G4RunManager::GetRunManager()->
    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    //Proto Histogram examples:
    //analysisManager->CreateH1("0","Photon Wavelength Per SiPM Hit", 250, 0., 1000);
-   //analysisManager->CreateH1("1","# of Photons per Event", 100, 0., 10000);
+   analysisManager->CreateH1("TimingHist", "HitTimesPerSiPM", 10, 0, 100);
+   analysisManager->CreateH1("PhotonCountHist","# of Photons per Event", 100, 0., 10000);
    //analysisManager->CreateH1("Labs","trackL in absorber", 100, 0., 1*m);
    //analysisManager->CreateH1("Lgap","trackL in gap", 100, 0., 50*cm);
-   analysisManager->CreateH1("TimingHist", "HitTimesPerSiPM", 10, 0, 100);
+
    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Extra Detector information to be stored in ntuples:
    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

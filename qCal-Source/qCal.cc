@@ -69,7 +69,7 @@ int main(int argc, char** argv)
    G4int nZAxis = 1;
 
    // Variables that become true when the user enters detector sizes manually and override default size:
-   bool b_xAxisEnteredByUser= false;
+   bool b_xAxisEnteredByUser = false;
    bool b_yAxisEnteredByUser = false;
    bool b_zAxisEnteredByUser = false;
 
@@ -81,9 +81,9 @@ int main(int argc, char** argv)
    G4String sAbs = "Fe";
 
    //If multithreaded option, instantiate nThreads
-#ifdef G4MULTITHREADED
+   #ifdef G4MULTITHREADED
    G4int nThreads = 0;
-#endif
+   #endif
 
    //Loop through the arguments and check to make sure they are in the correct order.
    G4cout << "If you receive a segmentation fault here, you probably entered the wrong arguments." << G4endl;
@@ -98,11 +98,11 @@ int main(int argc, char** argv)
       else if (G4String(argv[i]) == "-e") startingEnergy = atoi(argv[i + 1]);
       else if (G4String(argv[i]) == "-p") startingParticle = argv[i + 1];
       else if ( G4String(argv[i]) == "-a" ) sAbs  = argv[i+1];
-#ifdef G4MULTITHREADED
+   #ifdef G4MULTITHREADED
          else if ( G4String(argv[i]) == "-t" ) {
          nThreads = G4UIcommand::ConvertToInt(argv[i+1]);
       }
-#endif
+   #endif
       else {
          G4cout << "Incorrect Usage, arguments read are: " << G4endl;
          G4cout << "nXAxis: " << nXAxis << G4endl;
@@ -110,9 +110,9 @@ int main(int argc, char** argv)
          G4cout << "nZAxis: " << nZAxis << G4endl;
          G4cout << "startingEnergy: " << startingEnergy << G4endl;
          G4cout << "sAbs: " << sAbs << G4endl;
-#ifdef G4MULTITHREADED
+   #ifdef G4MULTITHREADED
          G4cout << "nThreads: " << nThreads << G4endl;
-#endif
+   #endif
          G4cout << "Macro: " << macro << G4endl;
          G4cout << "Session: " << session << G4endl;
          PrintUsage();
@@ -128,14 +128,14 @@ int main(int argc, char** argv)
    }
 
    //Construct the default Run Manager
-#ifdef G4MULTITHREADED
+   #ifdef G4MULTITHREADED
    auto runManager = new G4MTRunManager;
    if ( nThreads > 0 ) {
       runManager->SetNumberOfThreads(nThreads);
    }
-#else
+#  else
    auto runManager = new G4RunManager;
-#endif
+   #endif
 
 
    /**************************************************************************************
