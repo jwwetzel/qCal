@@ -177,13 +177,18 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
       }
    }
 
-   // Fill the hit times ntuple:
+
+
+   // Fill the hit times ntuple and the PhotonCount Histogram
    // Create histograms of hit times for each SiPM and extract the peak value which is the mode of hit times for that SiPM.
    // An initial estimate of the histogram bin width is 0.015 - 0.020 nsecs:
-
+   G4int i_totalPhotonCount = 0;
    G4double timeBinWidth = 0.015;
 
    for (G4int id = 0; id < SDVolume ; ++id){
+      // Sum up all the
+      i_totalPhotonCount += fphotonCount[id];
+
       G4double thi = finalHitTimes[id];
       G4double tlow = initialHitTimes[id];
 
@@ -218,6 +223,8 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
       // Clear histogram of hit times:
       analysisManager->GetH1(0)->reset();
    }
+   // Adds the events photon count to the histogram:
+   analysisManager->FillH1(1, i_totalPhotonCount);
 
    // Update all the root ntuples:
    analysisManager->AddNtupleRow();
