@@ -49,8 +49,6 @@ public:
    inline void SetDrawit(G4bool b){fDrawit=b;}
    inline G4bool GetDrawit(){return fDrawit;}
 
-   inline void NormalizeZCoord(G4double offset, G4double norm){fCoord = G4ThreeVector(fCoord.getX(), fCoord.getY(), (fCoord.getZ() - offset)/norm);}
-
 private:
    G4double fTime;
    G4int fSiPMNumber;

@@ -355,3 +355,18 @@ void qCalDetectorConstruction::ConstructSDandField()
    sdMan->AddNewDetector(sipm);
    logicSiPM->SetSensitiveDetector(sipm);
 }
+
+G4int qCalDetectorConstruction::RawCoordsToSiPMNumber(const G4ThreeVector &raw){
+   // The raw coordinatates are first offset and scaled to integer coordinates (rx, ry, rz) centered at (0,0,0),
+   // These are the coordinates output root files which allow negative component values,
+   // The offset and scale factors derive from SiPM dimensions in the detector construction
+   G4double rx = raw.getX() / this->GetCoordScaleXY();
+   G4double ry = raw.getY() / this->GetCoordScaleXY();
+   G4double rz = (raw.getZ() - p_foffsetZ) / this->GetCoordScaleZ();
+   // (rx, ry, rz) are then re-centered in a detector corner so that all components are positive:
+   G4double cx = rx + floor(0.5*p_nXAxis);
+   G4double cy = ry + floor(0.5*p_nYAxis);
+   G4double cz = rz + floor(0.5*p_nZAxis);
+   // The output id value counts the SiPMs layer-wise from the starting corner:
+   return (int)round(cx + p_nXAxis*cy + p_nXAxis*p_nYAxis*cz);
+}

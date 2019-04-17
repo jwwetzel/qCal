@@ -41,20 +41,11 @@ public:
    G4int GetVolume(){return p_nXAxis * p_nYAxis * p_nZAxis;};
    std::vector<G4double>& GetDetectorAxisValues(){return p_vDetectorAxisValues;}
    G4String GetAbsMaterial(){return p_sAbs;}
-
-   void SetOffsetZ(G4double offsetZ ){p_foffsetZ = offsetZ;}
-   G4double GetOffsetZ(){return p_foffsetZ;}
-
-   G4float getCubeSize() {
-      return (p_fCubeWidth + 2 * p_fWrapSize + p_fQuartzSpacing);}
-
-   G4int GetSiPMIDfromPosition(G4ThreeVector coords){
-      G4double px = coords.getX() + floor(p_nXAxis / 2);
-      G4double py = coords.getY() + floor(p_nYAxis / 2);
-      G4double pz = coords.getZ() + floor(p_nZAxis / 2);
-      G4int id =  round(px + p_nXAxis*py + p_nXAxis * p_nYAxis * pz);
-      return id;
-   }
+   G4double GetCoordScaleZ(){return (p_fAbsLen + p_sdCubeSize)/cm;}
+   G4double GetCoordScaleXY(){return p_sdCubeSize/cm;}
+   G4double GetCoordOffsetZ(){return p_foffsetZ;}
+   void SetCoordOffsetZ(G4double newOffsetZ){p_foffsetZ = newOffsetZ;}
+   G4int RawCoordsToSiPMNumber(const G4ThreeVector &raw);
 
 
 private:

@@ -23,11 +23,11 @@ class qCalSD : public G4VSensitiveDetector
    qCalSD(G4String SDname, G4float absLen, G4double cubeSize, G4int noOfZ);
    virtual ~qCalSD();
 
-   //Required Functions
+   //    Required Functions
    virtual G4bool ProcessHits(G4Step* step, G4TouchableHistory* rohist);
-   //A version of processHits that keeps aStep constant
-//   G4bool ProcessHits_constStep(const G4Step* ,
-//                                G4TouchableHistory* );
+   //    A version of processHits that keeps aStep constant
+   //   G4bool ProcessHits_constStep(const G4Step* ,
+   //   G4TouchableHistory* );
    virtual void Initialize(G4HCofThisEvent* hitCollection);
    virtual void EndOfEvent(G4HCofThisEvent* hitCollection );
 
@@ -35,7 +35,6 @@ class qCalSD : public G4VSensitiveDetector
    void Clear();
    void DrawAll();
    void PrintAll();
-   static std::map<G4ThreeVector, int> returnMap() { return normalizedMap; }
    
    //Initialize the arrays to store pmt possitions
    inline void InitSiPMs(G4int nSiPMs){
@@ -51,17 +50,12 @@ class qCalSD : public G4VSensitiveDetector
 
    qCalSiPMHitsCollection* fSiPMHitCollection;
    std::map<G4ThreeVector, int> mapOfHits;
-   static std::map<G4ThreeVector, int> normalizedMap;
    G4DataVector* fSiPMPositionsX;
    G4DataVector* fSiPMPositionsY;
    G4DataVector* fSiPMPositionsZ;
    G4float p_fAbsLen;
    G4double p_fcubeSize;
    G4int p_nZAxis;
-   static G4double p_foffsetZ;
-
-   void setNormalizedMap(std::map<G4ThreeVector, int> i) { normalizedMap = i; }
-
 };
 
 #endif
