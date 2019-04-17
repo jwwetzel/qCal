@@ -191,7 +191,7 @@ void qCalSD::EndOfEvent(G4HCofThisEvent*) {
 
       count++;
    }
-   G4cout << "THE Z-OFFSET IS: " << offsetZ << G4endl;
+   //G4cout << "THE Z-OFFSET IS: " << offsetZ << G4endl;
 
    ((qCalDetectorConstruction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction())->SetCoordOffsetZ(offsetZ);
 
