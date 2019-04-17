@@ -53,9 +53,9 @@ SDVolume(((qCalDetectorConstruction*)G4RunManager::GetRunManager()->
    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
    analysisManager->CreateNtuple("qCal", "Simulation Data");
-   analysisManager->CreateNtupleIColumn("SiPMPositionX", fEventAction->GetSiPMCoordinatesX()); // ID 0
-   analysisManager->CreateNtupleIColumn("SiPMPositionY", fEventAction->GetSiPMCoordinatesY()); // ID 1
-   analysisManager->CreateNtupleIColumn("SiPMPositionZ", fEventAction->GetSiPMCoordinatesZ()); // ID 2
+   analysisManager->CreateNtupleIColumn("SiPMPositionX", fEventAction->GetSiPMCoordsX()); // ID 0
+   analysisManager->CreateNtupleIColumn("SiPMPositionY", fEventAction->GetSiPMCoordsY()); // ID 1
+   analysisManager->CreateNtupleIColumn("SiPMPositionZ", fEventAction->GetSiPMCoordsZ()); // ID 2
    analysisManager->CreateNtupleDColumn("SiPMNumbers", fEventAction->GetSiPMNums()); // ID 3
    analysisManager->CreateNtupleDColumn("PhotonCounts", fEventAction->GetPhotonCount()); // ID 4
    analysisManager->CreateNtupleDColumn("HitTimes", fEventAction->GetHitTimes()); // ID 5

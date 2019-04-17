@@ -2,6 +2,7 @@
 #define qCalEventAction_h 1
 
 #include "G4UserEventAction.hh"
+#include "G4SystemOfUnits.hh"
 #include "globals.hh"
 #include "G4ThreeVector.hh"
 #include <vector>
@@ -25,10 +26,9 @@ public:
    std::vector<G4double>& GetSiPMNums() {return fSiPMNums;}
    std::vector<G4double>& GetHitTimes() {return fHitTimes;}
 
-   std::vector<G4int>& GetSiPMCoordinatesX() { return fSiPMCordsX; }
-   std::vector<G4int>& GetSiPMCoordinatesY() { return fSiPMCordsY; }
-   std::vector<G4int>& GetSiPMCoordinatesZ() { return fSiPMCordsZ; }
-
+   std::vector<G4int>& GetSiPMCoordsX() { return iSiPMCoordsX; }
+   std::vector<G4int>& GetSiPMCoordsY() { return iSiPMCoordsY; }
+   std::vector<G4int>& GetSiPMCoordsZ() { return iSiPMCoordsZ; }
 
 private:
    G4int fSiPMCollID;
@@ -38,9 +38,9 @@ private:
    std::vector<G4double> fSiPMNums;
    std::vector<G4double> fHitTimes;
 
-   std::vector<G4int> fSiPMCordsX;
-   std::vector<G4int> fSiPMCordsY;
-   std::vector<G4int> fSiPMCordsZ;
+   std::vector<G4int> iSiPMCoordsX;
+   std::vector<G4int> iSiPMCoordsY;
+   std::vector<G4int> iSiPMCoordsZ;
 
 };
 

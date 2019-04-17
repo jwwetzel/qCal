@@ -17,7 +17,6 @@
 #include "G4ParticleDefinition.hh"
 #include <map>
 
-std::map<G4ThreeVector, int> qCalSD::normalizedMap = {}; // ?
 
 //Constructor
 qCalSD::qCalSD(G4String SDname, G4float absLen, G4double cubeSize, G4int noOfZ)
@@ -69,7 +68,7 @@ G4bool qCalSD::ProcessHits(G4Step* step, G4TouchableHistory*)
    G4double tempY = copyNoPos.getY()/cm;
    G4double tempZ = copyNoPos.getZ()/cm;
    G4ThreeVector posVector = G4ThreeVector(tempX, tempY, tempZ);
-   std::map<G4ThreeVector, int>::iterator it = mapOfHits.find(posVector);
+   auto it = mapOfHits.find(posVector);
 
    if (it != mapOfHits.end())
    {
@@ -80,13 +79,11 @@ G4bool qCalSD::ProcessHits(G4Step* step, G4TouchableHistory*)
       mapOfHits.insert(std::make_pair(posVector, 1));
    }
 
-
    ///
    G4int copyNo                  = touchable->GetVolume()->GetCopyNo();
    G4double hitTime              = preStepPoint->GetGlobalTime();
    G4double photonWavelength     = 4.15e-15*3e8/(step->GetTrack()->GetTotalEnergy()/eV)*1e9;  //nm
-   
-   qCalHit* hit = NULL;
+   qCalHit* hit = nullptr;
    G4int isHit = 0;
    
    // Simulating the Hamamatsu S13360-**75CS
@@ -103,7 +100,7 @@ G4bool qCalSD::ProcessHits(G4Step* step, G4TouchableHistory*)
    else if (photonWavelength >= 800 && photonWavelength < 900) isHit = (rand() % 100) < 5*0.85;
    
    
-   if ( hit == NULL && isHit == 1)
+   if ( hit == nullptr && isHit == 1)
    {
       hit = new qCalHit(posVector, hitTime, photonWavelength);
       fSiPMHitCollection->insert(hit);
@@ -167,53 +164,39 @@ G4bool qCalSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 
 
 void qCalSD::EndOfEvent(G4HCofThisEvent*) {
-   G4double offsetX = 10;
-   G4double offsetY = 10;
-   G4double offsetZ = 10;
-   G4double normOffsetZ;
-   G4double normOffsetXY;
-   bool newZfound = false;
-   std::map<G4ThreeVector, int> finalMap;
-   G4ThreeVector newVector;
-   G4double newZ;
+   // The following iterative method below is used calculate the Z-offset that converts the raw
+   // floating-point z component of the detector to an integer value, this value is constant with SiPM dimensions
+   // but scales strongly with absorber material. If the SiPM X and Y dimensions change offsetX and offsetY need
+   // have to be calculated. Direct formulas for the offsets may be needed in the future.
 
+   G4double offsetX;
+   G4double offsetY;
+   G4double offsetZ;
+
+   int count = 0;
    for (auto iter = mapOfHits.cbegin(); iter != mapOfHits.cend(); iter++) {
 
       G4ThreeVector posAt = iter->first;
-      G4double newXtemp = (posAt.getX()) - (offsetX);
-      G4double newYtemp = (posAt.getY()) - (offsetY);
-      G4double newZtemp = (posAt.getZ()) - (offsetZ);
-      if (abs(offsetX) >= abs(posAt.getX())) {
+      /*
+      if (fabs(offsetX) > fabs(posAt.getX()) || count == 0) {
+         offsetX = fabs(posAt.getX());
       }
-      if (abs(offsetY) >= abs(posAt.getY())) {
+      if (fabs(offsetY) > fabs(posAt.getY()) || count == 0) {
+         offsetY = fabs(posAt.getY());
       }
-      if (abs(offsetZ) >= abs(posAt.getZ())) {
-         offsetZ = posAt.getZ();
+      */
+      if (fabs(offsetZ) > fabs(posAt.getZ()) || count == 0) {
+         offsetZ = fabs(posAt.getZ());
       }
+
+      count++;
    }
+   G4cout << "THE Z-OFFSET IS: " << offsetZ << G4endl;
 
-   ((qCalDetectorConstruction *) G4RunManager::GetRunManager()->GetUserDetectorConstruction())->SetOffsetZ(offsetZ);
+   ((qCalDetectorConstruction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction())->SetCoordOffsetZ(offsetZ);
 
-   normOffsetXY = 1 / cm; //(p_fcubeSize / cm);
-   if (p_nZAxis % 2 == 0) {
-      normOffsetZ = ((p_fAbsLen) + (p_fcubeSize)) / cm;
-   } else {
-      normOffsetZ = (((p_fAbsLen / 2) + (p_fcubeSize / 2)) * 2) / cm;
-   }
-
-   for (auto iter2 = mapOfHits.cbegin(); iter2 != mapOfHits.cend(); iter2++) {
-      G4ThreeVector posAt = iter2->first;
-      G4int hitNo = iter2->second;
-      G4double newX = (posAt.getX());// - (offsetX);
-      G4double newY = (posAt.getY());// -(offsetY);
-      G4double newZ = (posAt.getZ()) - (offsetZ);
-      newVector = G4ThreeVector(newX, newY, newZ / normOffsetZ);
-      finalMap.insert(std::make_pair(newVector, hitNo));
-   }
-
-   setNormalizedMap(finalMap);
-   finalMap.clear();
    mapOfHits.clear();
+
 }
 
 //Clear hit markings
