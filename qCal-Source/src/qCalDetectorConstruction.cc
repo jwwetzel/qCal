@@ -139,16 +139,17 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
 
    //G4float fAbsZDim = 0.5*fAbsRadLen;
    G4double cubeSize       = (p_fCubeWidth + 2 * p_fWrapSize + p_fQuartzSpacing)/2;
-   G4double cubeSizeZ      = ((p_fCubeWidth + 2 * p_fWrapSize + p_fQuartzSpacing)/ 2) + (p_fAbsLen);
+   G4double cubeSizeZ      = ((p_fCubeWidth + 2 * p_fWrapSize + p_fQuartzSpacing)/ 2) + (fAbsRadLen);
    G4Material* sipmMat     = quartzMat;
 
    ////////////////////////////////////////////////////////////////////////////////////////////////
    //Define the world (needs full detector + full absorber + extra space)
    ////////////////////////////////////////////////////////////////////////////////////////////////
+   G4int zDetOff = 1 * cm;
    G4Box* solidWorld             = new G4Box("World",
                                              p_fAbsXDim + p_fCubeWidth,
                                              p_fAbsYDim + p_fCubeWidth,
-                                             p_fAbsZDim + p_fCubeWidth);
+                                             p_fAbsZDim + p_fCubeWidth + zDetOff);
 
    G4LogicalVolume* worldLog     = new G4LogicalVolume(solidWorld,
                                                        airMat,
@@ -176,11 +177,8 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    G4LogicalVolume* logicQuartz = new G4LogicalVolume(solidQuartz,
                                                       quartzMat,
                                                       "logicQuartz");
-
-   G4ThreeVector quartzPos = G4ThreeVector(0,
-                                           0,
-                                           0);
-
+   //Placement Coordinates
+   G4ThreeVector quartzPos = G4ThreeVector(0,0,0);
    ////////////////////////////////////////////////////////////////////////////////////////////////
    //Create the SiPM
    ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -192,10 +190,9 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    logicSiPM = new G4LogicalVolume(solidSiPM,
                                    sipmMat,
                                    "logicSiPM");
-
-   G4ThreeVector SiPMPos = G4ThreeVector(0,
-                                         0,
-                                         -((p_fCubeWidth) / 2 + 0.001*cm));
+   
+   G4float SiPMZCoord = 0 - ((p_fCubeWidth) / 2 + 0.001*cm);
+   G4ThreeVector SiPMPos = G4ThreeVector(0,0,SiPMZCoord);
 
    ////////////////////////////////////////////////////////////////////////////////////////////////
    //Define the whole detector(tyvec wrapping,quartz,SiPM) - "Pixel"
@@ -210,10 +207,10 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
                                           cubeSize,
                                           cubeSizeZ);
 
-   G4Box* solidDetectorXY     = new G4Box("DetectorXYLayer",
-                                          cubeSize*p_nXAxis,
-                                          cubeSize*p_nYAxis,
-                                          cubeSizeZ);
+   G4Box* solidDetectorXY = new G4Box("DetectorXYLayer",
+	   cubeSize*p_nXAxis,
+	   cubeSize*p_nYAxis,
+	   cubeSize);
 
    G4LogicalVolume* logicDetector   = new G4LogicalVolume(solidDetector,   airMat, "logicDetector");
    G4LogicalVolume* logicDetectorX  = new G4LogicalVolume(solidDetectorX,  airMat, "logicDetectorX");
@@ -274,51 +271,87 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
                                                           absMat,
                                                           "logicAbsorber");
 
-   G4LogicalVolume* logicFinal      = new G4LogicalVolume(solidFinalAbsorber,
-                                                          absMat,
-                                                          "logicFinal");
+   G4LogicalVolume* logicFinal = new G4LogicalVolume(solidFinalAbsorber,
+	   airMat,
+	   "logicFinal");
 
-   G4ThreeVector absPos             = G4ThreeVector(0,
-                                                    0,
-                                                    (cubeSize) + fAbsRadLen - 0.001*cm);
+   G4LogicalVolume* logicFullDetector = new G4LogicalVolume(solidFinalAbsorber,
+	   airMat,
+	   "logicFinal");
 
-   new G4PVPlacement(0,                      //no rotation
-                     absPos,                 //at (0,0,0)
-                     logicDetectorXY,        //its logical volume
-                     "absorberOfDetector",   //its name
-                     logicAbsorber,          //its mother  volume
-                     false,                  //no boolean operation
-                     4,                      //copy number
-                     checkOverlaps);         //overlaps checking
+
+   G4ThreeVector absPos = G4ThreeVector(0,
+										0,
+										-cubeSize);
+
+   G4ThreeVector detPos = G4ThreeVector(0,
+										0,
+										fAbsRadLen);
+
+   new G4PVPlacement(0,         //no rotation
+	   absPos,					//at (0,0,0)
+	   logicAbsorber,			//its logical volume
+	   "absorberOfDetector",	//its name
+	   logicFinal,				//its mother  volume
+	   false,					//no boolean operation
+	   4,						//copy number
+	   checkOverlaps);			//overlaps checking
+
+   new G4PVPlacement(0,         //no rotation
+	   detPos,					//at (0,0,0)
+	   logicDetectorXY,			//its logical volume
+	   "DetectorPortion",		//its name
+	   logicFinal,				//its mother  volume
+	   false,					//no boolean operation
+	   4,						//copy number
+	   checkOverlaps);			//overlaps checking
 
    ////////////////////////////////////////////////////////////////////////////////////////////////
    //Replicate pixel and absorber in XYZDir, and place it in the world
    ////////////////////////////////////////////////////////////////////////////////////////////////
-   new G4PVReplica("detecLayerXYZ",             //Name
-                   logicAbsorber,               //Logical Volume
-                   logicFinal,                  //Mother volume
+   new G4PVReplica("FullDetectorXYZ",           //Name
+                   logicFinal,					//Logical Volume
+                   logicFullDetector,           //Mother volume
                    kZAxis,                      //Axis of replication
                    (p_nZAxis),                  //Number of replica
                    (cubeSize + fAbsRadLen)*2);  //Width of replica
 
    new G4PVPlacement(0,                         //no rotation
                      G4ThreeVector(0, 0, 0),    //at (0,0,0)
-                     logicFinal,                //its logical volume
-                     "DetectorAndAbs",          //its name
+                     logicFullDetector,         //its logical volume
+                     "Final",					//its name
                      worldLog,                  //its mother  volume
                      false,                     //no boolean operation
                      5,                         //copy number
                      false);                    //overlaps checking
 
    ////////////////////////////////////////////////////////////////////////////////////////////////
-   //DEBUGGING: color/visible settings foe quartz, sipm, and absorber to check for collisions
+   //DEBUGGING: color/visible settings for quartz, sipm, and absorber to check for collisions
    ////////////////////////////////////////////////////////////////////////////////////////////////
    //Set some containers to invisible so we dont see their outlines
-   logicFinal->SetVisAttributes(new G4VisAttributes(false));
-   logicDetector->SetVisAttributes(new G4VisAttributes(false));
-   logicDetectorX->SetVisAttributes(new G4VisAttributes(false));
-   logicDetectorXY->SetVisAttributes(new G4VisAttributes(false));
-   //logicAbsorber->SetVisAttributes(new G4VisAttributes(true));
+   G4Color brown(0.7, 0.4, 0.1);
+   G4Color red(1.0, 0.0, 0.0);
+   G4Color blue(0.0, 0.0, 1.0);
+   G4Color yellow(1.0, 1.0, 0.0);
+
+   G4VisAttributes* yellowColor = new G4VisAttributes(yellow);
+   G4VisAttributes* redColor = new G4VisAttributes(red);
+ 
+
+  //logicDetectorXY->SetVisAttributes(new G4VisAttributes(redColor));
+ 
+  //Set some containers to invisible so we dont see their outlines
+  logicFinal->SetVisAttributes(new G4VisAttributes(false));
+  logicDetector->SetVisAttributes(new G4VisAttributes(false));
+  logicDetectorX->SetVisAttributes(new G4VisAttributes(false));
+  logicDetectorXY->SetVisAttributes(new G4VisAttributes(false));
+  logicFinal->SetVisAttributes(new G4VisAttributes(false));
+  logicFullDetector->SetVisAttributes(new G4VisAttributes(false));
+  //logicAbsorber->SetVisAttributes(new G4VisAttributes(false));
+  //logicAbsorber->SetVisAttributes(yellowColor);
+  //logicFinal->SetVisAttributes(redColor);
+
+
    ////////////////////////////////////////////////////////////////////////////////////////////////
    //Set the Quartz Surface
    ////////////////////////////////////////////////////////////////////////////////////////////////
