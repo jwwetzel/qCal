@@ -75,7 +75,7 @@ int main(int argc, char** argv)
 
    G4float nCubeWidth = 1.0; // 1.0 cm cube by default
    G4int startingEnergy = 1 * GeV;
-   G4String startingParticle = "Mu-";
+   G4String startingParticle = "mu-";
 
    //Absorber Z
    G4String sAbs = "Fe";
