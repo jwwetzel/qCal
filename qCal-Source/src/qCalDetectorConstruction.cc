@@ -190,8 +190,8 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    logicSiPM = new G4LogicalVolume(solidSiPM,
                                    sipmMat,
                                    "logicSiPM");
-   
-   G4float SiPMZCoord = 0 - ((p_fCubeWidth) / 2 + 0.001*cm);
+
+   G4double SiPMZCoord = 0 - ((p_fCubeWidth) / 2 + 0.001*cm);
    G4ThreeVector SiPMPos = G4ThreeVector(0,0,SiPMZCoord);
 
    ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -336,10 +336,10 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
 
    G4VisAttributes* yellowColor = new G4VisAttributes(yellow);
    G4VisAttributes* redColor = new G4VisAttributes(red);
- 
+
 
   //logicDetectorXY->SetVisAttributes(new G4VisAttributes(redColor));
- 
+
   //Set some containers to invisible so we dont see their outlines
   logicFinal->SetVisAttributes(new G4VisAttributes(false));
   logicDetector->SetVisAttributes(new G4VisAttributes(false));

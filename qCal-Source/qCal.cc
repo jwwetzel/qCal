@@ -227,9 +227,9 @@ int main(int argc, char** argv)
    {
       // interactive mode : define UI session
       UImanager->ApplyCommand("/control/execute init_vis.mac");
-      if (ui->IsGUI()) {
-         UImanager->ApplyCommand("/control/execute gui.mac");
-      }
+      //if (ui->IsGUI()) {
+         //UImanager->ApplyCommand("/control/execute gui.mac");
+      //}
       ui->SessionStart();
       delete ui;
    }
