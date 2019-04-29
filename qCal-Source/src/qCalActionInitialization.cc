@@ -19,8 +19,10 @@ qCalActionInitialization::qCalActionInitialization(G4String sParticle, G4int sEn
    // p_theDetector->GetAbsXdim(), or GetAbsYdim(), or GetAbsZdim();
    
    p_theDetector  = (qCalDetectorConstruction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction();
-   p_gunXLocation = 0;
-   p_gunYLocation = 0;
+   G4int nXAxisIsEven = 1 - p_theDetector->GetnXAxis()%2 ;
+   G4int nYAxisIsEven = 1 - p_theDetector->GetnYAxis()%2 ;
+   p_gunXLocation = nXAxisIsEven * 0.5*p_theDetector->GetCubeSize();
+   p_gunYLocation = nYAxisIsEven * 0.5*p_theDetector->GetCubeSize();
    p_gunZLocation = p_theDetector->GetAbsZdim()+1*cm;
    startingParticle = sParticle;
    startingEnergy = sEnergy;
@@ -36,8 +38,7 @@ qCalActionInitialization::qCalActionInitialization(G4String sParticle, G4int sEn
 }
 
 //destructor
-qCalActionInitialization::~qCalActionInitialization()
-{}
+qCalActionInitialization::~qCalActionInitialization() = default;
 
 //Build method
 void qCalActionInitialization::Build()const
@@ -59,6 +60,6 @@ void qCalActionInitialization::Build()const
 //Build for Master
 void qCalActionInitialization::BuildForMaster() const
 {
-   qCalEventAction* eventAction = new qCalEventAction;
+   auto eventAction = new qCalEventAction;
    SetUserAction(new qCalRunAction(eventAction));
 }

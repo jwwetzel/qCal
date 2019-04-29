@@ -18,17 +18,17 @@ class G4LogicalVolume;
 class qCalDetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
-   qCalDetectorConstruction(G4int nXAxis = 1,
+   explicit qCalDetectorConstruction(G4int nXAxis = 1,
                             G4int nYAxis = 1,
                             G4int nZAxis = 1,
                             G4String sAbs = "Fe",
-                            G4float fAbsLen = 1.0,
-                            G4float fCubeWidth = 1.0
+                            G4double fAbsLen = 1.0,
+                            G4double fCubeWidth = 1.0
    );
-   virtual ~qCalDetectorConstruction();
+   ~qCalDetectorConstruction() override;
 
-   virtual G4VPhysicalVolume* Construct();
-   virtual void ConstructSDandField();
+   G4VPhysicalVolume* Construct() override;
+   void ConstructSDandField() override;
 
    G4double GetAbsXdim(){return p_fAbsXDim;};
    G4double GetAbsYdim(){return p_fAbsYDim;};
@@ -36,7 +36,7 @@ public:
    G4int GetnXAxis(){return p_nXAxis;};
    G4int GetnYAxis(){return p_nYAxis;};
    G4int GetnZAxis(){return p_nZAxis;};
-   G4float GetAbsLen(){return p_fAbsLen;};
+   G4double GetAbsLen(){return p_fAbsLen;};
    G4double GetCubeSize(){return p_sdCubeSize;};
    G4int GetVolume(){return p_nXAxis * p_nYAxis * p_nZAxis;};
    std::vector<G4double>& GetDetectorAxisValues(){return p_vDetectorAxisValues;}
@@ -53,18 +53,20 @@ private:
    G4int p_nYAxis;
    G4int p_nZAxis;
    G4String p_sAbs;
-   G4float p_fCubeWidth;
-   G4float p_fAbsXDim;
-   G4float p_fAbsYDim;
-   G4float p_fAbsZDim;
-   G4float p_fQuartzSpacing;
-   G4float p_fWrapSize;
-   G4float p_SiPMDim;
-   G4float p_fAbsLen;
+   G4double p_fCubeWidth;
+   G4double p_fAbsXDim;
+   G4double p_fAbsYDim;
+   G4double p_fAbsZDim;
+   G4double p_fQuartzSpacing;
+   G4double p_fWrapSize;
+   G4double p_SiPMDim;
+   G4double p_fAbsLen;
    std::vector<G4double> p_vDetectorAxisValues;
    G4double p_sdCubeSize;
    G4double p_foffsetZ;
+   G4double p_fscaleZ;
    G4LogicalVolume* logicSiPM;
+   G4double rzMIN;
 
    //The SiPM SDs:
    G4Cache<qCalSD*> fSiPM_SD;
