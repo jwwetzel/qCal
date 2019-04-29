@@ -40,7 +40,7 @@ qCalDetectorConstruction::qCalDetectorConstruction(G4int nXAxis,                
    p_fAbsLen = fAbsLen;                                                                            //absorber radiation length
    p_sAbs = sAbs;                                                                                  //Absorber element
    p_fCubeWidth = fCubeWidth * cm;                                                                 //Width of a single cube
-   p_fQuartzSpacing = 0.03*cm;                                                                     //Width between x-cubes (circuit board + sipm)
+   p_fQuartzSpacing = 0.01*cm;                                                                     //Width between x-cubes (circuit board + sipm)
    p_fWrapSize = 0.015*cm;                                                                         //Width of the tyvek wrapping
    p_fAbsXDim = ((p_fCubeWidth + 2 * p_fWrapSize + p_fQuartzSpacing) * p_nXAxis) / 2;              //Detector X coord center
    p_fAbsYDim = ((p_fCubeWidth + 2 * p_fWrapSize + p_fQuartzSpacing) * p_nYAxis) / 2;              //Detector Y coord Center
@@ -212,7 +212,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    G4LogicalVolume* logicDetectorX  = new G4LogicalVolume(solidDetectorX,  airMat, "logicDetectorX");
    G4LogicalVolume* logicDetectorXY = new G4LogicalVolume(solidDetectorXY, airMat, "logicDetectorXY");
 
-   G4VPhysicalVolume* quartzPlace = new G4PVPlacement(nullptr,                   //no rotation
+   G4VPhysicalVolume* quartzPlace = new G4PVPlacement(nullptr,             //no rotation
                                                       quartzPos,           //at (0,0,0)
                                                       logicQuartz,         //its logical volume
                                                       "quartzOfDetector",  //its name
@@ -350,10 +350,11 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    ////////////////////////////////////////////////////////////////////////////////////////////////
    //Set the Quartz Surface
    ////////////////////////////////////////////////////////////////////////////////////////////////
-   G4OpticalSurface* quartzWrap = new G4OpticalSurface("QuartzWrap");
-   quartzWrap->SetType(dielectric_metal);
-   quartzWrap->SetFinish(polished);
-   quartzWrap->SetModel(glisur);
+   G4OpticalSurface *quartzWrap = new G4OpticalSurface("QuartzWrap");
+   G4LogicalSkinSurface *quartzSurface = new G4LogicalSkinSurface("QuartzSurface", logicQuartz, quartzWrap);
+   quartzWrap->SetType(dielectric_LUT);
+   quartzWrap->SetModel(LUT);
+   quartzWrap->SetFinish(polishedtyvekair);
 
    new G4LogicalBorderSurface("QuartzWrap",
                               quartzPlace,
