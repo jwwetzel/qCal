@@ -18,17 +18,17 @@ class G4LogicalVolume;
 class qCalDetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
-   explicit qCalDetectorConstruction(G4int nXAxis = 1,
+   qCalDetectorConstruction(G4int nXAxis = 1,
                             G4int nYAxis = 1,
                             G4int nZAxis = 1,
                             G4String sAbs = "Fe",
                             G4double fAbsLen = 1.0,
                             G4double fCubeWidth = 1.0
    );
-   ~qCalDetectorConstruction() override;
+   virtual ~qCalDetectorConstruction();
 
-   G4VPhysicalVolume* Construct() override;
-   void ConstructSDandField() override;
+   virtual G4VPhysicalVolume* Construct();
+   virtual void ConstructSDandField();
 
    G4double GetAbsXdim(){return p_fAbsXDim;};
    G4double GetAbsYdim(){return p_fAbsYDim;};
@@ -66,7 +66,6 @@ private:
    G4double p_foffsetZ;
    G4double p_fscaleZ;
    G4LogicalVolume* logicSiPM;
-   G4double rzMIN;
 
    //The SiPM SDs:
    G4Cache<qCalSD*> fSiPM_SD;

@@ -19,10 +19,8 @@ qCalActionInitialization::qCalActionInitialization(G4String sParticle, G4int sEn
    // p_theDetector->GetAbsXdim(), or GetAbsYdim(), or GetAbsZdim();
    
    p_theDetector  = (qCalDetectorConstruction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction();
-   G4int nXAxisIsEven = 1 - p_theDetector->GetnXAxis()%2 ;
-   G4int nYAxisIsEven = 1 - p_theDetector->GetnYAxis()%2 ;
-   p_gunXLocation = nXAxisIsEven * 0.5*p_theDetector->GetCubeSize();
-   p_gunYLocation = nYAxisIsEven * 0.5*p_theDetector->GetCubeSize();
+   p_gunXLocation = (1 - p_theDetector->GetnXAxis()%2 ) * 0.5*p_theDetector->GetCubeSize();
+   p_gunYLocation = (1 - p_theDetector->GetnYAxis()%2 )* 0.5*p_theDetector->GetCubeSize();
    p_gunZLocation = p_theDetector->GetAbsZdim()+1*cm;
    startingParticle = sParticle;
    startingEnergy = sEnergy;

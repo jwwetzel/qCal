@@ -99,7 +99,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
            1.000293, 1.000293, 1.000293, 1.000293, 1.000293, 1.000293, 1.000293,
            1.000293, 1.000293, 1.000293, 1.000293 };
 
-   auto airMPT = new G4MaterialPropertiesTable();
+   G4MaterialPropertiesTable* airMPT = new G4MaterialPropertiesTable();
    airMPT->AddProperty("RINDEX", PhotonEnergyQ, RefractiveIndexAir, nEntries);
    airMat->SetMaterialPropertiesTable(airMPT);
 
@@ -126,7 +126,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
            0.055*m, 0.054375*m, 0.05375*m, 0.053125*m,
            0.0525*m, 0.051875*m, 0.05125*m, 0.05*m };
 
-   auto quartzMPT = new G4MaterialPropertiesTable();
+   G4MaterialPropertiesTable* quartzMPT = new G4MaterialPropertiesTable();
    quartzMPT->AddProperty("RINDEX", PhotonEnergyQ, RefractiveIndexQ, nEntries);
    quartzMPT->AddProperty("ABSLENGTH", PhotonEnergyQ, AbsorptionQ, nEntries);
    quartzMat->SetMaterialPropertiesTable(quartzMPT);
@@ -153,7 +153,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
 
    G4ThreeVector solidPos        = G4ThreeVector(0, 0, 0);
 
-   G4VPhysicalVolume* physWorld  = new G4PVPlacement(nullptr,               //no rotation
+   G4VPhysicalVolume* physWorld  = new G4PVPlacement(0,               //no rotation
                                                      G4ThreeVector(), //at (0,0,0)
                                                      worldLog,        //its logical volume
                                                      "World",         //its name
@@ -284,7 +284,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
 										0,
 										fAbsRadLen);
 
-   new G4PVPlacement(nullptr,         //no rotation
+   new G4PVPlacement(0,         //no rotation
 	   absPos,					//at (0,0,0)
 	   logicAbsorber,			//its logical volume
 	   "absorberOfDetector",	//its name
@@ -292,7 +292,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
 	   false,					//no boolean operation
 	   4,						//copy number
 	   checkOverlaps);			//overlaps checking
-   new G4PVPlacement(nullptr,         //no rotation
+   new G4PVPlacement(0,         //no rotation
 	   detPos,					//at (0,0,0)
 	   logicDetectorXY,			//its logical volume
 	   "DetectorPortion",		//its name
@@ -364,7 +364,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    G4double reflectivity[2]   = { 1., 1. };
    G4double efficiency[2]     = { 0.0, 0.0 };
 
-   auto quartzWrapMPT = new G4MaterialPropertiesTable();
+   G4MaterialPropertiesTable* quartzWrapMPT = new G4MaterialPropertiesTable();
    quartzWrapMPT->AddProperty("REFLECTIVITY",   pp, reflectivity, 2);
    quartzWrapMPT->AddProperty("EFFICIENCY",     pp, efficiency,   2);
 
@@ -388,11 +388,12 @@ G4int qCalDetectorConstruction::RawCoordsToSiPMNumber(const G4ThreeVector &raw){
    // The raw coordinatates are first offset and scaled to integer coordinates (rx, ry, rz) centered at (0,0,0),
    // These are the coordinates output root files which allow negative component values,
    // The offset and scale factors derive from SiPM dimensions in the detector construction
-   G4int nXAxisIsEven = 1- this->p_nXAxis%2;
-   G4int nYAxisIsEven = 1 - this->p_nYAxis%2;
-   G4double rx = raw.getX() / (p_sdCubeSize/cm) + 0.5 * nXAxisIsEven;
-   G4double ry = raw.getY() / (p_sdCubeSize/cm) + 0.5 * nYAxisIsEven;
-   G4double rz = (raw.getZ() - p_foffsetZ )/p_fscaleZ;
+   G4int nXAxisIsEven = 1 - p_nXAxis%2;
+   G4int nYAxisIsEven = 1 - p_nYAxis%2;
+   G4int nZAxisIsEven = 1 - p_nZAxis%2;
+   G4double rx = raw.getX() / (p_sdCubeSize/cm) +0.5 * nXAxisIsEven;
+   G4double ry = raw.getY() / (p_sdCubeSize/cm) +0.5 * nYAxisIsEven;
+   G4double rz = (raw.getZ() - p_foffsetZ )/p_fscaleZ -nZAxisIsEven;
    // (rx, ry, rz) are then re-centered in a detector corner so that all components are positive:
    G4double cx = rx + floor(0.5*p_nXAxis);
    G4double cy = ry + floor(0.5*p_nYAxis);

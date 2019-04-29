@@ -12,12 +12,12 @@ class G4Run;
 class qCalRunAction : public G4UserRunAction
 {
 public:
-   explicit qCalRunAction(qCalEventAction* eventAction);
-   ~qCalRunAction() override;
+   qCalRunAction(qCalEventAction* eventAction);
+   virtual ~qCalRunAction();
    
-   void BeginOfRunAction(const G4Run*) override;
-   void EndOfRunAction(const G4Run*) override;
-   virtual void SetOutputFileName(const G4String& outputFileName);
+   virtual void BeginOfRunAction(const G4Run*);
+   virtual void EndOfRunAction(const G4Run*);
+   virtual void SetOutputFileName(G4String outputFileName);
    
 private:
    G4String p_runActionOutputFileName;

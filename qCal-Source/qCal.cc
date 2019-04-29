@@ -10,7 +10,6 @@
 #include "qCalDetectorConstruction.hh"
 #include "qCalActionInitialization.hh"
 #include "qCalPhysicsList.hh"
-
 #include <cstdlib>
 #include "G4UImanager.hh"
 #include "G4UIcommand.hh"
@@ -19,9 +18,8 @@
 #include "FTFP_BERT.hh"
 #include "G4OpticalPhysics.hh"
 #include "G4EmStandardPhysics_option4.hh"
-
 #include "G4NistManager.hh"
-#include "G4NuclideTable.hh"
+
 #ifdef G4MULTITHREADED
 #include "G4MTRunManager.hh"
 #else
@@ -73,8 +71,8 @@ int main(int argc, char** argv)
    bool b_yAxisEnteredByUser = false;
    bool b_zAxisEnteredByUser = false;
 
-   G4double nCubeWidth = 1.0; // 1.0 cm cube by default
-   auto startingEnergy = (G4int)(1 * GeV);
+   G4double nCubeWidth = 1; // 1.0 cm cube by default
+   G4int startingEnergy = 1 * GeV;
    G4String startingParticle = "mu-";
 
    //Absorber Z
@@ -122,7 +120,7 @@ int main(int argc, char** argv)
 
    //Detect interactive mode (no macro provided), define UI session
    G4UIExecutive* ui = nullptr;
-   if (macro.empty())
+   if (!macro.size())
    {
       ui = new G4UIExecutive(argc, argv, session);
    }
@@ -154,7 +152,7 @@ int main(int argc, char** argv)
    quartzMat->AddElement(Si, nAtoms = 1);
    quartzMat->AddElement(O, nAtoms = 4);
 
-   const G4Material* absorberMat = nist->FindOrBuildMaterial("G4_" + sAbs);
+   G4Material* absorberMat = nist->FindOrBuildMaterial("G4_" + sAbs);
    G4double fAbsRadLen = absorberMat->GetRadlen()*mm;
    ///Calculate the new X,Y, and Z based off of the initial energy
    //For X and Y of detector, dependant on the nuclear interaction length of the silicon + material.
@@ -165,8 +163,8 @@ int main(int argc, char** argv)
    fSilNucLength = quartzMat->GetNuclearInterLength()/cm;
    bothNucLength = fAbsNucLength + fSilNucLength;
    //G4cout << "Nuclear Interaction Lengths: " << fAbsNucLength << ", " << fSilNucLength << ", " << bothNucLength << G4endl;
-   if (!b_xAxisEnteredByUser) nXAxis = (G4int)ceil(bothNucLength / nCubeWidth);
-   if (!b_yAxisEnteredByUser) nYAxis = (G4int)ceil(bothNucLength / nCubeWidth);
+   if (!b_xAxisEnteredByUser) nXAxis = ceil(bothNucLength / nCubeWidth);
+   if (!b_yAxisEnteredByUser) nYAxis = ceil(bothNucLength / nCubeWidth);
    G4cout << "Number of X Cubes: " << nXAxis << G4endl;
    G4cout << "Number of Y Cubes: " << nYAxis << G4endl;
    //For Z of detector, dependaant on the energy of the particle that will be entering
@@ -175,7 +173,7 @@ int main(int argc, char** argv)
    lambdaAtt = pow((startingEnergy), 0.3);
    LMax = tMax + (2.5)*(lambdaAtt);
    layerWidth = (nCubeWidth + fAbsRadLen);
-   if (!b_zAxisEnteredByUser) nZAxis = (G4int)ceil((LMax*bothNucLength) / layerWidth);
+   if (!b_zAxisEnteredByUser) nZAxis = ceil((LMax*bothNucLength) / layerWidth);
    //G4cout << "tMax: " << tMax << ", " << "lambdaAtt: " << lambdaAtt << ", " "L: " << LMax << ", " << "LayerWidth: " << layerWidth << G4endl;
    G4cout << "Number of Z Cubes: " << nZAxis << G4endl;
 
@@ -218,7 +216,7 @@ int main(int argc, char** argv)
 
    //Process the macro or start the UI Session
 
-   if ( !macro.empty())
+   if (macro.size())
    {
       //batch mode
       G4String command = "/control/execute ";

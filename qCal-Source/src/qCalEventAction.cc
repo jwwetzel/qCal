@@ -167,7 +167,7 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
       G4double tlow = fInitialHitTimes[id];
       // Calculate the number of bins given the bin width and initial/final times:
       auto timeBins = (int)(ceil((thi-tlow) / timeBinWidth) + 1);
-      if (thi != -1 && tlow != -1 && thi > tlow && thi >= 0 && tlow >= 0) {
+      if (thi > tlow && thi >= 0 && tlow >= 0) {
          analysisManager->SetH1(0, timeBins, tlow, thi); // Hist ID 0
          for (G4int i = 0; i < n_hit; ++i) {
             qCalHit *hit = (*eventSiPMHitCollection)[i];
