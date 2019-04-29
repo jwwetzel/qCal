@@ -11,10 +11,10 @@ class qCalActionInitialization : public G4VUserActionInitialization
 {
 public:
     qCalActionInitialization(G4String sParticle, G4int sEnergy);
-    ~qCalActionInitialization() override;
+    virtual ~qCalActionInitialization();
 
-    void BuildForMaster() const override;
-    void Build() const override;
+    virtual void BuildForMaster() const;
+    virtual void Build() const;
 
 private:
    qCalDetectorConstruction* p_theDetector;

@@ -100,7 +100,7 @@ void qCalRunAction::EndOfRunAction(const G4Run* /*run*/)
    analysisManager->CloseFile();
 }
 
-void qCalRunAction::SetOutputFileName(const G4String& outputFileNameByCmd)
+void qCalRunAction::SetOutputFileName(G4String outputFileNameByCmd)
 {
    p_runActionOutputFileName = outputFileNameByCmd;
 }

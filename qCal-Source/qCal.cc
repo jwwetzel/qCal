@@ -10,7 +10,6 @@
 #include "qCalDetectorConstruction.hh"
 #include "qCalActionInitialization.hh"
 #include "qCalPhysicsList.hh"
-
 #include <cstdlib>
 #include "G4UImanager.hh"
 #include "G4UIcommand.hh"
@@ -19,9 +18,8 @@
 #include "FTFP_BERT.hh"
 #include "G4OpticalPhysics.hh"
 #include "G4EmStandardPhysics_option4.hh"
-
 #include "G4NistManager.hh"
-#include "G4NuclideTable.hh"
+
 #ifdef G4MULTITHREADED
 #include "G4MTRunManager.hh"
 #else
@@ -122,7 +120,7 @@ int main(int argc, char** argv)
 
    //Detect interactive mode (no macro provided), define UI session
    G4UIExecutive* ui = nullptr;
-   if (macro.empty())
+   if (!macro.size())
    {
       ui = new G4UIExecutive(argc, argv, session);
    }
@@ -154,7 +152,7 @@ int main(int argc, char** argv)
    quartzMat->AddElement(Si, nAtoms = 1);
    quartzMat->AddElement(O, nAtoms = 4);
 
-   const G4Material* absorberMat = nist->FindOrBuildMaterial("G4_" + sAbs);
+   G4Material* absorberMat = nist->FindOrBuildMaterial("G4_" + sAbs);
    G4double fAbsRadLen = absorberMat->GetRadlen()*mm;
    ///Calculate the new X,Y, and Z based off of the initial energy
    //For X and Y of detector, dependant on the nuclear interaction length of the silicon + material.
@@ -218,7 +216,7 @@ int main(int argc, char** argv)
 
    //Process the macro or start the UI Session
 
-   if ( !macro.empty())
+   if (macro.size())
    {
       //batch mode
       G4String command = "/control/execute ";

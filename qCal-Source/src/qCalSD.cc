@@ -20,7 +20,7 @@
 
 //Constructor
 qCalSD::qCalSD(G4String SDname, G4double absLen, G4double cubeSize, G4int noOfZ)
-: G4VSensitiveDetector(SDname), fSiPMHitCollection(nullptr),fSiPMPositionsX(0),fSiPMPositionsY(0),fSiPMPositionsZ(0)
+: G4VSensitiveDetector(SDname), fSiPMHitCollection(0),fSiPMPositionsX(0),fSiPMPositionsY(0),fSiPMPositionsZ(0)
 {
    collectionName.insert("SiPMHitCollection");
    p_fAbsLen = absLen;
@@ -59,7 +59,7 @@ G4bool qCalSD::ProcessHits(G4Step* step, G4TouchableHistory*)
    auto touchable = (G4TouchableHistory*)(preStepPoint->GetTouchable());
    ///
 
-   const G4ThreeVector& copyNoPos = touchable->GetTranslation();
+   G4ThreeVector copyNoPos = touchable->GetTranslation();
    /////Storing the smallest vector(which will be (0,0,0), as well as the second smallest which will be (0,0,1);
    G4double tempX = copyNoPos.getX()/cm;
    G4double tempY = copyNoPos.getY()/cm;
@@ -168,8 +168,8 @@ void qCalSD::EndOfEvent(G4HCofThisEvent*) {
    //G4double offsetX;
    //G4double offsetY;
    G4double offsetZ = -10000;
-   for (const auto& hit : mapOfHits) {
-      G4ThreeVector posAt = hit.first;
+   for (auto iter = mapOfHits.cbegin(); iter != mapOfHits.cend(); iter++) {
+      G4ThreeVector posAt = iter->first;
       /*
       if (fabs(offsetX) >= fabs(posAt.getX() {
          offsetX = posAt.getX());

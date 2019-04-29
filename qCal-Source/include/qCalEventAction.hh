@@ -17,10 +17,10 @@ class qCalEventAction : public G4UserEventAction
 public:
    
    qCalEventAction();
-   ~qCalEventAction() override;
+   virtual ~qCalEventAction();
    
-   void BeginOfEventAction(const G4Event*) override;
-   void EndOfEventAction(const G4Event*) override;
+   virtual void BeginOfEventAction(const G4Event*);
+   virtual void EndOfEventAction(const G4Event*);
    //   virtual void SetSaveThreshold(G4int save);
    std::vector<G4double>& GetPhotonCount() { return fphotonCount;}
    std::vector<G4double>& GetSiPMNums() {return fSiPMNums;}
