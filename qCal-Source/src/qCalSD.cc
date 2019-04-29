@@ -19,8 +19,8 @@
 
 
 //Constructor
-qCalSD::qCalSD(G4String SDname, G4float absLen, G4double cubeSize, G4int noOfZ)
-: G4VSensitiveDetector(SDname), fSiPMHitCollection(0),fSiPMPositionsX(0),fSiPMPositionsY(0),fSiPMPositionsZ(0)
+qCalSD::qCalSD(G4String SDname, G4double absLen, G4double cubeSize, G4int noOfZ)
+: G4VSensitiveDetector(SDname), fSiPMHitCollection(nullptr),fSiPMPositionsX(0),fSiPMPositionsY(0),fSiPMPositionsZ(0)
 {
    collectionName.insert("SiPMHitCollection");
    p_fAbsLen = absLen;
@@ -29,11 +29,8 @@ qCalSD::qCalSD(G4String SDname, G4float absLen, G4double cubeSize, G4int noOfZ)
 }
 
 //Destructor
-qCalSD::~qCalSD()
-{
-   
-}
-
+qCalSD::~qCalSD() = default;
+//{}
 //Initialize (Required)
 void qCalSD::Initialize(G4HCofThisEvent* hitsCE)
 {
@@ -59,10 +56,10 @@ G4bool qCalSD::ProcessHits(G4Step* step, G4TouchableHistory*)
    G4StepPoint* preStepPoint = step->GetPreStepPoint();
    G4Track *aTrack = step->GetTrack() ;
 
-   G4TouchableHistory* touchable = (G4TouchableHistory*)(preStepPoint->GetTouchable());
+   auto touchable = (G4TouchableHistory*)(preStepPoint->GetTouchable());
    ///
 
-   G4ThreeVector copyNoPos = touchable->GetTranslation();
+   const G4ThreeVector& copyNoPos = touchable->GetTranslation();
    /////Storing the smallest vector(which will be (0,0,0), as well as the second smallest which will be (0,0,1);
    G4double tempX = copyNoPos.getX()/cm;
    G4double tempY = copyNoPos.getY()/cm;
@@ -80,7 +77,7 @@ G4bool qCalSD::ProcessHits(G4Step* step, G4TouchableHistory*)
    }
 
    ///
-   G4int copyNo                  = touchable->GetVolume()->GetCopyNo();
+   //G4int copyNo                  = touchable->GetVolume()->GetCopyNo();
    G4double hitTime              = preStepPoint->GetGlobalTime();
    G4double photonWavelength     = 4.15e-15*3e8/(step->GetTrack()->GetTotalEnergy()/eV)*1e9;  //nm
    qCalHit* hit = nullptr;
@@ -98,9 +95,8 @@ G4bool qCalSD::ProcessHits(G4Step* step, G4TouchableHistory*)
    else if (photonWavelength >= 600 && photonWavelength < 700) isHit = (rand() % 100) < 25*0.85;
    else if (photonWavelength >= 700 && photonWavelength < 800) isHit = (rand() % 100) < 15*0.85;
    else if (photonWavelength >= 800 && photonWavelength < 900) isHit = (rand() % 100) < 5*0.85;
-   
-   
-   if ( hit == nullptr && isHit == 1)
+
+   if (isHit == 1) //if ( hit == nullptr && isHit == 1)
    {
       hit = new qCalHit(posVector, hitTime, photonWavelength);
       fSiPMHitCollection->insert(hit);
@@ -110,7 +106,7 @@ G4bool qCalSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 
 
    }
-   
+   //mapOfHits.clear();
    return false;
 }
 
@@ -169,30 +165,24 @@ void qCalSD::EndOfEvent(G4HCofThisEvent*) {
    // but scales strongly with absorber material. If the SiPM X and Y dimensions change offsetX and offsetY need
    // have to be calculated. Direct formulas for the offsets may be needed in the future.
 
-   G4double offsetX;
-   G4double offsetY;
-   G4double offsetZ;
-
-   int count = 0;
-   for (auto iter = mapOfHits.cbegin(); iter != mapOfHits.cend(); iter++) {
-
-      G4ThreeVector posAt = iter->first;
+   //G4double offsetX;
+   //G4double offsetY;
+   G4double offsetZ = -10000;
+   for (const auto& hit : mapOfHits) {
+      G4ThreeVector posAt = hit.first;
       /*
-      if (fabs(offsetX) > fabs(posAt.getX()) || count == 0) {
-         offsetX = fabs(posAt.getX());
+      if (fabs(offsetX) >= fabs(posAt.getX() {
+         offsetX = posAt.getX());
       }
-      if (fabs(offsetY) > fabs(posAt.getY()) || count == 0) {
-         offsetY = fabs(posAt.getY());
+      if (fabs(offsetY) >= fabs(posAt.getY(){
+         offsetY = posAt.getY());
       }
       */
-      if (fabs(offsetZ) > fabs(posAt.getZ()) || count == 0) {
-         offsetZ = fabs(posAt.getZ());
+      G4double currentZ = posAt.getZ();
+      if (fabs(offsetZ) >= fabs(currentZ)){
+         offsetZ = currentZ;
       }
-
-      count++;
    }
-   //G4cout << "THE Z-OFFSET IS: " << offsetZ << G4endl;
-
    ((qCalDetectorConstruction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction())->SetCoordOffsetZ(offsetZ);
 
    mapOfHits.clear();

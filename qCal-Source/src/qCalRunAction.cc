@@ -35,7 +35,7 @@ SDVolume(((qCalDetectorConstruction*)G4RunManager::GetRunManager()->
    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    //Proto Histogram examples:
    //analysisManager->CreateH1("0","Photon Wavelength Per SiPM Hit", 250, 0., 1000);
-   analysisManager->CreateH1("TimingHist", "HitTimesPerSiPM", 10, 0, 100);
+   analysisManager->CreateH1("TimingHist", "HitTimesPerSiPM", 10, 0, 1000);
    analysisManager->CreateH1("PhotonCountHist","# of Photons per Event", 100, 0., 100000);
 
    //analysisManager->CreateH1("Labs","trackL in absorber", 100, 0., 1*m);
@@ -100,7 +100,7 @@ void qCalRunAction::EndOfRunAction(const G4Run* /*run*/)
    analysisManager->CloseFile();
 }
 
-void qCalRunAction::SetOutputFileName(G4String outputFileNameByCmd)
+void qCalRunAction::SetOutputFileName(const G4String& outputFileNameByCmd)
 {
    p_runActionOutputFileName = outputFileNameByCmd;
 }
