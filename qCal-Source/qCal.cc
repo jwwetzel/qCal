@@ -71,8 +71,8 @@ int main(int argc, char** argv)
    bool b_yAxisEnteredByUser = false;
    bool b_zAxisEnteredByUser = false;
 
-   G4double nCubeWidth = 1.0; // 1.0 cm cube by default
-   auto startingEnergy = (G4int)(1 * GeV);
+   G4double nCubeWidth = 1; // 1.0 cm cube by default
+   G4int startingEnergy = 1 * GeV;
    G4String startingParticle = "mu-";
 
    //Absorber Z
@@ -163,8 +163,8 @@ int main(int argc, char** argv)
    fSilNucLength = quartzMat->GetNuclearInterLength()/cm;
    bothNucLength = fAbsNucLength + fSilNucLength;
    //G4cout << "Nuclear Interaction Lengths: " << fAbsNucLength << ", " << fSilNucLength << ", " << bothNucLength << G4endl;
-   if (!b_xAxisEnteredByUser) nXAxis = (G4int)ceil(bothNucLength / nCubeWidth);
-   if (!b_yAxisEnteredByUser) nYAxis = (G4int)ceil(bothNucLength / nCubeWidth);
+   if (!b_xAxisEnteredByUser) nXAxis = ceil(bothNucLength / nCubeWidth);
+   if (!b_yAxisEnteredByUser) nYAxis = ceil(bothNucLength / nCubeWidth);
    G4cout << "Number of X Cubes: " << nXAxis << G4endl;
    G4cout << "Number of Y Cubes: " << nYAxis << G4endl;
    //For Z of detector, dependaant on the energy of the particle that will be entering
@@ -173,7 +173,7 @@ int main(int argc, char** argv)
    lambdaAtt = pow((startingEnergy), 0.3);
    LMax = tMax + (2.5)*(lambdaAtt);
    layerWidth = (nCubeWidth + fAbsRadLen);
-   if (!b_zAxisEnteredByUser) nZAxis = (G4int)ceil((LMax*bothNucLength) / layerWidth);
+   if (!b_zAxisEnteredByUser) nZAxis = ceil((LMax*bothNucLength) / layerWidth);
    //G4cout << "tMax: " << tMax << ", " << "lambdaAtt: " << lambdaAtt << ", " "L: " << LMax << ", " << "LayerWidth: " << layerWidth << G4endl;
    G4cout << "Number of Z Cubes: " << nZAxis << G4endl;
 

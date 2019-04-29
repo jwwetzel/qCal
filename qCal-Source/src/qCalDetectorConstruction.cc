@@ -221,7 +221,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
                                                       2,                   //copy number
                                                       checkOverlaps);      //overlaps checking
 
-   new G4PVPlacement(0,                     //no rotation
+   new G4PVPlacement(nullptr,                     //no rotation
                      SiPMPos,               //at (0,0,0)
                      logicSiPM,             //its logical volume
                      "sipmOfDetector",      //its name
@@ -388,10 +388,10 @@ G4int qCalDetectorConstruction::RawCoordsToSiPMNumber(const G4ThreeVector &raw){
    // The raw coordinatates are first offset and scaled to integer coordinates (rx, ry, rz) centered at (0,0,0),
    // These are the coordinates output root files which allow negative component values,
    // The offset and scale factors derive from SiPM dimensions in the detector construction
-   G4int nXAxisIsEven = 1- p_nXAxis%2;
+   G4int nXAxisIsEven = 1 - p_nXAxis%2;
    G4int nYAxisIsEven = 1 - p_nYAxis%2;
-   G4int nZAxisIsEven = 1 - p_nYAxis%2;
-   G4double rx = raw.getX() / (p_sdCubeSize/cm) + 0.5 * nXAxisIsEven;
+   G4int nZAxisIsEven = 1 - p_nZAxis%2;
+   G4double rx = raw.getX() / (p_sdCubeSize/cm) +0.5 * nXAxisIsEven;
    G4double ry = raw.getY() / (p_sdCubeSize/cm) +0.5 * nYAxisIsEven;
    G4double rz = (raw.getZ() - p_foffsetZ )/p_fscaleZ -nZAxisIsEven;
    // (rx, ry, rz) are then re-centered in a detector corner so that all components are positive:
