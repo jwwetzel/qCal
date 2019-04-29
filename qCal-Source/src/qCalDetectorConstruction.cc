@@ -392,7 +392,7 @@ G4int qCalDetectorConstruction::RawCoordsToSiPMNumber(const G4ThreeVector &raw){
    G4int nYAxisIsEven = 1 - p_nYAxis%2;
    G4int nZAxisIsEven = 1 - p_nYAxis%2;
    G4double rx = raw.getX() / (p_sdCubeSize/cm) + 0.5 * nXAxisIsEven;
-   G4double ry = raw.getY() / (p_sdCubeSize/cm) -0.5 * nYAxisIsEven;
+   G4double ry = raw.getY() / (p_sdCubeSize/cm) +0.5 * nYAxisIsEven;
    G4double rz = (raw.getZ() - p_foffsetZ )/p_fscaleZ -nZAxisIsEven;
    // (rx, ry, rz) are then re-centered in a detector corner so that all components are positive:
    G4double cx = rx + floor(0.5*p_nXAxis);
