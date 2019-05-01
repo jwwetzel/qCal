@@ -46,7 +46,7 @@ namespace {
 int main(int argc, char** argv)
 {
    //Make sure there aren't too many args
-   if( argc > 15 )
+   if( argc > 15)
    {
       G4cout << " Too many Arguments " << G4endl;
       PrintUsage();
@@ -62,6 +62,8 @@ int main(int argc, char** argv)
 
    //For the number of Quartz cubes in each access from arguments, default is 1x1x1
    ///Function to calculate needed
+   //G4int nEvents = 10000;
+
    G4int nXAxis = 1;
    G4int nYAxis = 1;
    G4int nZAxis = 1;
@@ -89,6 +91,7 @@ int main(int argc, char** argv)
    {
       if      ( G4String(argv[i]) == "-m" ) macro = argv[i+1];
       else if ( G4String(argv[i]) == "-u" ) session = argv[i+1];
+      //else if ( G4String(argv[i]) == "-n" ) nEvents = atoi(argv[i+1]);
       else if ( G4String(argv[i]) == "-w" ) nCubeWidth = atof(argv[i+1]);
       else if ( G4String(argv[i]) == "-x" ) { nXAxis = atoi(argv[i+1]); b_xAxisEnteredByUser = true; }
       else if ( G4String(argv[i]) == "-y" ) { nYAxis = atoi(argv[i+1]); b_yAxisEnteredByUser = true; }
