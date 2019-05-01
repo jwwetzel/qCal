@@ -11,7 +11,7 @@
 
 
 //constructor
-qCalActionInitialization::qCalActionInitialization(G4String sParticle, G4int sEnergy)
+qCalActionInitialization::qCalActionInitialization(G4String sParticle, G4int sEnergy) // G4int iEvents)
 : G4VUserActionInitialization()
 {
    // Grab the Detector construction to aim the gun at its center.
@@ -19,8 +19,8 @@ qCalActionInitialization::qCalActionInitialization(G4String sParticle, G4int sEn
    // p_theDetector->GetAbsXdim(), or GetAbsYdim(), or GetAbsZdim();
    
    p_theDetector  = (qCalDetectorConstruction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction();
-   p_gunXLocation = (1 - p_theDetector->GetnXAxis()%2 ) * 0.5*p_theDetector->GetCubeSize();
-   p_gunYLocation = (1 - p_theDetector->GetnYAxis()%2 )* 0.5*p_theDetector->GetCubeSize();
+   p_gunXLocation = 0; //(1 - p_theDetector->GetnXAxis()%2 ) * 0.5*p_theDetector->GetCubeSize();
+   p_gunYLocation = 0; //(1 - p_theDetector->GetnYAxis()%2 )* 0.5*p_theDetector->GetCubeSize();
    p_gunZLocation = p_theDetector->GetAbsZdim()+1*cm;
    startingParticle = sParticle;
    startingEnergy = sEnergy;

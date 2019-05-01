@@ -35,8 +35,10 @@ SDVolume(((qCalDetectorConstruction*)G4RunManager::GetRunManager()->
    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    //Proto Histogram examples:
    //analysisManager->CreateH1("0","Photon Wavelength Per SiPM Hit", 250, 0., 1000);
-   analysisManager->CreateH1("TimingHist", "HitTimesPerSiPM", 10, 0, 10000);
-   analysisManager->CreateH1("PhotonCountHist","# of Photons per Event", 100, 0., 100000);
+   // Important thing is the bin width
+   analysisManager->CreateH1("CalculateTimesHist", "HitTimesPerHitPerSiPM", 50*50, 0, 50*1000);
+   analysisManager->CreateH1("PhotonCountHist","# of Photons per Event", 5000, 0., 100*1000);
+   //analysisManager->CreateH1("EventTimesHist", "EventsPerHitTime", 100, 0, 2);
 
    //analysisManager->CreateH1("Labs","trackL in absorber", 100, 0., 1*m);
    //analysisManager->CreateH1("Lgap","trackL in gap", 100, 0., 50*cm);

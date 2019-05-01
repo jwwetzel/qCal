@@ -159,8 +159,9 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
    // An initial estimate of the histogram bin width is 0.015 - 0.020 nsecs:
    G4int i_totalPhotonCount = 0;
    G4double timeBinWidth = 0.015;
-
+   //G4double i_modeTime = 0;
    for (G4int id = 0; id < SDVolume ; ++id){
+      analysisManager->GetH1(0)->reset();
       // Sum up all theq
       i_totalPhotonCount += (int)fphotonCount[id];
       G4double thi = fFinalHitTimes[id];
@@ -181,6 +182,8 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
          for (G4int i = 0; i < nHistEntries; ++i) {
             if (analysisManager->GetH1(0)->bin_height(i) == maxModeLength) {
                fHitTimes[id] = analysisManager->GetH1(0)->bin_center(i);
+               //i_modeTime = fHitTimes[id];
+               //analysisManager->FillH1(2, i_modeTime);
                break;
             }
          }
@@ -189,8 +192,9 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
       else{
          fHitTimes[id] = thi;
       }
+
       // Clear histogram of hit times:
-      analysisManager->GetH1(0)->reset();
+
    }
    // Adds the events photon count to the histogram:
    analysisManager->FillH1(1, i_totalPhotonCount);

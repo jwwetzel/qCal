@@ -183,7 +183,10 @@ void qCalSD::EndOfEvent(G4HCofThisEvent*) {
          offsetZ = currentZ;
       }
    }
-   ((qCalDetectorConstruction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction())->SetCoordOffsetZ(offsetZ);
+   if ( !((qCalDetectorConstruction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction())->GetCoordOffsetZ()){
+      ((qCalDetectorConstruction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction())->SetCoordOffsetZ(offsetZ);
+   }
+
 
    mapOfHits.clear();
 

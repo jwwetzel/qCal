@@ -48,6 +48,7 @@ qCalDetectorConstruction::qCalDetectorConstruction(G4int nXAxis,                
    p_SiPMDim = 0.5*cm;                                                                             //Dimension of SiPM
    p_sdCubeSize = (p_fCubeWidth + 2 * p_fWrapSize + p_fQuartzSpacing);
    p_fscaleZ = (p_fAbsLen + p_sdCubeSize)/cm;
+   p_foffsetZ = 0;
 }
 
 qCalDetectorConstruction::~qCalDetectorConstruction() = default;
@@ -351,7 +352,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    //Set the Quartz Surface
    ////////////////////////////////////////////////////////////////////////////////////////////////
    G4OpticalSurface *quartzWrap = new G4OpticalSurface("QuartzWrap");
-   G4LogicalSkinSurface *quartzSurface = new G4LogicalSkinSurface("QuartzSurface", logicQuartz, quartzWrap);
+   //G4LogicalSkinSurface *quartzSurface = new G4LogicalSkinSurface("QuartzSurface", logicQuartz, quartzWrap);
    quartzWrap->SetType(dielectric_LUT);
    quartzWrap->SetModel(LUT);
    quartzWrap->SetFinish(polishedtyvekair);
@@ -389,16 +390,15 @@ G4int qCalDetectorConstruction::RawCoordsToSiPMNumber(const G4ThreeVector &raw){
    // The raw coordinatates are first offset and scaled to integer coordinates (rx, ry, rz) centered at (0,0,0),
    // These are the coordinates output root files which allow negative component values,
    // The offset and scale factors derive from SiPM dimensions in the detector construction
-   G4int nXAxisIsEven = 1 - p_nXAxis%2;
-   G4int nYAxisIsEven = 1 - p_nYAxis%2;
-   G4int nZAxisIsEven = 1 - p_nZAxis%2;
-   G4double rx = raw.getX() / (p_sdCubeSize/cm) +0.5 * nXAxisIsEven;
-   G4double ry = raw.getY() / (p_sdCubeSize/cm) +0.5 * nYAxisIsEven;
-   G4double rz = (raw.getZ() - p_foffsetZ )/p_fscaleZ -nZAxisIsEven;
+   //G4int nXAxisIsEven = 1 - p_nXAxis%2;
+   //G4int nYAxisIsEven = 1 - p_nYAxis%2;
+   G4double rx = raw.getX() / (p_sdCubeSize/cm); // +0.5 * nXAxisIsEven;
+   G4double ry = raw.getY() / (p_sdCubeSize/cm); // +0.5 * nYAxisIsEven;
+   G4double rz = (raw.getZ() -p_foffsetZ )/p_fscaleZ- (fabs(p_foffsetZ) > 1.0 ? 1.0 :  0.0); //-nZAxisIsEven;// -nZAxisIsEven;
    // (rx, ry, rz) are then re-centered in a detector corner so that all components are positive:
-   G4double cx = rx + floor(0.5*p_nXAxis);
-   G4double cy = ry + floor(0.5*p_nYAxis);
-   G4double cz = rz + floor(0.5*p_nZAxis);
+   G4double cx = round(rx) + floor(0.5*p_nXAxis);
+   G4double cy = round(ry) + floor(0.5*p_nYAxis);
+   G4double cz = round(rz) + floor(0.5*p_nZAxis);
    // The output id value counts the SiPMs layer-wise from the starting corner:
-   return (int)round(cx + p_nXAxis*cy + p_nXAxis*p_nYAxis*cz);
+   return (int)(cx + p_nXAxis*cy + p_nXAxis*p_nYAxis*cz);
 }
