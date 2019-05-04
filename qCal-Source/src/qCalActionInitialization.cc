@@ -11,7 +11,7 @@
 
 
 //constructor
-qCalActionInitialization::qCalActionInitialization(G4String sParticle, G4int sEnergy)
+qCalActionInitialization::qCalActionInitialization()
 : G4VUserActionInitialization()
 {
    // Grab the Detector construction to aim the gun at its center.
@@ -19,11 +19,10 @@ qCalActionInitialization::qCalActionInitialization(G4String sParticle, G4int sEn
    // p_theDetector->GetAbsXdim(), or GetAbsYdim(), or GetAbsZdim();
    
    p_theDetector  = (qCalDetectorConstruction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction();
-   p_gunXLocation = (1 - p_theDetector->GetnXAxis()%2 ) * 0.5*p_theDetector->GetCubeSize();
-   p_gunYLocation = (1 - p_theDetector->GetnYAxis()%2 )* 0.5*p_theDetector->GetCubeSize();
-   p_gunZLocation = p_theDetector->GetAbsZdim()+1*cm;
-   startingParticle = sParticle;
-   startingEnergy = sEnergy;
+   p_gunXLocation = 0 * cm;
+   p_gunYLocation = 0 * cm;
+   p_gunZLocation = p_theDetector->GetAbsZdim()+1 * cm;
+
    G4cout << "************************************"   << G4endl;
    G4cout << "***    Action Initialization     ***"   << G4endl;
    G4cout << "************************************"   << G4endl;
@@ -43,15 +42,15 @@ void qCalActionInitialization::Build()const
 {
    G4ThreeVector gunPosition = G4ThreeVector(p_gunXLocation, p_gunYLocation, p_gunZLocation);
    G4ThreeVector gunMomentum = G4ThreeVector(0,0,-1);
-   SetUserAction(new qCalPrimaryGeneratorAction(startingParticle,startingEnergy, gunPosition, gunMomentum));
+   SetUserAction(new qCalPrimaryGeneratorAction("mu-",120.0*GeV, gunPosition, gunMomentum));
 
    auto eventAction = new qCalEventAction;
    SetUserAction(eventAction);
    SetUserAction(new qCalRunAction(eventAction));
    
-   G4cout << "The Gun's Config is: " << G4endl;
-   G4cout << "Particle: " << startingParticle             << G4endl;
-   G4cout << "Energy: " << startingEnergy               << G4endl;
+   G4cout << "The Default Gun's Config is: "       << G4endl;
+   G4cout << "Particle: "  << "Particle: Mu-"      << G4endl;
+   G4cout << "Energy: "    << "Energy: 120 GeV"    << G4endl;
 
 }
 

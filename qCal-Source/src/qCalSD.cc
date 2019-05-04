@@ -167,25 +167,25 @@ void qCalSD::EndOfEvent(G4HCofThisEvent*) {
 
    //G4double offsetX;
    //G4double offsetY;
-   G4double offsetZ = -10000;
-   for (auto iter = mapOfHits.cbegin(); iter != mapOfHits.cend(); iter++) {
-      G4ThreeVector posAt = iter->first;
-      /*
-      if (fabs(offsetX) >= fabs(posAt.getX() {
-         offsetX = posAt.getX());
-      }
-      if (fabs(offsetY) >= fabs(posAt.getY(){
-         offsetY = posAt.getY());
-      }
-      */
-      G4double currentZ = posAt.getZ();
-      if (fabs(offsetZ) >= fabs(currentZ)){
-         offsetZ = currentZ;
-      }
-   }
-   ((qCalDetectorConstruction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction())->SetCoordOffsetZ(offsetZ);
-
-   mapOfHits.clear();
+//   G4double offsetZ = -10000;
+//   for (auto iter = mapOfHits.cbegin(); iter != mapOfHits.cend(); iter++) {
+//      G4ThreeVector posAt = iter->first;
+//      /*
+//      if (fabs(offsetX) >= fabs(posAt.getX() {
+//         offsetX = posAt.getX());
+//      }
+//      if (fabs(offsetY) >= fabs(posAt.getY(){
+//         offsetY = posAt.getY());
+//      }
+//      */
+//      G4double currentZ = posAt.getZ();
+//      if (fabs(offsetZ) >= fabs(currentZ)){
+//         offsetZ = currentZ;
+//      }
+//   }
+//   ((qCalDetectorConstruction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction())->SetCoordOffsetZ(offsetZ);
+//
+//   mapOfHits.clear();
 
 }
 

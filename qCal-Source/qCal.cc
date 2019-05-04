@@ -39,7 +39,7 @@ namespace {
       G4cerr << " Usage: " << G4endl;
       G4cerr << " qCal [-m macro ] [-w cubeWidth] [-e startingEnergy] [-p startingParticle] [-a absorberZ] [-u UIsession] [-t nThreads]" << G4endl;
       G4cerr << "   note: -t option is available only for multi-threaded mode." << G4endl;
-      G4cerr << "Example: ./qCal -m lowE.Mac -w 1.0 -e 1 -p mu- -a Fe -u \"qt\" -t 4" << G4endl;
+      G4cerr << "Example: ./qCal -m lowE.Mac -w 1.0 -e 1 -p mu- -a Fe -t 4" << G4endl;
    }
 }
 
@@ -71,7 +71,7 @@ int main(int argc, char** argv)
    bool b_yAxisEnteredByUser = false;
    bool b_zAxisEnteredByUser = false;
 
-   G4double nCubeWidth = 1; // 1.0 cm cube by default
+   G4double nCubeWidth = 1.0; // 1.0 cm cube by default
    G4int startingEnergy = 1 * GeV;
    G4String startingParticle = "mu-";
 
@@ -143,14 +143,14 @@ int main(int argc, char** argv)
    G4NistManager* nist = G4NistManager::Instance();
 
 
-   //Creating the silicon and absorber materials
-   G4double atomicNumber, atomicWeight, density;
-   G4int nElements, nAtoms;
-   G4Element* O = new G4Element("Oxygen", "O", atomicNumber = 8, atomicWeight = ((16.00*g) / mole));
-   G4Element* Si = new G4Element("Silicon", "Si", atomicNumber = 14, atomicWeight = ((28.09*g) / mole));
-   G4Material* quartzMat = new G4Material("quartzCrystal", density = ((2.648*g) / cm3), nElements = 2);
-   quartzMat->AddElement(Si, nAtoms = 1);
-   quartzMat->AddElement(O, nAtoms = 4);
+//   //Creating the silicon and absorber materials
+//   G4double atomicNumber, atomicWeight, density;
+//   G4int nElements, nAtoms;
+//   G4Element* O = new G4Element("Oxygen", "O", atomicNumber = 8, atomicWeight = ((16.00*g) / mole));
+//   G4Element* Si = new G4Element("Silicon", "Si", atomicNumber = 14, atomicWeight = ((28.09*g) / mole));
+//   G4Material* quartzMat = new G4Material("quartzCrystal", density = ((2.648*g) / cm3), nElements = 2);
+//   quartzMat->AddElement(Si, nAtoms = 1);
+//   quartzMat->AddElement(O, nAtoms = 4);
 
    G4Material* absorberMat = nist->FindOrBuildMaterial("G4_" + sAbs);
    G4double fAbsRadLen = absorberMat->GetRadlen()*mm;
@@ -158,24 +158,24 @@ int main(int argc, char** argv)
    //For X and Y of detector, dependant on the nuclear interaction length of the silicon + material.
    //Take the ceiling of the nuclear interaction length divided by a cubes width to get the number needed.
    //G4cout << "Starting Energy: " << startingEnergy << " GeV" << G4endl;
-   G4double fAbsNucLength, fSilNucLength, bothNucLength;
-   fAbsNucLength = absorberMat->GetNuclearInterLength()/cm;
-   fSilNucLength = quartzMat->GetNuclearInterLength()/cm;
-   bothNucLength = fAbsNucLength + fSilNucLength;
+//   G4double fAbsNucLength, fSilNucLength, bothNucLength;
+//   fAbsNucLength = absorberMat->GetNuclearInterLength()/cm;
+//   fSilNucLength = quartzMat->GetNuclearInterLength()/cm;
+//   bothNucLength = fAbsNucLength + fSilNucLength;
    //G4cout << "Nuclear Interaction Lengths: " << fAbsNucLength << ", " << fSilNucLength << ", " << bothNucLength << G4endl;
-   if (!b_xAxisEnteredByUser) nXAxis = ceil(bothNucLength / nCubeWidth);
-   if (!b_yAxisEnteredByUser) nYAxis = ceil(bothNucLength / nCubeWidth);
-   G4cout << "Number of X Cubes: " << nXAxis << G4endl;
-   G4cout << "Number of Y Cubes: " << nYAxis << G4endl;
-   //For Z of detector, dependaant on the energy of the particle that will be entering
-   G4double tMax, lambdaAtt, LMax, layerWidth;
-   tMax = (0.2)*log(startingEnergy) + 0.7;
-   lambdaAtt = pow((startingEnergy), 0.3);
-   LMax = tMax + (2.5)*(lambdaAtt);
-   layerWidth = (nCubeWidth + fAbsRadLen);
-   if (!b_zAxisEnteredByUser) nZAxis = ceil((LMax*bothNucLength) / layerWidth);
-   //G4cout << "tMax: " << tMax << ", " << "lambdaAtt: " << lambdaAtt << ", " "L: " << LMax << ", " << "LayerWidth: " << layerWidth << G4endl;
-   G4cout << "Number of Z Cubes: " << nZAxis << G4endl;
+//   if (!b_xAxisEnteredByUser) nXAxis = ceil(bothNucLength / nCubeWidth);
+//   if (!b_yAxisEnteredByUser) nYAxis = ceil(bothNucLength / nCubeWidth);
+//   G4cout << "Number of X Cubes: " << nXAxis << G4endl;
+//   G4cout << "Number of Y Cubes: " << nYAxis << G4endl;
+//   //For Z of detector, dependaant on the energy of the particle that will be entering
+//   G4double tMax, lambdaAtt, LMax, layerWidth;
+//   tMax = (0.2)*log(startingEnergy) + 0.7;
+//   lambdaAtt = pow((startingEnergy), 0.3);
+//   LMax = tMax + (2.5)*(lambdaAtt);
+//   layerWidth = (nCubeWidth + fAbsRadLen);
+//   if (!b_zAxisEnteredByUser) nZAxis = ceil((LMax*bothNucLength) / layerWidth);
+//   //G4cout << "tMax: " << tMax << ", " << "lambdaAtt: " << lambdaAtt << ", " "L: " << LMax << ", " << "LayerWidth: " << layerWidth << G4endl;
+//   G4cout << "Number of Z Cubes: " << nZAxis << G4endl;
 
    auto detConstruction = new qCalDetectorConstruction(nXAxis, nYAxis, nZAxis, sAbs, fAbsRadLen, nCubeWidth);
    runManager->SetUserInitialization(detConstruction);
@@ -199,7 +199,7 @@ int main(int argc, char** argv)
    runManager->SetUserInitialization(physicsList);
 
    //Initialize Actions, includes primary generator
-   auto actionInitialization = new qCalActionInitialization(startingParticle,startingEnergy);
+   auto actionInitialization = new qCalActionInitialization();
    runManager->SetUserInitialization(actionInitialization);
 
    runManager->Initialize();
