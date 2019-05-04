@@ -105,7 +105,7 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
       G4cout   << G4endl
                << ">>> Event "      << anEvent->GetEventID() << " >>> Simulation truth : "
                << ">>> Particle: "  << primary->GetG4code()->GetParticleName()
-               << ">>> Momentum: "  << primary->GetMomentum() << G4endl;
+               << ">>> Momentum: "  << primary->GetMomentum()/GeV << G4endl;
       G4cout << "The SiPMs collectively received: " << n_hit << " hits." << G4endl;
 
    }
