@@ -1,5 +1,5 @@
 /**********************************
- Quartz Based Cherenkov Calorimeter
+ quartzMat Based Cherenkov Calorimeter
  Produced by Dr. James Wetzel
  Contact: james-wetzel@uiowa.edu
  The University of Iowa
@@ -60,7 +60,7 @@ int main(int argc, char** argv)
    //For the session argument
    G4String session;
 
-   //For the number of Quartz cubes in each access from arguments, default is 1x1x1
+   //For the number of quartzMat cubes in each access from arguments, default is 1x1x1
    ///Function to calculate needed
    //G4int nEvents = 10000;
 
@@ -151,9 +151,9 @@ int main(int argc, char** argv)
    G4int nElements, nAtoms;
    G4Element* O = new G4Element("Oxygen", "O", atomicNumber = 8, atomicWeight = ((16.00*g) / mole));
    G4Element* Si = new G4Element("Silicon", "Si", atomicNumber = 14, atomicWeight = ((28.09*g) / mole));
-   G4Material* quartz = new G4Material("quartzCrystal", density = ((2.648*g) / cm3), nElements = 2);
-   quartz->AddElement(Si, nAtoms = 1);
-   quartz->AddElement(O, nAtoms = 4);
+   G4Material* quartzMat = new G4Material("quartzCrystal1", density = ((2.648*g) / cm3), nElements = 2);
+   quartzMat->AddElement(Si, nAtoms = 1);
+   quartzMat->AddElement(O, nAtoms = 4);
 
    G4Material* absorberMat = nist->FindOrBuildMaterial("G4_" + sAbs);
    G4double fAbsRadLen = absorberMat->GetRadlen()*mm;
@@ -164,7 +164,7 @@ int main(int argc, char** argv)
    //G4cout << "Starting Energy: " << startingEnergy << " GeV" << G4endl;
    G4double fAbsNucLength, fSilNucLength, bothNucLength;
    fAbsNucLength = absorberMat->GetNuclearInterLength()/cm;
-   fSilNucLength = quartz->GetNuclearInterLength()/cm;
+   fSilNucLength = quartzMat->GetNuclearInterLength()/cm;
    bothNucLength = fAbsNucLength + fSilNucLength;
    //G4cout << "Nuclear Interaction Lengths: " << fAbsNucLength << ", " << fSilNucLength << ", " << bothNucLength << G4endl;
    if (!b_xAxisEnteredByUser) nXAxis = ceil(bothNucLength / nCubeWidth);
