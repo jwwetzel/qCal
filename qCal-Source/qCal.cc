@@ -96,7 +96,7 @@ int main(int argc, char** argv)
       else if ( G4String(argv[i]) == "-x" ) { nXAxis = atoi(argv[i+1]); b_xAxisEnteredByUser = true; }
       else if ( G4String(argv[i]) == "-y" ) { nYAxis = atoi(argv[i+1]); b_yAxisEnteredByUser = true; }
       else if ( G4String(argv[i]) == "-z" ) { nZAxis = atoi(argv[i+1]); b_zAxisEnteredByUser = true; }
-      else if (G4String(argv[i]) == "-e") startingEnergy = atoi(argv[i + 1]);
+      else if (G4String(argv[i]) == "-e") startingEnergy = atoi(argv[i + 1])*GeV;
       else if (G4String(argv[i]) == "-p") startingParticle = argv[i + 1];
       else if ( G4String(argv[i]) == "-a" ) sAbs  = argv[i+1];
    #ifdef G4MULTITHREADED
@@ -109,7 +109,7 @@ int main(int argc, char** argv)
          G4cout << "nXAxis: " << nXAxis << G4endl;
          G4cout << "nYAxis: " << nYAxis << G4endl;
          G4cout << "nZAxis: " << nZAxis << G4endl;
-         G4cout << "startingEnergy: " << startingEnergy << G4endl;
+         G4cout << "startingEnergy (GeV): " << startingEnergy << G4endl;
          G4cout << "sAbs: " << sAbs << G4endl;
    #ifdef G4MULTITHREADED
          G4cout << "nThreads: " << nThreads << G4endl;
