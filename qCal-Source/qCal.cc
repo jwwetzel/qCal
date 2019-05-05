@@ -64,17 +64,17 @@ int main(int argc, char** argv)
    ///Function to calculate needed
    //G4int nEvents = 10000;
 
-   G4int nXAxis = 1;
-   G4int nYAxis = 1;
-   G4int nZAxis = 1;
+   G4int nXAxis = 59;
+   G4int nYAxis = 59;
+   G4int nZAxis = 79;
 
    // Variables that become true when the user enters detector sizes manually and override default size:
-   bool b_xAxisEnteredByUser = false;
-   bool b_yAxisEnteredByUser = false;
-   bool b_zAxisEnteredByUser = false;
+  // bool b_xAxisEnteredByUser = false;
+  // bool b_yAxisEnteredByUser = false;
+  // bool b_zAxisEnteredByUser = false;
 
-   G4double nCubeWidth = 1; // 1.0 cm cube by default
-   G4int startingEnergy = 1 * GeV;
+   G4double nCubeWidth = 1.0; // 1.0 cm cube by default
+   auto startingEnergy = (int)GeV;
    G4String startingParticle = "mu-";
 
    //Absorber Z
@@ -93,9 +93,9 @@ int main(int argc, char** argv)
       else if ( G4String(argv[i]) == "-u" ) session = argv[i+1];
       //else if ( G4String(argv[i]) == "-n" ) nEvents = atoi(argv[i+1]);
       else if ( G4String(argv[i]) == "-w" ) nCubeWidth = atof(argv[i+1]);
-      else if ( G4String(argv[i]) == "-x" ) { nXAxis = atoi(argv[i+1]); b_xAxisEnteredByUser = true; }
-      else if ( G4String(argv[i]) == "-y" ) { nYAxis = atoi(argv[i+1]); b_yAxisEnteredByUser = true; }
-      else if ( G4String(argv[i]) == "-z" ) { nZAxis = atoi(argv[i+1]); b_zAxisEnteredByUser = true; }
+      else if ( G4String(argv[i]) == "-x" ) { nXAxis = atoi(argv[i+1]);}// b_xAxisEnteredByUser = true; }
+      else if ( G4String(argv[i]) == "-y" ) { nYAxis = atoi(argv[i+1]); }//b_yAxisEnteredByUser = true; }
+      else if ( G4String(argv[i]) == "-z" ) { nZAxis = atoi(argv[i+1]);}// b_zAxisEnteredByUser = true; }
       else if (G4String(argv[i]) == "-e") startingEnergy = atoi(argv[i + 1])*GeV;
       else if (G4String(argv[i]) == "-p") startingParticle = argv[i + 1];
       else if ( G4String(argv[i]) == "-a" ) sAbs  = argv[i+1];
@@ -151,19 +151,20 @@ int main(int argc, char** argv)
    G4int nElements, nAtoms;
    G4Element* O = new G4Element("Oxygen", "O", atomicNumber = 8, atomicWeight = ((16.00*g) / mole));
    G4Element* Si = new G4Element("Silicon", "Si", atomicNumber = 14, atomicWeight = ((28.09*g) / mole));
-   G4Material* quartzMat = new G4Material("quartzCrystal", density = ((2.648*g) / cm3), nElements = 2);
-   quartzMat->AddElement(Si, nAtoms = 1);
-   quartzMat->AddElement(O, nAtoms = 4);
+   G4Material* quartz = new G4Material("quartzCrystal", density = ((2.648*g) / cm3), nElements = 2);
+   quartz->AddElement(Si, nAtoms = 1);
+   quartz->AddElement(O, nAtoms = 4);
 
    G4Material* absorberMat = nist->FindOrBuildMaterial("G4_" + sAbs);
    G4double fAbsRadLen = absorberMat->GetRadlen()*mm;
+   /*
    ///Calculate the new X,Y, and Z based off of the initial energy
    //For X and Y of detector, dependant on the nuclear interaction length of the silicon + material.
    //Take the ceiling of the nuclear interaction length divided by a cubes width to get the number needed.
    //G4cout << "Starting Energy: " << startingEnergy << " GeV" << G4endl;
    G4double fAbsNucLength, fSilNucLength, bothNucLength;
    fAbsNucLength = absorberMat->GetNuclearInterLength()/cm;
-   fSilNucLength = quartzMat->GetNuclearInterLength()/cm;
+   fSilNucLength = quartz->GetNuclearInterLength()/cm;
    bothNucLength = fAbsNucLength + fSilNucLength;
    //G4cout << "Nuclear Interaction Lengths: " << fAbsNucLength << ", " << fSilNucLength << ", " << bothNucLength << G4endl;
    if (!b_xAxisEnteredByUser) nXAxis = ceil(bothNucLength / nCubeWidth);
@@ -179,7 +180,7 @@ int main(int argc, char** argv)
    if (!b_zAxisEnteredByUser) nZAxis = ceil((LMax*bothNucLength) / layerWidth);
    //G4cout << "tMax: " << tMax << ", " << "lambdaAtt: " << lambdaAtt << ", " "L: " << LMax << ", " << "LayerWidth: " << layerWidth << G4endl;
    G4cout << "Number of Z Cubes: " << nZAxis << G4endl;
-
+   */
    auto detConstruction = new qCalDetectorConstruction(nXAxis, nYAxis, nZAxis, sAbs, fAbsRadLen, nCubeWidth);
    runManager->SetUserInitialization(detConstruction);
 

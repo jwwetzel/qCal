@@ -65,6 +65,7 @@ G4bool qCalSD::ProcessHits(G4Step* step, G4TouchableHistory*)
    G4double tempY = copyNoPos.getY()/cm;
    G4double tempZ = copyNoPos.getZ()/cm;
    G4ThreeVector posVector = G4ThreeVector(tempX, tempY, tempZ);
+   /*
    auto it = mapOfHits.find(posVector);
 
    if (it != mapOfHits.end())
@@ -75,7 +76,7 @@ G4bool qCalSD::ProcessHits(G4Step* step, G4TouchableHistory*)
    {
       mapOfHits.insert(std::make_pair(posVector, 1));
    }
-
+*/
    ///
    //G4int copyNo                  = touchable->GetVolume()->GetCopyNo();
    G4double hitTime              = preStepPoint->GetGlobalTime();
@@ -167,17 +168,18 @@ void qCalSD::EndOfEvent(G4HCofThisEvent*) {
 
    //G4double offsetX;
    //G4double offsetY;
+   /*
    G4double offsetZ = -10000;
    for (auto iter = mapOfHits.cbegin(); iter != mapOfHits.cend(); iter++) {
       G4ThreeVector posAt = iter->first;
-      /*
+
       if (fabs(offsetX) >= fabs(posAt.getX() {
          offsetX = posAt.getX());
       }
       if (fabs(offsetY) >= fabs(posAt.getY(){
          offsetY = posAt.getY());
       }
-      */
+
       G4double currentZ = posAt.getZ();
       if (fabs(offsetZ) >= fabs(currentZ)){
          offsetZ = currentZ;
@@ -187,8 +189,8 @@ void qCalSD::EndOfEvent(G4HCofThisEvent*) {
       ((qCalDetectorConstruction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction())->SetCoordOffsetZ(offsetZ);
    }
 
-
-   mapOfHits.clear();
+*/
+   //mapOfHits.clear();
 
 }
 

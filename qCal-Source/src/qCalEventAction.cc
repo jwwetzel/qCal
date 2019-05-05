@@ -27,7 +27,8 @@
  **************************************************************************************/
 qCalEventAction::qCalEventAction():
    G4UserEventAction(),
-   fSiPMCollID(-1),
+   fSiPMCollID(-1)
+   /*
    eventDetector((qCalDetectorConstruction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction()),
    SDVolume(eventDetector->GetVolume()),
    fphotonCount{std::vector<G4double>(SDVolume, 0)},
@@ -38,7 +39,7 @@ qCalEventAction::qCalEventAction():
    iSiPMCoordsX{ std::vector<G4int>(SDVolume, -1)},
    iSiPMCoordsY{ std::vector<G4int>(SDVolume, -1)},
    iSiPMCoordsZ{ std::vector<G4int>(SDVolume, -1)}
-
+   */
 
 {
    //Set Print Progress to every event.
@@ -113,7 +114,7 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
    //Get the Analysis Manager
    auto analysisManager = G4AnalysisManager::Instance();
    analysisManager->SetVerboseLevel(1);
-
+   /*
    // The SiPM Number and (x,y,z) SiPM coordinate Ntuples are filled first,
    // Center of the detector is at (0,0,0) for both even and odd nAxes,
    // this requires a shift along each axis by half the axis size rounded down,
@@ -131,18 +132,21 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
       // z-coordinate runs do not repeat:
       iSiPMCoordsZ[i] = (int)floor(1.0*i/(nXAxis*nYAxis)) - (int)floor(0.5*nZAxis);
    }
-
-
+   */
+   G4int i_totalPhotonCount = 0;
    // The hits are iterated to give them SiPMNumbers (IDs) and extract photon counts and hit times:
    for ( G4int i = 0; i < n_hit; ++i ) {
       qCalHit *hit = (*eventSiPMHitCollection)[i];
+      /*
       // Set hit integer coordinates and SiPM number from scale factor:
       G4int IDofHit = eventDetector->RawCoordsToSiPMNumber(hit->GetSiPMCoords());
       hit->SetSiPMNumber(IDofHit);
       // Increment the hit count for the hit with the current SiPM number:
       fphotonCount[IDofHit] += hit->GetPhotonCount();
       // Set initial and final times for hits at the current SiPM number:
-
+       */
+      i_totalPhotonCount+= hit->GetPhotonCount();
+      /*
       if (fphotonCount[IDofHit] > 0) {
          if (hit->GetTime() >= fFinalHitTimes[IDofHit]) {
             fFinalHitTimes[IDofHit] = hit->GetTime();
@@ -151,13 +155,14 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
             fInitialHitTimes[IDofHit] = hit->GetTime();
          }
       }
-
+      */
    }
 
    // Single hit times are calculated for each SiPM that fill the hit times ntuple:
    // Create histograms of hit times for each SiPM and extract the peak value which is the mode of hit times for that SiPM.
    // An initial estimate of the histogram bin width is 0.015 - 0.020 nsecs:
-   G4int i_totalPhotonCount = 0;
+
+   /*
    G4double timeBinWidth = 0.015;
    //G4double i_modeTime = 0;
    for (G4int id = 0; id < SDVolume ; ++id){
@@ -196,19 +201,24 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
       // Clear histogram of hit times:
 
    }
+    */
    // Adds the events photon count to the histogram:
-   analysisManager->FillH1(1, i_totalPhotonCount);
+   analysisManager->FillH1(0, i_totalPhotonCount);
 
    // Update all the root ntuples:
-   analysisManager->AddNtupleRow();
+  // analysisManager->AddNtupleRow();
 
    // Reset the SiPM counts and Hit Times to zero for a new event.
+   /*
    for (int i = 0; i < SDVolume; i++){
       fphotonCount[i] = 0.;
+
       fHitTimes[i] = -1.;
       fFinalHitTimes[i] = -1.;
       fInitialHitTimes[i] = -1.;
+
    }
+    */
 }
 
 

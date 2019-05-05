@@ -11,9 +11,11 @@
 
 
 qCalRunAction::qCalRunAction(qCalEventAction* eventAction)
-: G4UserRunAction(), fEventAction(eventAction),
+: G4UserRunAction(), fEventAction(eventAction)
+/*
 SDVolume(((qCalDetectorConstruction*)G4RunManager::GetRunManager()->
         GetUserDetectorConstruction())->GetVolume())
+        */
 {
    p_runActionOutputFileName = "qCalOutputFile";
    G4RunManager::GetRunManager()->SetPrintProgress(1);
@@ -36,13 +38,13 @@ SDVolume(((qCalDetectorConstruction*)G4RunManager::GetRunManager()->
    //Proto Histogram examples:
    //analysisManager->CreateH1("0","Photon Wavelength Per SiPM Hit", 250, 0., 1000);
    // Important thing is the bin width
-   analysisManager->CreateH1("CalculateTimesHist", "HitTimesPerHitPerSiPM", 50*50, 0, 50*1000);
+   //analysisManager->CreateH1("CalculateTimesHist", "HitTimesPerHitPerSiPM", 50*50, 0, 50*1000);
    analysisManager->CreateH1("PhotonCountHist","# of Photons per Event", 5000, 0., 100*1000);
    //analysisManager->CreateH1("EventTimesHist", "EventsPerHitTime", 100, 0, 2);
 
    //analysisManager->CreateH1("Labs","trackL in absorber", 100, 0., 1*m);
    //analysisManager->CreateH1("Lgap","trackL in gap", 100, 0., 50*cm);
-
+/*
    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Extra Detector information to be stored in ntuples:
    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -63,7 +65,7 @@ SDVolume(((qCalDetectorConstruction*)G4RunManager::GetRunManager()->
    analysisManager->CreateNtupleDColumn("PhotonCounts", fEventAction->GetPhotonCount()); // ID 4
    analysisManager->CreateNtupleDColumn("HitTimes", fEventAction->GetHitTimes()); // ID 5
    analysisManager->FinishNtuple();
-
+*/
    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Filling Constant Ntuples:
    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
