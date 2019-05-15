@@ -11,7 +11,7 @@
 
 
 //constructor
-qCalActionInitialization::qCalActionInitialization(G4String sParticle, G4int sEnergy) // G4int iEvents)
+qCalActionInitialization::qCalActionInitialization(G4String sParticle, G4int sEnergy)
 : G4VUserActionInitialization()
 {
    // Grab the Detector construction to aim the gun at its center.
@@ -41,7 +41,7 @@ qCalActionInitialization::~qCalActionInitialization() = default;
 //Build method
 void qCalActionInitialization::Build()const
 {
-   G4ThreeVector gunPosition = G4ThreeVector(p_gunXLocation, p_gunYLocation, p_gunZLocation);
+   const G4ThreeVector gunPosition = G4ThreeVector(p_gunXLocation, p_gunYLocation, p_gunZLocation);
    G4ThreeVector gunMomentum = G4ThreeVector(0,0,-1);
    SetUserAction(new qCalPrimaryGeneratorAction(startingParticle,startingEnergy, gunPosition, gunMomentum));
 

@@ -49,13 +49,14 @@ class qCalSD : public G4VSensitiveDetector
    private:
 
    qCalSiPMHitsCollection* fSiPMHitCollection;
-   std::map<G4ThreeVector, int> mapOfHits;
+   //std::map<G4ThreeVector, int> mapOfHits;
    G4DataVector* fSiPMPositionsX;
    G4DataVector* fSiPMPositionsY;
    G4DataVector* fSiPMPositionsZ;
-   G4double p_fAbsLen;
-   G4double p_fcubeSize;
-   G4int p_nZAxis;
+   //G4double p_fAbsLen;
+   //G4double p_fcubeSize;
+   //G4int p_nZAxis;
+   G4double p_offsetZ;
 };
 
 #endif

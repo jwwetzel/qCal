@@ -23,9 +23,10 @@ qCalSD::qCalSD(G4String SDname, G4double absLen, G4double cubeSize, G4int noOfZ)
 : G4VSensitiveDetector(SDname), fSiPMHitCollection(0),fSiPMPositionsX(0),fSiPMPositionsY(0),fSiPMPositionsZ(0)
 {
    collectionName.insert("SiPMHitCollection");
-   p_fAbsLen = absLen;
-   p_fcubeSize = cubeSize;
-   p_nZAxis = noOfZ;
+   //p_fAbsLen = absLen;
+   //p_fcubeSize = cubeSize;
+   //p_nZAxis = noOfZ;
+   p_offsetZ = -10000;
 }
 
 //Destructor
@@ -65,18 +66,12 @@ G4bool qCalSD::ProcessHits(G4Step* step, G4TouchableHistory*)
    G4double tempY = copyNoPos.getY()/cm;
    G4double tempZ = copyNoPos.getZ()/cm;
    G4ThreeVector posVector = G4ThreeVector(tempX, tempY, tempZ);
-   /*
-   auto it = mapOfHits.find(posVector);
 
-   if (it != mapOfHits.end())
-   {
-      it->second++;
+   if (fabs(p_offsetZ) > fabs(tempZ)){
+      p_offsetZ = tempZ;
    }
-   else
-   {
-      mapOfHits.insert(std::make_pair(posVector, 1));
-   }
-*/
+
+
    ///
    //G4int copyNo                  = touchable->GetVolume()->GetCopyNo();
    G4double hitTime              = preStepPoint->GetGlobalTime();
@@ -101,12 +96,11 @@ G4bool qCalSD::ProcessHits(G4Step* step, G4TouchableHistory*)
    {
       hit = new qCalHit(posVector, hitTime, photonWavelength);
       fSiPMHitCollection->insert(hit);
-      aTrack->SetTrackStatus(fStopAndKill);
-      hit->SetDrawit(true);
+      hit->SetDrawit(false);
       hit->IncPhotonCount();
 
-
    }
+   aTrack->SetTrackStatus(fStopAndKill);
    //mapOfHits.clear();
    return false;
 }
@@ -168,8 +162,8 @@ void qCalSD::EndOfEvent(G4HCofThisEvent*) {
 
    //G4double offsetX;
    //G4double offsetY;
+   //G4double offsetZ = -10000;
    /*
-   G4double offsetZ = -10000;
    for (auto iter = mapOfHits.cbegin(); iter != mapOfHits.cend(); iter++) {
       G4ThreeVector posAt = iter->first;
 
@@ -185,11 +179,9 @@ void qCalSD::EndOfEvent(G4HCofThisEvent*) {
          offsetZ = currentZ;
       }
    }
-   if ( !((qCalDetectorConstruction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction())->GetCoordOffsetZ()){
-      ((qCalDetectorConstruction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction())->SetCoordOffsetZ(offsetZ);
-   }
+   */
+   ((qCalDetectorConstruction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction())->SetCoordOffsetZ(p_offsetZ);
 
-*/
    //mapOfHits.clear();
 
 }
