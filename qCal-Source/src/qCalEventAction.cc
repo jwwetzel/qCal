@@ -143,6 +143,7 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
       fphotonCount[IDofHit] += hit->GetPhotonCount();
       // Set initial and final times for hits at the current SiPM number:
 
+<<<<<<< HEAD
 //      if (fphotonCount[IDofHit] > 0) {
 //         if (hit->GetTime() >= fFinalHitTimes[IDofHit]) {
 //            fFinalHitTimes[IDofHit] = hit->GetTime();
@@ -151,6 +152,16 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
 //            fInitialHitTimes[IDofHit] = hit->GetTime();
 //         }
 //      }
+=======
+      if (fphotonCount[IDofHit] > 0) {
+         if (hit->GetTime() >= fFinalHitTimes[IDofHit]) {
+            fFinalHitTimes[IDofHit] = hit->GetTime();
+         }
+         if (hit->GetTime() < fInitialHitTimes[IDofHit] || fInitialHitTimes[IDofHit] == -1) {
+            fInitialHitTimes[IDofHit] = hit->GetTime();
+         }
+     }
+>>>>>>> f20554b5f8d70e6a6ea2c9645c43eef1b602d5d6
 
    }
 
@@ -164,6 +175,7 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
    {
       // Sum up all theq
       i_totalPhotonCount += (int)fphotonCount[id];
+<<<<<<< HEAD
 //      G4double thi = fFinalHitTimes[id];
 //      G4double tlow = fInitialHitTimes[id];
 //      // Calculate the number of bins given the bin width and initial/final times:
@@ -193,6 +205,37 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
 //      else{
 //         fHitTimes[id] = thi;
 //      }
+=======
+      G4double thi = fFinalHitTimes[id];
+      G4double tlow = fInitialHitTimes[id];
+      // Calculate the number of bins given the bin width and initial/final times:
+      auto timeBins = (int)(ceil((thi-tlow) / timeBinWidth) + 1);
+      if (thi > tlow && thi >= 0 && tlow >= 0)
+      {
+         analysisManager->SetH1(0, timeBins, tlow, thi); // Hist ID 0
+         for (G4int i = 0; i < n_hit; ++i)
+         {
+            qCalHit *hit = (*eventSiPMHitCollection)[i];
+            int IDofHit = hit->GetSiPMNumber();
+            if (IDofHit == id)
+            {
+               analysisManager->FillH1(0, hit->GetTime());
+           }
+         }
+         G4int nHistEntries = analysisManager->GetH1(0)->all_entries();
+         auto maxModeLength = (int)analysisManager->GetH1(0)->max_bin_height();
+         for (G4int i = 0; i < nHistEntries; ++i) {
+            if (analysisManager->GetH1(0)->bin_height(i) == maxModeLength) {
+               fHitTimes[id] = analysisManager->GetH1(0)->bin_center(i);
+               break;
+            }
+         }
+      }
+      // If condition not met then the SiPM received only 1 hit:
+      else{
+         fHitTimes[id] = thi;
+      }
+>>>>>>> f20554b5f8d70e6a6ea2c9645c43eef1b602d5d6
       // Clear histogram of hit times:
       analysisManager->GetH1(0)->reset();
    }
