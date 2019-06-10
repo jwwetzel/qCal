@@ -354,11 +354,8 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    //Set the Quartz Surface
    ////////////////////////////////////////////////////////////////////////////////////////////////
    G4OpticalSurface *quartzWrap = new G4OpticalSurface("QuartzWrap");
-<<<<<<< HEAD
    G4LogicalSkinSurface *quartzSurface = new G4LogicalSkinSurface("QuartzSurface", logicQuartz, quartzWrap);
-=======
-   //G4LogicalSkinSurface *quartzSurface = new G4LogicalSkinSurface("QuartzSurface", logicQuartz, quartzWrap);
->>>>>>> f20554b5f8d70e6a6ea2c9645c43eef1b602d5d6
+//   G4LogicalSkinSurface *quartzSurface = new G4LogicalSkinSurface("QuartzSurface", logicQuartz, quartzWrap);
 //   quartzWrap->SetType(dielectric_LUT);
 //   quartzWrap->SetModel(LUT);
 //   quartzWrap->SetFinish(polished);

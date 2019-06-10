@@ -96,14 +96,8 @@ G4bool qCalSD::ProcessHits(G4Step* step, G4TouchableHistory*)
    {
       hit = new qCalHit(posVector, hitTime, photonWavelength);
       fSiPMHitCollection->insert(hit);
-<<<<<<< HEAD
       hit->SetDrawit(true);
       hit->IncPhotonCount();
-=======
-      hit->SetDrawit(false);
-      hit->IncPhotonCount();
-
->>>>>>> f20554b5f8d70e6a6ea2c9645c43eef1b602d5d6
    }
    aTrack->SetTrackStatus(fStopAndKill);
    //mapOfHits.clear();
