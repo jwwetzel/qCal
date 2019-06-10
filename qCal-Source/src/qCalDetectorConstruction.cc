@@ -24,6 +24,8 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4PVReplica.hh"
+#include "G4VPVParameterisation.hh"
+#include "G4PVParameterised.hh"
 
 
 qCalDetectorConstruction::qCalDetectorConstruction(G4int nXAxis,                                   //Number of cubes in the X-Axis
@@ -40,8 +42,8 @@ qCalDetectorConstruction::qCalDetectorConstruction(G4int nXAxis,                
    p_fAbsLen = fAbsLen;                                                                            //absorber radiation length
    p_sAbs = sAbs;                                                                                  //Absorber element
    p_fCubeWidth = fCubeWidth * cm;                                                                 //Width of a single cube
-   p_fQuartzSpacing = 0.01*cm;                                                                     //Width between x-cubes (circuit board + sipm)
-   p_fWrapSize = 0.015*cm;                                                                         //Width of the tyvek wrapping
+   p_fQuartzSpacing = 0.0; //0.001*cm;                                                                     //Width between x-cubes (circuit board + sipm)
+   p_fWrapSize = 0.025*cm; //0.001*cm;                                                                         //Width of the tyvek wrapping
    p_fAbsXDim = ((p_fCubeWidth + 2 * p_fWrapSize + p_fQuartzSpacing) * p_nXAxis) / 2;              //Detector X coord center
    p_fAbsYDim = ((p_fCubeWidth + 2 * p_fWrapSize + p_fQuartzSpacing) * p_nYAxis) / 2;              //Detector Y coord Center
    p_fAbsZDim = ((p_fCubeWidth + 2 * p_fWrapSize + p_fQuartzSpacing + p_fAbsLen) * p_nZAxis) / 2;  //Detector Z coord Center
@@ -62,7 +64,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    G4NistManager* nist = G4NistManager::Instance();
 
    // Option to switch on/off checking of volumes overlaps
-   G4bool checkOverlaps = true;
+   const G4bool checkOverlaps = true;
 
    //Creating The Materials for Quartz, and the air surrounding it.
    G4double atomicNumber, atomicWeight, density;
@@ -133,15 +135,15 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
 
    //Define the User selected Absorber Material
    G4Material* absMat = nist->FindOrBuildMaterial("G4_" + p_sAbs);
-   G4double fAbsRadLen = p_fAbsLen/2;
-   G4double cubeSize       = p_sdCubeSize/2;
-   G4double cubeSizeZ      = (p_sdCubeSize+p_fAbsLen)/2;
+   const G4double fAbsRadLen = p_fAbsLen/2;
+   const G4double cubeSize       = p_sdCubeSize/2;
+   const G4double cubeSizeZ      = (p_sdCubeSize+p_fAbsLen)/2;
    G4Material* sipmMat     = quartzMat;
 
    ////////////////////////////////////////////////////////////////////////////////////////////////
    //Define the world (needs full detector + full absorber + extra space)
    ////////////////////////////////////////////////////////////////////////////////////////////////
-   G4double zDetOff = 1 * cm;
+   const G4double zDetOff = 1 * cm;
    G4Box* solidWorld             = new G4Box("World",
                                              p_fAbsXDim + p_fCubeWidth,
                                              p_fAbsYDim + p_fCubeWidth,
@@ -153,7 +155,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
 
    G4ThreeVector solidPos        = G4ThreeVector(0, 0, 0);
 
-   G4VPhysicalVolume* physWorld  = new G4PVPlacement(0,               //no rotation
+   G4VPhysicalVolume* physWorld  = new G4PVPlacement(nullptr,               //no rotation
                                                      G4ThreeVector(), //at (0,0,0)
                                                      worldLog,        //its logical volume
                                                      "World",         //its name
@@ -169,6 +171,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
                                   0.5*p_fCubeWidth,
                                   0.5*p_fCubeWidth,
                                   0.5*p_fCubeWidth);
+
    G4LogicalVolume* logicQuartz = new G4LogicalVolume(solidQuartz,
                                                       quartzMat,
                                                       "logicQuartz");
@@ -187,7 +190,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
                                    "logicSiPM");
 
 
-   G4double SiPMZCoord = 0 - ((p_fCubeWidth) / 2 + 0.001*cm);
+   G4double SiPMZCoord = 0 - ((p_fCubeWidth) / 2 +0.001*cm);
    G4ThreeVector SiPMPos = G4ThreeVector(0,0,SiPMZCoord);
 
    ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -284,7 +287,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
 										0,
 										fAbsRadLen);
 
-   new G4PVPlacement(0,         //no rotation
+   new G4PVPlacement(nullptr,         //no rotation
 	   absPos,					//at (0,0,0)
 	   logicAbsorber,			//its logical volume
 	   "absorberOfDetector",	//its name
@@ -292,7 +295,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
 	   false,					//no boolean operation
 	   4,						//copy number
 	   checkOverlaps);			//overlaps checking
-   new G4PVPlacement(0,         //no rotation
+   new G4PVPlacement(nullptr,         //no rotation
 	   detPos,					//at (0,0,0)
 	   logicDetectorXY,			//its logical volume
 	   "DetectorPortion",		//its name
@@ -351,7 +354,11 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    //Set the Quartz Surface
    ////////////////////////////////////////////////////////////////////////////////////////////////
    G4OpticalSurface *quartzWrap = new G4OpticalSurface("QuartzWrap");
+<<<<<<< HEAD
    G4LogicalSkinSurface *quartzSurface = new G4LogicalSkinSurface("QuartzSurface", logicQuartz, quartzWrap);
+=======
+   //G4LogicalSkinSurface *quartzSurface = new G4LogicalSkinSurface("QuartzSurface", logicQuartz, quartzWrap);
+>>>>>>> f20554b5f8d70e6a6ea2c9645c43eef1b602d5d6
 //   quartzWrap->SetType(dielectric_LUT);
 //   quartzWrap->SetModel(LUT);
 //   quartzWrap->SetFinish(polished);

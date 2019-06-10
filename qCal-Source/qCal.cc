@@ -19,6 +19,9 @@
 #include "FTFP_BERT.hh"
 #include "G4OpticalPhysics.hh"
 #include "G4EmStandardPhysics_option4.hh"
+#include "G4EmStandardPhysics_option3.hh"
+#include "G4EmStandardPhysics_option2.hh"
+#include "G4EmStandardPhysics_option1.hh"
 #include "G4NistManager.hh"
 
 #ifdef G4MULTITHREADED
@@ -98,7 +101,11 @@ int main(int argc, char** argv)
 		else if (G4String(argv[i]) == "-x") { nXAxis = atoi(argv[i + 1]); b_xAxisEnteredByUser = true; }
 		else if (G4String(argv[i]) == "-y") { nYAxis = atoi(argv[i + 1]); b_yAxisEnteredByUser = true; }
 		else if (G4String(argv[i]) == "-z") { nZAxis = atoi(argv[i + 1]); b_zAxisEnteredByUser = true; }
+<<<<<<< HEAD
 		else if (G4String(argv[i]) == "-e") startingEnergy = atoi(argv[i + 1]);
+=======
+		else if (G4String(argv[i]) == "-e") startingEnergy = (atoi(argv[i + 1]) * GeV);
+>>>>>>> f20554b5f8d70e6a6ea2c9645c43eef1b602d5d6
 		else if (G4String(argv[i]) == "-p") startingParticle = argv[i + 1];
 		else if (G4String(argv[i]) == "-a") sAbs = argv[i + 1];
 		else if (G4String(argv[i]) == "-s") seedIndex = atoi(argv[i + 1]);
@@ -222,10 +229,19 @@ int main(int argc, char** argv)
 
 	auto detConstruction = new qCalDetectorConstruction(nXAxis, nYAxis, nZAxis, sAbs, fAbsRadLen, nCubeWidth);
 	runManager->SetUserInitialization(detConstruction);
+<<<<<<< HEAD
 
 	//Configure Physics List for initialization
 	auto physicsList = new FTFP_BERT;
 	physicsList->ReplacePhysics(new G4EmStandardPhysics_option4());
+=======
+   G4cout << "X IS " << nXAxis << G4endl;
+   G4cout << "Y IS " << nYAxis << G4endl;
+   G4cout << "Z IS " << nZAxis << G4endl;
+	//Configure Physics List for initialization
+	auto physicsList = new FTFP_BERT;
+	physicsList->ReplacePhysics(new G4EmStandardPhysics_option4);
+>>>>>>> f20554b5f8d70e6a6ea2c9645c43eef1b602d5d6
 
 	G4OpticalPhysics* opticalPhysics = new G4OpticalPhysics();
 	opticalPhysics->SetWLSTimeProfile("delta");
