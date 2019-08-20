@@ -1,0 +1,7 @@
+/home/rich/Downloads/qCal-master/qCal-Build/CMakeFiles/install/strip.dir
+/home/rich/Downloads/qCal-master/qCal-Build/CMakeFiles/edit_cache.dir
+/home/rich/Downloads/qCal-master/qCal-Build/CMakeFiles/qCal.dir
+/home/rich/Downloads/qCal-master/qCal-Build/CMakeFiles/rebuild_cache.dir
+/home/rich/Downloads/qCal-master/qCal-Build/CMakeFiles/list_install_components.dir
+/home/rich/Downloads/qCal-master/qCal-Build/CMakeFiles/install/local.dir
+/home/rich/Downloads/qCal-master/qCal-Build/CMakeFiles/install.dir
