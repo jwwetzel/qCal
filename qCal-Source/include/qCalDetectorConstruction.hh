@@ -65,6 +65,7 @@ private:
    G4double p_sdCubeSize;
    G4double p_foffsetZ;
    G4double p_fscaleZ;
+   G4double p_PMTBackDim;
    G4LogicalVolume* logicSiPM;
 
    //The SiPM SDs:

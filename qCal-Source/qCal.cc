@@ -50,7 +50,7 @@ namespace {
 int main(int argc, char** argv)
 {
 	//Make sure there aren't too many args
-	if (argc > 15)
+	if (argc > 19)
 	{
 		G4cout << " Too many Arguments " << G4endl;
 		PrintUsage();
