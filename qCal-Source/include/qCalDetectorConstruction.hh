@@ -23,7 +23,10 @@ public:
                             G4int nZAxis = 1,
                             G4String sAbs = "Fe",
                             G4double fAbsLen = 1.0,
-                            G4double fCubeWidth = 1.0
+                            G4double fCubeWidth = 1.0,
+                            G4double fQuartzDepth = 1.0,
+                            G4double fPMTDepth = 1.0,
+                            G4double fDetecWidth = 1.0
    );
    virtual ~qCalDetectorConstruction();
 
@@ -33,6 +36,7 @@ public:
    G4double GetAbsXdim(){return p_fAbsXDim;};
    G4double GetAbsYdim(){return p_fAbsYDim;};
    G4double GetAbsZdim(){return p_fAbsZDim;};
+   G4double GetHalfDetSize() {return negHalfDetSize;}
    G4int GetnXAxis(){return p_nXAxis;};
    G4int GetnYAxis(){return p_nYAxis;};
    G4int GetnZAxis(){return p_nZAxis;};
@@ -54,6 +58,7 @@ private:
    G4int p_nZAxis;
    G4String p_sAbs;
    G4double p_fCubeWidth;
+   G4double p_fQuartzDepth;
    G4double p_fAbsXDim;
    G4double p_fAbsYDim;
    G4double p_fAbsZDim;
@@ -67,7 +72,7 @@ private:
    G4double p_fscaleZ;
    G4double p_PMTBackDim;
    G4LogicalVolume* logicSiPM;
-
+   G4double negHalfDetSize;
    //The SiPM SDs:
    G4Cache<qCalSD*> fSiPM_SD;
    std::vector<G4ThreeVector> fSiPMPositions;

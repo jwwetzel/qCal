@@ -43,7 +43,7 @@ namespace {
 		G4cerr << " Usage: " << G4endl;
 		G4cerr << " qCal [-m macro ] [-w cubeWidth] [-e startingEnergy] [-p startingParticle] [-a absorberZ] [-u UIsession] [-t nThreads] [-s seedIndex]" << G4endl;
 		G4cerr << "   note: -t option is available only for multi-threaded mode." << G4endl;
-		G4cerr << "Example: ./qCal -m lowE.Mac -w 1.0 -e 1 -p mu- -a Fe -t 4 -s 15" << G4endl;
+		G4cerr << "Example: ./qCal -m lowE.Mac -w 1.0 -e 1 -p mu- -a Fe -t 4 -s 15 -qd 2 -pd 2 -dw 2" << G4endl;
 	}
 }
 
@@ -74,8 +74,13 @@ int main(int argc, char** argv)
 	bool b_xAxisEnteredByUser = false;
 	bool b_yAxisEnteredByUser = false;
 	bool b_zAxisEnteredByUser = false;
+	bool b_absLengthEntered = false;
 
 	G4double nCubeWidth = 1.0; // 1.0 cm cube by default
+	G4double nCubeDepth = 1.0;
+	G4double nPMTDepth = 1.0;
+	G4double nDetecWidth = 0.5;
+	G4double fAbsRadLen = 1.0;
 	G4int startingEnergy = 1 * GeV;
 	G4String startingParticle = "mu-";
 
@@ -105,6 +110,10 @@ int main(int argc, char** argv)
 		else if (G4String(argv[i]) == "-p") startingParticle = argv[i + 1];
 		else if (G4String(argv[i]) == "-a") sAbs = argv[i + 1];
 		else if (G4String(argv[i]) == "-s") seedIndex = atoi(argv[i + 1]);
+		else if (G4String(argv[i]) == "-qd") nCubeDepth = atof(argv[i + 1]);								//quartzDepth in centimeters
+		else if (G4String(argv[i]) == "-pd") nPMTDepth = atof(argv[i + 1]);									//PMTDepth in centimeters
+		else if (G4String(argv[i]) == "-dw") nDetecWidth = atof(argv[i + 1]);   							//DetectorWidth in centimeters
+		else if (G4String(argv[i]) == "-ad") {fAbsRadLen = atof(argv[i + 1]); b_absLengthEntered = true; }  //Absorber depth in centimeters
 #ifdef G4MULTITHREADED
 		else if (G4String(argv[i]) == "-t") {
 			nThreads = G4UIcommand::ConvertToInt(argv[i + 1]);
@@ -197,9 +206,11 @@ int main(int argc, char** argv)
 	   G4Material* quartzCry = new G4Material("quartzStarting", density = ((2.648*g) / cm3), nElements = 2);
 	   quartzCry->AddElement(Si, nAtoms = 1);
 	   quartzCry->AddElement(O, nAtoms = 4);
-
+if (!b_absLengthEntered)
+{
 	G4Material* absorberMat = nist->FindOrBuildMaterial("G4_" + sAbs);
-	G4double fAbsRadLen = absorberMat->GetRadlen()*mm;
+	fAbsRadLen = absorberMat->GetRadlen()/cm;
+	G4double mmAbsRadLen = absorberMat->GetRadlen()*mm;
 ///Calculate the new X,Y, and Z based off of the initial energy
 //For X and Y of detector, dependant on the nuclear interaction length of the silicon + material.
 //Take the ceiling of the nuclear interaction length divided by a cubes width to get the number needed.
@@ -218,12 +229,12 @@ int main(int argc, char** argv)
 		tMax = (0.2)*log(startingEnergy) + 0.7;
 		lambdaAtt = pow((startingEnergy), 0.3);
 		LMax = tMax + (2.5)*(lambdaAtt);
-		layerWidth = (nCubeWidth + fAbsRadLen);
+		layerWidth = (nCubeDepth + mmAbsRadLen);
 		if (!b_zAxisEnteredByUser) nZAxis = ceil((LMax*bothNucLength) / layerWidth);
     //G4cout << "tMax: " << tMax << ", " << "lambdaAtt: " << lambdaAtt << ", " "L: " << LMax << ", " << "LayerWidth: " << layerWidth << G4endl;
     //G4cout << "Number of Z Cubes: " << nZAxis << G4endl;
-
-	auto detConstruction = new qCalDetectorConstruction(nXAxis, nYAxis, nZAxis, sAbs, fAbsRadLen, nCubeWidth);
+}
+	auto detConstruction = new qCalDetectorConstruction(nXAxis, nYAxis, nZAxis, sAbs, fAbsRadLen, nCubeWidth, nCubeDepth, nPMTDepth, nDetecWidth);
 	runManager->SetUserInitialization(detConstruction);
 
    G4cout << "X IS " << nXAxis << G4endl;
