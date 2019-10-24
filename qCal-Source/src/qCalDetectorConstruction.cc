@@ -42,7 +42,7 @@ qCalDetectorConstruction::qCalDetectorConstruction(G4int nXAxis,                
    p_nXAxis = nXAxis;                                                                              //Number of cubes in the X-Axis
    p_nYAxis = nYAxis;                                                                              //Number of cubes in the Y-Axis
    p_nZAxis = nZAxis;                                                                              //Number of cubes in the Z-Axis
-   p_fAbsLen = (4*fAbsLen);   //(fAbsLen/2 gives the exact cm that the user inputs                                                                        //absorber radiation length
+   p_fAbsLen = (fAbsLen/2);  //gives the exact cm that the user inputs                                                                        //absorber radiation length
    p_sAbs = sAbs;                                                                                  //Absorber element
    p_fCubeWidth = (fCubeWidth)/2;    //56 *mm                                                 //Width of a single cube
    p_fQuartzDepth = (fCubeDepth)/2;
@@ -148,8 +148,12 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    //const G4double cubeSize       = p_sdCubeSize/2;
    const G4double cubeSizeZ      = (p_fQuartzDepth+p_fAbsLen);                  //(p_sdCubeSize+p_fAbsLen)/2;
    G4Material* sipmMat           = quartzMat;
-   G4cout << "ABSLEN = " << p_fAbsLen << G4endl;
-   G4cout << "PMTDIM = " << p_PMTBackDim << G4endl;
+   G4cout << "Absorber Depth = " << p_fAbsLen << G4endl;
+   G4cout << "Detector Casing Depth = " << p_PMTBackDim << G4endl;
+   G4cout << "Quartz Depth = " << p_fQuartzDepth << G4endl;
+
+   G4cout << "Quartz Width = " << p_fCubeWidth << G4endl;
+   G4cout << "Sensistive Detector Width = " << p_SiPMDim << G4endl;
 
    ////////////////////////////////////////////////////////////////////////////////////////////////
    //Define the world (needs full detector + full absorber + extra space)

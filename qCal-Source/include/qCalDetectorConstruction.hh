@@ -71,6 +71,7 @@ private:
    G4double p_foffsetZ;
    G4double p_fscaleZ;
    G4double p_PMTBackDim;
+   G4double p_sensDetecDepth;
    G4LogicalVolume* logicSiPM;
    G4double negHalfDetSize;
    //The SiPM SDs:

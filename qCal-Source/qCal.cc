@@ -209,7 +209,7 @@ int main(int argc, char** argv)
 if (!b_absLengthEntered)
 {
 	G4Material* absorberMat = nist->FindOrBuildMaterial("G4_" + sAbs);
-	fAbsRadLen = absorberMat->GetRadlen()/cm;
+	fAbsRadLen = 4*(absorberMat->GetRadlen()/cm);
 	G4double mmAbsRadLen = absorberMat->GetRadlen()*mm;
 ///Calculate the new X,Y, and Z based off of the initial energy
 //For X and Y of detector, dependant on the nuclear interaction length of the silicon + material.
