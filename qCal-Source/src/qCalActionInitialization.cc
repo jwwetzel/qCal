@@ -24,6 +24,7 @@ qCalActionInitialization::qCalActionInitialization(G4String sParticle, G4int sEn
    p_gunZLocation = p_theDetector->GetHalfDetSize();//p_theDetector->GetHalfDetSize();
    //G4cout << "AbsZDim = " << p_theDetector->GetAbsZdim() << G4endl;
    //G4cout << "neg = " << p_theDetector->GetHalfDetSize() << G4endl;
+   //p_gunZLocation = p_theDetector->GetAbsZdim()+1*cm;
 
    startingParticle = sParticle;
    startingEnergy = sEnergy;

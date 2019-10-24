@@ -37,6 +37,7 @@ qCalDetectorConstruction::qCalDetectorConstruction(G4int nXAxis,                
                                                    G4double fCubeDepth,                            //Depth of a single cube
                                                    G4double fPMTBackDepth,                         //Depth of the PMT Backing
                                                    G4double fDetecWidth)                           //Width of the Active Detector Backing
+
       :G4VUserDetectorConstruction()
 {
    p_nXAxis = nXAxis;                                                                              //Number of cubes in the X-Axis
@@ -214,12 +215,13 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
                                    p_fCubeWidth,
                                    p_fCubeWidth,
                                    p_PMTBackDim);
-   
+
    G4LogicalVolume* logicPMTBack = new G4LogicalVolume(solidPMTBack,
                                                        airMat,
                                                        "logicPMTBack");
-   
+
    G4double PMTBackZCoord = 0 - ((p_fQuartzDepth)+(p_PMTBackDim)) - (2*p_sensDetecDepth);
+
    
    G4ThreeVector PMTBackPos = G4ThreeVector(0,0,PMTBackZCoord);
 
@@ -240,6 +242,19 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
                                       p_sdCubeSize*p_nXAxis,
                                       p_sdCubeSize*p_nYAxis,
                                       (p_fQuartzDepth +(p_PMTBackDim)));
+                                          cubeSize,
+                                          cubeSize,
+                                          (cubeSizeZ+p_PMTBackDim+0.002*cm));
+
+   G4Box* solidDetectorX      = new G4Box("DetectorXLayer",
+                                          cubeSize*p_nXAxis,
+                                          cubeSize,
+                                          cubeSizeZ+p_PMTBackDim);
+
+   G4Box* solidDetectorXY = new G4Box("DetectorXYLayer",
+                                      cubeSize*p_nXAxis,
+                                      cubeSize*p_nYAxis,
+                                      (p_quartzDepth +(p_PMTBackDim/2)));
 
    G4LogicalVolume* logicDetector   = new G4LogicalVolume(solidDetector,   airMat, "logicDetector");
    G4LogicalVolume* logicDetectorX  = new G4LogicalVolume(solidDetectorX,  airMat, "logicDetectorX");
@@ -310,6 +325,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
                                                (p_sdCubeSize)*(p_nYAxis),
                                                ((((p_fQuartzDepth + p_fAbsLen))+(p_PMTBackDim)))*(p_nZAxis)); //+0.25
 
+
    G4LogicalVolume* logicAbsorber      = new G4LogicalVolume(solidAbsorber,
                                                           absMat,
                                                           "logicAbsorber");
@@ -358,6 +374,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
                    (p_nZAxis),                  //Number of replica
                    2*(((p_fQuartzDepth + p_fAbsLen)) + (2*p_sensDetecDepth) + (p_PMTBackDim))); //Width of replica //+0.25
 
+
    new G4PVPlacement(nullptr,                   //no rotation
                      G4ThreeVector(0, 0, 0),    //at (0,0,0)
                      logicFullDetector,         //its logical volume
@@ -398,6 +415,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    //logicFinal->SetVisAttributes(blueColor);
 
 
+
    ////////////////////////////////////////////////////////////////////////////////////////////////
    //Set the Quartz Surface
    ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -406,7 +424,8 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    quartzWrap->SetType(dielectric_metal); 
    quartzWrap->SetModel(unified);
    quartzWrap->SetFinish(polishedtyvekair);
-   //UnusedLogicalSkinSurface??
+   //UnusedLogicalSkinSurface? Compiling mentions that quartzSurface is never used.
+
    new G4LogicalBorderSurface("QuartzWrap",
                               quartzPlace,
                               physWorld,
