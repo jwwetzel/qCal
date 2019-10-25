@@ -168,7 +168,7 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
       G4double tlow = fInitialHitTimes[id];
       // Calculate the number of bins given the bin width and initial/final times:
       auto timeBins = (int)(ceil((thi-tlow) / timeBinWidth) + 1);
-      timeBins = timeBins <= 0.0 ? 1 : timeBins; // Force greater than 1
+      //timeBins = timeBins <= 0.0 ? 1 : timeBins; // Force greater than 1
       if (thi > tlow && thi >= 0 && tlow >= 0)
       {
          analysisManager->SetH1(0, timeBins, tlow, thi); // Hist ID 0
@@ -201,14 +201,14 @@ void qCalEventAction::EndOfEventAction(const G4Event* anEvent)
    analysisManager->FillH1(1, i_totalPhotonCount);
 
    // Update all the root ntuples:
-   analysisManager->AddNtupleRow();
+   //analysisManager->AddNtupleRow();
 
    // Reset the SiPM counts and Hit Times to zero for a new event.
    for (int i = 0; i < SDVolume; i++){
       fphotonCount[i] = 0.;
-      fHitTimes[i] = -1.;
-      fFinalHitTimes[i] = -1.;
-      fInitialHitTimes[i] = -1.;
+      //fHitTimes[i] = -1.;
+      //fFinalHitTimes[i] = -1.;
+      //fInitialHitTimes[i] = -1.;
    }
 }
 
