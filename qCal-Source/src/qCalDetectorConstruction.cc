@@ -165,7 +165,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
                                              p_fAbsYDim + p_fCubeWidth,
                                              ((p_nZAxis)*(((p_fQuartzDepth + p_fAbsLen)) + (2*p_sensDetecDepth) + (p_PMTBackDim))) + zDetOff);
                                              //((p_nZAxis)*(p_fAbsZDim + p_fQuartzDepth + p_PMTBackDim)) + zDetOff);
-
+G4cout << "World Depth = " << (((p_nZAxis)*(((p_fQuartzDepth + p_fAbsLen)) + (2*p_sensDetecDepth) + (p_PMTBackDim))) + zDetOff) << G4endl;
    G4LogicalVolume* worldLog     = new G4LogicalVolume(solidWorld,
                                                        airMat,
                                                        "World");
@@ -242,10 +242,11 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
                                       p_sdCubeSize*p_nXAxis,
                                       p_sdCubeSize*p_nYAxis,
                                       (p_fQuartzDepth +(p_PMTBackDim)));
-                                          cubeSize,
-                                          cubeSize,
-                                          (cubeSizeZ+p_PMTBackDim+0.002*cm));
+                                         // cubeSize,
+                                         // cubeSize,
+                                         // (cubeSizeZ+p_PMTBackDim+0.002*cm));
 
+/*
    G4Box* solidDetectorX      = new G4Box("DetectorXLayer",
                                           cubeSize*p_nXAxis,
                                           cubeSize,
@@ -255,6 +256,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
                                       cubeSize*p_nXAxis,
                                       cubeSize*p_nYAxis,
                                       (p_quartzDepth +(p_PMTBackDim/2)));
+   */
 
    G4LogicalVolume* logicDetector   = new G4LogicalVolume(solidDetector,   airMat, "logicDetector");
    G4LogicalVolume* logicDetectorX  = new G4LogicalVolume(solidDetectorX,  airMat, "logicDetectorX");
@@ -336,7 +338,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
 
    G4LogicalVolume* logicFullDetector  = new G4LogicalVolume(solidFullDetector,
                                                             airMat,
-                                                            "logicFinal");
+                                                            "logicFullDetector");
 
 
    G4ThreeVector absPos = G4ThreeVector(0,
@@ -349,36 +351,36 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
 
    new G4PVPlacement(nullptr,                //no rotation
                      absPos,                 //at (0,0,0)
-                     logicAbsorber,			   //its logical volume
-                     "absorberOfDetector",	//its name
-                     logicFinal,				   //its mother  volume
-                     false,					   //no boolean operation
-                     4,						      //copy number
-                     checkOverlaps);			//overlaps checking
+                     logicAbsorber,        //its logical volume
+                     "absorberOfDetector",  //its name
+                     logicFinal,           //its mother  volume
+                     false,            //no boolean operation
+                     4,                 //copy number
+                     checkOverlaps);      //overlaps checking
    new G4PVPlacement(nullptr,                //no rotation
-                     detPos,					   //at (0,0,0)
-                     logicDetectorXY,			//its logical volume
-                     "DetectorPortion",		//its name
-                     logicFinal,				   //its mother  volume
-                     false,					   //no boolean operation
-                     4,						      //copy number
-                     checkOverlaps);			//overlaps checking
+                     detPos,             //at (0,0,0)
+                     logicDetectorXY,     //its logical volume
+                     "DetectorPortion",   //its name
+                     logicFinal,           //its mother  volume
+                     false,            //no boolean operation
+                     4,                 //copy number
+                     checkOverlaps);      //overlaps checking
 
    ////////////////////////////////////////////////////////////////////////////////////////////////
    //Replicate pixel and absorber in XYZDir, and place it in the world
    ////////////////////////////////////////////////////////////////////////////////////////////////
    new G4PVReplica("FullDetectorXYZ",           //Name
-                   logicFinal,					   //Logical Volume
+                   logicFinal,             //Logical Volume
                    logicFullDetector,           //Mother volume
                    kZAxis,                      //Axis of replication
                    (p_nZAxis),                  //Number of replica
-                   2*(((p_fQuartzDepth + p_fAbsLen)) + (2*p_sensDetecDepth) + (p_PMTBackDim))); //Width of replica //+0.25
+                   2*(((p_fQuartzDepth + p_fAbsLen)) + (p_sensDetecDepth) + (p_PMTBackDim))); //Width of replica //+0.25
 
 
    new G4PVPlacement(nullptr,                   //no rotation
                      G4ThreeVector(0, 0, 0),    //at (0,0,0)
                      logicFullDetector,         //its logical volume
-                     "Final",					      //its name
+                     "Final",               //its name
                      worldLog,                  //its mother  volume
                      false,                     //no boolean operation
                      5,                         //copy number
@@ -409,10 +411,11 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    logicFinal->SetVisAttributes(new G4VisAttributes(false));
    logicFullDetector->SetVisAttributes(new G4VisAttributes(false));
 //   logicAbsorber->SetVisAttributes(new G4VisAttributes(false));
-   logicAbsorber->SetVisAttributes(yellowColor);
-   logicPMTBack->SetVisAttributes(greenColor);
-   logicSiPM->SetVisAttributes(redColor);
-   //logicFinal->SetVisAttributes(blueColor);
+   //logicAbsorber->SetVisAttributes(yellowColor);
+   //logicPMTBack->SetVisAttributes(greenColor);
+   //logicSiPM->SetVisAttributes(redColor);
+  //logicFinal->SetVisAttributes(blueColor);
+  logicFullDetector->SetVisAttributes(greenColor);
 
 
 
@@ -463,8 +466,11 @@ G4int qCalDetectorConstruction::RawCoordsToSiPMNumber(const G4ThreeVector &raw){
    G4int nXAxisIsEven = 1 - p_nXAxis%2;
    G4int nYAxisIsEven = 1 - p_nYAxis%2;
    G4int nZAxisIsEven = 1 - p_nZAxis%2;
-   G4double rx = raw.getX() / (p_sdCubeSize/cm) +0.5 * nXAxisIsEven;
-   G4double ry = raw.getY() / (p_sdCubeSize/cm) +0.5 * nYAxisIsEven;
+   //G4cout << "SDCube ==" << p_sdCubeSize << G4endl;
+   //G4cout << "SDCubeDiv ==" << p_sdCubeSize/cm << G4endl;
+
+   G4double rx = raw.getX() / (p_sdCubeSize) +0.5 * nXAxisIsEven;
+   G4double ry = raw.getY() / (p_sdCubeSize) +0.5 * nYAxisIsEven;
    G4double rz = (raw.getZ() - p_foffsetZ )/p_fscaleZ -nZAxisIsEven;
    // (rx, ry, rz) are then re-centered in a detector corner so that all components are positive:
    G4double cx = rx + floor(0.5*p_nXAxis);
