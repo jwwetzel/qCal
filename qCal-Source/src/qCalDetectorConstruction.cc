@@ -160,6 +160,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    G4cout << "Sensistive Detector Width = " << p_SiPMDim << G4endl;
    */
 
+
    ////////////////////////////////////////////////////////////////////////////////////////////////
    //Define the world (needs full detector + full absorber + extra space)
    ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -170,7 +171,9 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
                                              p_fAbsZDim + zDetOff);
                                             //((p_nZAxis)*(((p_fQuartzDepth + p_fAbsLen)) + (2*p_sensDetecDepth) + (p_PMTBackDim))) + zDetOff)
                                              //((p_nZAxis)*(p_fAbsZDim + p_fQuartzDepth + p_PMTBackDim)) + zDetOff);
+
   //G4cout << "World Depth = " << (((p_nZAxis)*(((p_fQuartzDepth + p_fAbsLen)) + (2*p_sensDetecDepth) + (p_PMTBackDim))) + zDetOff) << G4endl;
+
    G4LogicalVolume* worldLog     = new G4LogicalVolume(solidWorld,
                                                        airMat,
                                                        "World");
@@ -416,11 +419,13 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    logicFinal->SetVisAttributes(new G4VisAttributes(false));
    logicFullDetector->SetVisAttributes(new G4VisAttributes(false));
 //   logicAbsorber->SetVisAttributes(new G4VisAttributes(false));
+
    logicAbsorber->SetVisAttributes(yellowColor);
    logicPMTBack->SetVisAttributes(greenColor);
    logicSiPM->SetVisAttributes(redColor);
   //logicFinal->SetVisAttributes(blueColor);
   //logicFullDetector->SetVisAttributes(greenColor);
+
 
 
 
