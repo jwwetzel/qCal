@@ -43,20 +43,23 @@ qCalDetectorConstruction::qCalDetectorConstruction(G4int nXAxis,                
    p_nXAxis = nXAxis;                                                                              //Number of cubes in the X-Axis
    p_nYAxis = nYAxis;                                                                              //Number of cubes in the Y-Axis
    p_nZAxis = nZAxis;                                                                              //Number of cubes in the Z-Axis
-   p_fAbsLen = (4*fAbsLen);   //(fAbsLen/2 gives the exact cm that the user inputs                                                                        //absorber radiation length
+   p_fAbsLen = (fAbsLen/2);  //gives the exact cm that the user inputs                                                                        //absorber radiation length
    p_sAbs = sAbs;                                                                                  //Absorber element
    p_fCubeWidth = (fCubeWidth)/2;    //56 *mm                                                 //Width of a single cube
    p_fQuartzDepth = (fCubeDepth)/2;
    p_fQuartzSpacing = 0.0; //0.001*cm;                                                             //Width between x-cubes (circuit board + sipm)
-   p_fWrapSize = 0.025*cm; //0.001*cm;                                                             //Width of the tyvek wrapping
-   p_fAbsXDim = ((p_fCubeWidth + 2 * p_fWrapSize + p_fQuartzSpacing) * p_nXAxis) / 2;              //Detector X coord center
-   p_fAbsYDim = ((p_fCubeWidth + 2 * p_fWrapSize + p_fQuartzSpacing) * p_nYAxis) / 2;              //Detector Y coord Center
-   p_fAbsZDim = ((p_fCubeWidth + 2 * p_fWrapSize + p_fQuartzSpacing + p_fAbsLen) * p_nZAxis) / 4;  //Detector Z coord Center
+   p_fWrapSize = 0.025*cm; //0.001*cm;      
+                                                          //Width of the tyvek wrapping
+   p_fAbsXDim = (((p_fCubeWidth*2) + (2 * p_fWrapSize) + p_fQuartzSpacing) * p_nXAxis) / 2;              //Detector X coord center
+   p_fAbsYDim = (((p_fCubeWidth*2) + (2 * p_fWrapSize) + p_fQuartzSpacing) * p_nYAxis) / 2;              //Detector Y coord Center
+   p_fAbsZDim = ((p_nZAxis)*(((p_fQuartzDepth + p_fAbsLen)) + (2*p_sensDetecDepth) + (p_PMTBackDim))) + (0.25*cm);//((p_fCubeWidth + 2 * p_fWrapSize + p_fQuartzSpacing + p_fAbsLen) * p_nZAxis) / 4;  //Detector Z coord Center
+   //Definitely might have gogtn changed
+
    p_SiPMDim =  (fDetecWidth)/2;        //48.5*mm;                                                                            //Dimension of SiPM
-   p_sdCubeSize = (p_fCubeWidth + 2 * p_fWrapSize + p_fQuartzSpacing)/2;
+   p_sdCubeSize = p_fCubeWidth;//((p_fCubeWidth*2) + (2 * p_fWrapSize) + p_fQuartzSpacing)/2;
    p_PMTBackDim = (fPMTBackDepth)/2;
    p_fscaleZ = (p_fAbsLen + p_sdCubeSize)/cm;
-   p_sensDetecDepth = 0.001*cm;
+   p_sensDetecDepth = (0.001*cm);
    negHalfDetSize = ((((p_nZAxis)*(((p_fQuartzDepth + p_fAbsLen)) + (2*p_sensDetecDepth) + (p_PMTBackDim))) + (0.25*cm)));
 }
 
@@ -149,9 +152,13 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    //const G4double cubeSize       = p_sdCubeSize/2;
    const G4double cubeSizeZ      = (p_fQuartzDepth+p_fAbsLen);                  //(p_sdCubeSize+p_fAbsLen)/2;
    G4Material* sipmMat           = quartzMat;
-   //G4cout << "ABSLEN = " << p_fAbsLen << G4endl;
-   //G4cout << "PMTDIM = " << p_PMTBackDim << G4endl;
-
+   /*
+   G4cout << "Absorber Depth = " << p_fAbsLen << G4endl;
+   G4cout << "Detector Casing Depth = " << p_PMTBackDim << G4endl;
+   G4cout << "Quartz Depth = " << p_fQuartzDepth << G4endl;
+   G4cout << "Quartz Width = " << p_fCubeWidth << G4endl;
+   G4cout << "Sensistive Detector Width = " << p_SiPMDim << G4endl;
+   */
 
    ////////////////////////////////////////////////////////////////////////////////////////////////
    //Define the world (needs full detector + full absorber + extra space)
@@ -160,9 +167,10 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    G4Box* solidWorld             = new G4Box("World",
                                              p_fAbsXDim + p_fCubeWidth,
                                              p_fAbsYDim + p_fCubeWidth,
-                                             ((p_nZAxis)*(((p_fQuartzDepth + p_fAbsLen)) + (2*p_sensDetecDepth) + (p_PMTBackDim))) + zDetOff);
+                                             p_fAbsZDim + zDetOff);
+                                            //((p_nZAxis)*(((p_fQuartzDepth + p_fAbsLen)) + (2*p_sensDetecDepth) + (p_PMTBackDim))) + zDetOff)
                                              //((p_nZAxis)*(p_fAbsZDim + p_fQuartzDepth + p_PMTBackDim)) + zDetOff);
-
+  //G4cout << "World Depth = " << (((p_nZAxis)*(((p_fQuartzDepth + p_fAbsLen)) + (2*p_sensDetecDepth) + (p_PMTBackDim))) + zDetOff) << G4endl;
    G4LogicalVolume* worldLog     = new G4LogicalVolume(solidWorld,
                                                        airMat,
                                                        "World");
@@ -197,14 +205,14 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    G4Box* solidSiPM = new G4Box("solidSiPM",
                                 p_SiPMDim,
                                 p_SiPMDim,
-                                0.001*cm);
+                                p_sensDetecDepth);
 
    logicSiPM = new G4LogicalVolume(solidSiPM,
                                    sipmMat,
                                    "logicSiPM");
 
 
-   G4double SiPMZCoord = 0 - ((p_fQuartzDepth) + (p_sensDetecDepth));
+   G4double SiPMZCoord = 0 - ((p_fQuartzDepth) + (p_sensDetecDepth));  
    G4ThreeVector SiPMPos = G4ThreeVector(0,0,SiPMZCoord);
 
    //Create the backing of the PMT, tentatively just an air gap.
@@ -239,10 +247,11 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
                                       p_sdCubeSize*p_nXAxis,
                                       p_sdCubeSize*p_nYAxis,
                                       (p_fQuartzDepth +(p_PMTBackDim)));
-                                          cubeSize,
-                                          cubeSize,
-                                          (cubeSizeZ+p_PMTBackDim+0.002*cm));
+                                         // cubeSize,
+                                         // cubeSize,
+                                         // (cubeSizeZ+p_PMTBackDim+0.002*cm));
 
+/*
    G4Box* solidDetectorX      = new G4Box("DetectorXLayer",
                                           cubeSize*p_nXAxis,
                                           cubeSize,
@@ -252,6 +261,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
                                       cubeSize*p_nXAxis,
                                       cubeSize*p_nYAxis,
                                       (p_quartzDepth +(p_PMTBackDim/2)));
+   */
 
    G4LogicalVolume* logicDetector   = new G4LogicalVolume(solidDetector,   airMat, "logicDetector");
    G4LogicalVolume* logicDetectorX  = new G4LogicalVolume(solidDetectorX,  airMat, "logicDetectorX");
@@ -333,7 +343,7 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
 
    G4LogicalVolume* logicFullDetector  = new G4LogicalVolume(solidFullDetector,
                                                             airMat,
-                                                            "logicFinal");
+                                                            "logicFullDetector");
 
 
    G4ThreeVector absPos = G4ThreeVector(0,
@@ -346,36 +356,36 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
 
    new G4PVPlacement(nullptr,                //no rotation
                      absPos,                 //at (0,0,0)
-                     logicAbsorber,			   //its logical volume
-                     "absorberOfDetector",	//its name
-                     logicFinal,				   //its mother  volume
-                     false,					   //no boolean operation
-                     4,						      //copy number
-                     checkOverlaps);			//overlaps checking
+                     logicAbsorber,        //its logical volume
+                     "absorberOfDetector",  //its name
+                     logicFinal,           //its mother  volume
+                     false,            //no boolean operation
+                     4,                 //copy number
+                     checkOverlaps);      //overlaps checking
    new G4PVPlacement(nullptr,                //no rotation
-                     detPos,					   //at (0,0,0)
-                     logicDetectorXY,			//its logical volume
-                     "DetectorPortion",		//its name
-                     logicFinal,				   //its mother  volume
-                     false,					   //no boolean operation
-                     4,						      //copy number
-                     checkOverlaps);			//overlaps checking
+                     detPos,             //at (0,0,0)
+                     logicDetectorXY,     //its logical volume
+                     "DetectorPortion",   //its name
+                     logicFinal,           //its mother  volume
+                     false,            //no boolean operation
+                     4,                 //copy number
+                     checkOverlaps);      //overlaps checking
 
    ////////////////////////////////////////////////////////////////////////////////////////////////
    //Replicate pixel and absorber in XYZDir, and place it in the world
    ////////////////////////////////////////////////////////////////////////////////////////////////
    new G4PVReplica("FullDetectorXYZ",           //Name
-                   logicFinal,					   //Logical Volume
+                   logicFinal,             //Logical Volume
                    logicFullDetector,           //Mother volume
                    kZAxis,                      //Axis of replication
                    (p_nZAxis),                  //Number of replica
-                   2*(((p_fQuartzDepth + p_fAbsLen)) + (2*p_sensDetecDepth) + (p_PMTBackDim))); //Width of replica //+0.25
+                   2*(((p_fQuartzDepth + p_fAbsLen)) + (p_sensDetecDepth) + (p_PMTBackDim))); //Width of replica //+0.25
 
 
    new G4PVPlacement(nullptr,                   //no rotation
                      G4ThreeVector(0, 0, 0),    //at (0,0,0)
                      logicFullDetector,         //its logical volume
-                     "Final",					      //its name
+                     "Final",               //its name
                      worldLog,                  //its mother  volume
                      false,                     //no boolean operation
                      5,                         //copy number
@@ -409,7 +419,8 @@ G4VPhysicalVolume* qCalDetectorConstruction::Construct()
    logicAbsorber->SetVisAttributes(yellowColor);
    logicPMTBack->SetVisAttributes(greenColor);
    logicSiPM->SetVisAttributes(redColor);
-   //logicFinal->SetVisAttributes(blueColor);
+  //logicFinal->SetVisAttributes(blueColor);
+  //logicFullDetector->SetVisAttributes(greenColor);
 
 
 
@@ -460,8 +471,11 @@ G4int qCalDetectorConstruction::RawCoordsToSiPMNumber(const G4ThreeVector &raw){
    G4int nXAxisIsEven = 1 - p_nXAxis%2;
    G4int nYAxisIsEven = 1 - p_nYAxis%2;
    G4int nZAxisIsEven = 1 - p_nZAxis%2;
-   G4double rx = raw.getX() / (p_sdCubeSize/cm) +0.5 * nXAxisIsEven;
-   G4double ry = raw.getY() / (p_sdCubeSize/cm) +0.5 * nYAxisIsEven;
+   //G4cout << "SDCube ==" << p_sdCubeSize << G4endl;
+   //G4cout << "SDCubeDiv ==" << p_sdCubeSize/cm << G4endl;
+
+   G4double rx = raw.getX() / (p_sdCubeSize) +0.5 * nXAxisIsEven;
+   G4double ry = raw.getY() / (p_sdCubeSize) +0.5 * nYAxisIsEven;
    G4double rz = (raw.getZ() - p_foffsetZ )/p_fscaleZ -nZAxisIsEven;
    // (rx, ry, rz) are then re-centered in a detector corner so that all components are positive:
    G4double cx = rx + floor(0.5*p_nXAxis);
