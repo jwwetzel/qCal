@@ -4,7 +4,6 @@
 #include "G4MuonPlus.hh"
 #include "G4MuonMinus.hh"
 #include "G4OpticalPhysics.hh"
-#include "G4OpticalProcessIndex.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4OpBoundaryProcess.hh"
 #include "G4Cerenkov.hh"
