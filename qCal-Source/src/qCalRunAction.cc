@@ -15,7 +15,7 @@ qCalRunAction::qCalRunAction(qCalEventAction* eventAction)
 SDVolume(((qCalDetectorConstruction*)G4RunManager::GetRunManager()->
         GetUserDetectorConstruction())->GetVolume())
 {
-   p_runActionOutputFileName = "qCalOutputFile";
+   p_runActionOutputFileName = "qCalOutputFile.root";
    G4RunManager::GetRunManager()->SetPrintProgress(1);
    
    auto analysisManager = G4AnalysisManager::Instance();
