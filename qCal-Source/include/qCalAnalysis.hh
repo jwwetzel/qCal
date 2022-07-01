@@ -1,6 +1,6 @@
 #ifndef qCalAnalysis_h
 #define qCalAnalysis_h 1
 
-#include "g4root.hh"
+#include "G4AnalysisManager.hh"
 
 #endif
