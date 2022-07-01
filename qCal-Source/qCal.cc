@@ -30,13 +30,9 @@
 #include "G4RunManager.hh"
 #endif
 
-#ifdef G4VIS_USE
 #include "G4VisExecutive.hh"
-#endif
-
-#ifdef G4UI_USE
 #include "G4UIExecutive.hh"
-#endif
+
 
 namespace {
 	void PrintUsage() {
@@ -245,15 +241,21 @@ if (!b_absLengthEntered)
 	physicsList->ReplacePhysics(new G4EmStandardPhysics_option4);
 
 	G4OpticalPhysics* opticalPhysics = new G4OpticalPhysics();
-	opticalPhysics->SetWLSTimeProfile("delta");
-	opticalPhysics->SetScintillationYieldFactor(1.0);
-	opticalPhysics->SetScintillationExcitationRatio(0.0);
-	opticalPhysics->SetMaxNumPhotonsPerStep(100);
-	opticalPhysics->SetMaxBetaChangePerStep(10.0);
-	opticalPhysics->SetTrackSecondariesFirst(kCerenkov, true);
-	opticalPhysics->SetTrackSecondariesFirst(kScintillation, true);
+    
+    physicsList->RegisterPhysics(opticalPhysics);
+    
+    auto opticalParams = G4OpticalParameters::Instance();
+    
 
-	physicsList->RegisterPhysics(opticalPhysics);
+    opticalParams->SetWLSTimeProfile("delta");
+//    opticalParams->SetScintillationYieldFactor(1.0);
+//    opticalParams->SetScintillationExcitationRatio(0.0);
+    opticalParams->SetCerenkovMaxPhotonsPerStep(100);
+    opticalParams->SetCerenkovMaxBetaChange(10.0);
+    opticalParams->SetCerenkovTrackSecondariesFirst(true);
+//    opticalParams->SetCerenkovTrackSecondariesFirst(kScintillation, true);
+
+
 
 	//Initialize Physics List
 	runManager->SetUserInitialization(physicsList);
