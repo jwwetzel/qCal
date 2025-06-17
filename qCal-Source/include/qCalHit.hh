@@ -13,8 +13,6 @@
 
 #include "tls.hh"
 
-class G4VTouchable;
-
 class qCalHit : public G4VHit
 {
 public:

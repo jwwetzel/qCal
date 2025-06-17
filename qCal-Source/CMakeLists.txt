@@ -1,5 +1,5 @@
 # (1)
-cmake_minimum_required(VERSION 2.7.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.16...3.27)
 project(qCal)
 
 # (2)
